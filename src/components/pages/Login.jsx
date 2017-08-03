@@ -12,7 +12,7 @@ const FormItem = Form.Item;
 class Login extends React.Component {
     componentWillMount() {
         const { receiveData } = this.props;
-        receiveData(null, 'auth');
+        receiveData(null, 'auth')
     }
     componentWillReceiveProps(nextProps) {
         const { auth: nextAuth = {} } = nextProps;
