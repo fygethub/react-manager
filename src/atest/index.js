@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './style/index.css';
-import classname from 'classnames';
+import classNames from 'classnames/bind';
 
 export default class CssModuleT extends React.Component {
     constructor(props) {
@@ -19,14 +19,16 @@ export default class CssModuleT extends React.Component {
 
     render() {
         console.log(styles);
-        let styles = classname.bind(styles);
-        styles = ({
+        let cx = classNames.bind(styles);
+
+        let className = cx({
             commonTheme: this.state.theme === 'bright',
-            darkTheme: this.state.dark === 'dark',
+            darkTheme: this.state.theme === 'dark',
         });
 
+        console.log(className);
         return (
-            <div style={styles}>
+            <div className={className}>
                 <button onClick={this.changeTheme}/>
                 <h3>Hello World</h3>
             </div>

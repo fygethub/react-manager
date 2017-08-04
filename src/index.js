@@ -84,7 +84,7 @@ const routes =
                 <Route path="routerEnter" component={RouterEnter}/>
             </Route>
             <Route path="atest">
-                <Route path="cssmodule" getComponent={CssModuleT}/>
+                <Route path="css-module" getComponent={CssModuleT}/>
             </Route>
         </Route>
         <Route path={'login'} components={Login}/>
