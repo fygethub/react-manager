@@ -19,7 +19,7 @@ import Modals from './components/ui/Modals';
 import Notifications from './components/ui/Notifications';
 import Tabs from './components/ui/Tabs';
 import Banners from './components/ui/banners';
-import Drags from './components/ui/Draggable';
+import Drags from './components/ui/draggable/Draggable';
 import Dashboard from './components/dashboard/Dashboard';
 import Gallery from './components/ui/Gallery';
 import NotFound from './components/pages/NotFound';
