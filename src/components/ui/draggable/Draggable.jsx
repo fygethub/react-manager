@@ -22,17 +22,15 @@ class Drags extends React.Component {
         };
         this.DrawBoard = null;
         this.timer = -1;
-        this.dragItems = ['deep','middle','latest'];
+        this.dragItems = ['deep', 'middle', 'latest'];
         this.getDrawBoardStyle = this.getDrawBoardStyle.bind(this);
     }
 
     componentDidMount() {
-        console.log('didmount');
         this.DrawBoard = document.getElementById('draw-board');
-        this.dragItems = Array.prototype.slice.call(document.querySelectorAll('.dragItem'), 0);
         let deltaPositions = {};
-        this.dragItems && this.dragItems.forEach(item => {
-            deltaPositions[item.id] = {x: 0, y: 0, width: 100, height: 100};
+        this.dragItems.forEach(item => {
+            deltaPositions[item] = {x: 0, y: 0, width: 100, height: 100};
         });
         console.log(deltaPositions);
         this.setState({deltaPositions});
@@ -113,6 +111,16 @@ class Drags extends React.Component {
         });
     };
 
+    changeDeltaStyles = (position, attr) => (e) => {
+        if (e.target && !(typeof ((e.target.value - 0)) === 'number')) return 0;
+        let deltaPositions = this.state.deltaPositions;
+        let deltaPosition = deltaPositions[position];
+        deltaPosition = {...deltaPosition, [attr]: e.target.value - 0};
+        this.setState({
+            deltaPositions:{}
+        })
+    };
+
     render() {
         const dragHandlers = {onStop: this.onStop};
         const {deltaPosition, deltaPositions} = this.state;
@@ -133,20 +141,27 @@ class Drags extends React.Component {
                             <div>x: {deltaPosition.x.toFixed(0)}, y: {deltaPosition.y.toFixed(0)}</div>
                         </Card>
                     </Draggable>
-                    <Draggable
-                        onStop={this.handleOnStop('middle')}
-                        onStart={this.onStart('middle')}
-                        position={{
-                            x: deltaPositions['middle'] && deltaPositions['middle'].x,
-                            y: deltaPositions['middle'] && deltaPositions['middle'].y
-                        }}
-                    >
-                        <Card bordered={false} className='dragItem middle' id="middle">
-                            <div>I track my deltas</div>
-                            <div>x: {deltaPositions['middle'] && deltaPositions['middle'].x.toFixed(0)},
-                                y: {deltaPositions['middle'] && deltaPositions['middle'].y.toFixed(0)}</div>
-                        </Card>
-                    </Draggable>
+                    {
+                        this.dragItems.map((item) => {
+                            return (
+                                <Draggable
+                                    key={item}
+                                    onStop={this.handleOnStop(item)}
+                                    onStart={this.onStart(item)}
+                                    position={{
+                                        x: deltaPositions[item] && deltaPositions[item].x,
+                                        y: deltaPositions[item] && deltaPositions[item].y
+                                    }}
+                                >
+                                    <Card bordered={false} className='dragItem middle' id="middle">
+                                        <div>I track my deltas</div>
+                                        <div>x: {deltaPositions[item] && deltaPositions[item].x.toFixed(0)},
+                                            y: {deltaPositions[item] && deltaPositions[item].y.toFixed(0)}</div>
+                                    </Card>
+                                </Draggable>
+                            )
+                        })
+                    }
                 </div>
                 <div className="rightTools">
                     <Menu
@@ -188,17 +203,39 @@ class Drags extends React.Component {
                             key='middle'
                             title={<span><Icon type="apple"/>中部背景</span>}
                         >
-                            <Menu.Item key="5">
-                                <input type="text" name="width" placeholder="width" size="default"/>
+                            <Menu.Item key="9">
+                                <input
+                                    type="text"
+                                    placeholder="width"
+                                    value={deltaPositions['middle'] && deltaPositions['middle'].width}
+                                    onChange={this.changeDeltaStyles('middle', 'width')}
+                                    size="default"/>
                             </Menu.Item>
-                            <Menu.Item key="6">
-                                <input type="text" name="height" placeholder="height" size="default"/>
+                            <Menu.Item key="10">
+                                <input
+                                    type="text"
+                                    value={deltaPositions['middle'] && deltaPositions['middle'].height}
+                                    placeholder="height"
+                                    onChange={this.changeDeltaStyles('middle', 'height')}
+                                    size="default"/>
                             </Menu.Item>
-                            <Menu.Item key="7">
-                                <input type="text" name="top" placeholder="top" size="default"/>
+                            <Menu.Item key="11">
+                                <input
+                                    type="text"
+                                    placeholder="top"
+                                    size="default"
+                                    value={deltaPositions['middle'] && deltaPositions['middle'].y}
+                                    onChange={deltaPositions['middle'] && this.changeDeltaStyles('middle', 'y')}
+                                />
                             </Menu.Item>
-                            <Menu.Item key="8">
-                                <input type="text" name="left" placeholder="left" size="default"/>
+                            <Menu.Item key="12">
+                                <input
+                                    type="text"
+                                    placeholder="left"
+                                    size="default"
+                                    value={deltaPositions['middle'] && deltaPositions['middle'].x}
+                                    onChange={deltaPositions['middle'] && this.changeDeltaStyles('middle', 'x')}
+                                />
                             </Menu.Item>
                         </SubMenu>
                         <SubMenu
