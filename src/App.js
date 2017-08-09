@@ -39,7 +39,6 @@ class App extends Component {
                         {this.props.children}
                     </Content>
                     <Footer style={{textAlign: 'center'}}>
-                        React-Admin ©2017 Created by 865470087@qq.com
                     </Footer>
                 </Layout>
             </Layout>

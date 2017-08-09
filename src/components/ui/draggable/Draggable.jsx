@@ -6,6 +6,8 @@ import {Menu, Icon, Card, Input} from 'antd';
 import BreadcrumbCustom from '../../BreadcrumbCustom';
 import Draggable from 'react-draggable';
 import './draggable.less';
+import FontEditor from './FontEditor';
+
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
 
@@ -17,9 +19,11 @@ class Drags extends React.Component {
             openKeys: [],
         };
         this.DrawBoard = null;
-        this.timer = -1;
-        this.dragItems = ['deep', 'middle', 'latest'];
-        this.editStyles = ['height', 'width', 'x', 'y', 'zIndex'];
+        this.dragItems = ['deep', 'middle', 'latest', 'text', 'text1'];
+        this.editStyles = ['height', 'width', 'x', 'y', 'zIndex', 'backgroundColor', 'color'];
+
+
+        this.eidtStylesFun = this.eidtStylesFun.bind(this);
         this.getDrawBoardStyle = this.getDrawBoardStyle.bind(this);
     }
 
@@ -28,10 +32,21 @@ class Drags extends React.Component {
         let deltaPositions = {};
         const _this = this;
         this.dragItems.forEach(item => {
-            deltaPositions[item] = {height: 100, width: 100, x: 0, y: 0, zIndex: 0};
+            deltaPositions[item] = {
+                height: 200,
+                width: 200,
+                x: 0,
+                y: 0,
+                zIndex: 0,
+                backgroundColor: '#fff',
+                color: '#000'
+            };
         });
         this.setState({deltaPositions});
+
+
     }
+
 
     getDrawBoardStyle(style) {
         if (!style) {
@@ -56,48 +71,61 @@ class Drags extends React.Component {
         this.setState({deltaPositions});
     };
 
-
     changeDeltaStyles = (position, attr) => (e) => {
         if (e.target && !(typeof ((e.target.value - 0)) === 'number')) return 0;
         let deltaPositions = this.state.deltaPositions;
-        deltaPositions[position][attr] = e.target.value - 0;
+        deltaPositions[position][attr] = e.target.value;
         this.setState({
             deltaPositions
         })
     };
 
-    render() {
+    eidtStylesFun(item) {
+        let styles = {};
         const {deltaPositions} = this.state;
+        this.editStyles.forEach((attr) => {
+            styles[attr] = deltaPositions[item] && deltaPositions[item][attr];
+        });
+        return styles;
+    }
+
+    render() {
+        const {deltaPosition, deltaPositions} = this.state;
+        const dragHandlers = {onStop: this.onStop};
         const _this = this;
         return (
             <div className="gutter-example button-demo">
                 <BreadcrumbCustom first="UI" second="拖拽"/>
                 <div className="draw-board" id="draw-board">
                     { _this.dragItems.map((item) => {
+                        let doms = '';
+                        if (item === 'text') {
+                            doms = <FontEditor/>
+
+                        }
                         return <Draggable
                             key={item}
                             onStop={_this.handleOnStop(item)}
                             onStart={_this.onStart(item)}
                             position={{
-                                x: deltaPositions[item] && deltaPositions[item].x,
-                                y: deltaPositions[item] && deltaPositions[item].y
+                                x: deltaPositions[item] && deltaPositions[item].x - 0,
+                                y: deltaPositions[item] && deltaPositions[item].y - 0
                             }}>
                             <Card
                                 bordered={false}
                                 className='dragItem'
-                                style={{
-                                    width: deltaPositions[item] && deltaPositions[item]['width'],
-                                    height: deltaPositions[item] && deltaPositions[item]['height'],
-                                    zIndex: deltaPositions[item] && deltaPositions[item]['zIndex'],
-                                }}>
-                                <div>I track my deltas</div>
-                                <div>x: {deltaPositions[item] && deltaPositions[item].x.toFixed(0)},
-                                    y: {deltaPositions[item] && deltaPositions[item].y.toFixed(0)}</div>
+                                style={_this.eidtStylesFun(item)}>
+                                {doms}
+                                {!doms && <div>x: {deltaPositions[item] && deltaPositions[item].x},
+                                    y: {deltaPositions[item] && deltaPositions[item].y}</div>
+                                }
                             </Card>
                         </Draggable>
                     })
                     }
                 </div>
+
+                <div className="line"></div>
                 <div className="rightTools">
                     <Menu
                         mode="inline"
@@ -106,15 +134,21 @@ class Drags extends React.Component {
                         { _this.dragItems.map((item) =>
                             <SubMenu
                                 key={item}
-                                title={<span><Icon type="apple"/>{item}背景</span>}>
+                                title={<span><Icon type="apple"/>{item}</span>}>
                                 { _this.editStyles.map((attr) =>
                                     <Menu.Item key={item + attr}>
+                                        <label htmlFor={item + attr} style={{
+                                            position: 'absolute',
+                                            marginLeft: '-40',
+                                            width: '40',
+                                            overflow: 'hidden'
+                                        }}>{attr}</label>
                                         <input
+                                            id={item + attr}
                                             type="text"
                                             placeholder={attr}
                                             value={deltaPositions[item] && deltaPositions[item][attr]}
-                                            onChange={_this.changeDeltaStyles(item, attr)}
-                                            size="default"/>
+                                            onChange={_this.changeDeltaStyles(item, attr)}/>
                                     </Menu.Item>)
                                 }
                             </SubMenu>)
