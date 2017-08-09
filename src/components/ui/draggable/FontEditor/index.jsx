@@ -58,7 +58,7 @@ export default class FontEditor extends React.Component {
         const show = this.state.showEditor;
         return (<div className="font-editor">
                 <div id="text-output" onClick={this.handClick}/>
-                <div id="pell" style={{visibility: show ? 'visible' : 'hidden'}}/>
+                <div id="pell" style={{display: show ? 'block' : 'none'}}/>
             </div>
         )
     }
