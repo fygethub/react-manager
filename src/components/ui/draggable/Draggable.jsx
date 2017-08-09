@@ -114,11 +114,10 @@ class Drags extends React.Component {
     changeDeltaStyles = (position, attr) => (e) => {
         if (e.target && !(typeof ((e.target.value - 0)) === 'number')) return 0;
         let deltaPositions = this.state.deltaPositions;
-        let deltaPosition = deltaPositions[position];
-        deltaPosition = {...deltaPosition, [attr]: e.target.value - 0};
+        deltaPositions[position][attr] = e.target.value - 0;
         this.setState({
-            deltaPositions:{}
-        })
+            deltaPositions
+        }, () => console.log(this.state))
     };
 
     render() {
@@ -129,7 +128,7 @@ class Drags extends React.Component {
             <div className="gutter-example button-demo">
                 <BreadcrumbCustom first="UI" second="拖拽"/>
                 <div className="draw-board" id="draw-board">
-                    <Draggable
+                   {/* <Draggable
                         onDrag={this.handleDrag}
                         {...dragHandlers}
                         onStart={this.onStart('deep')}
@@ -140,7 +139,7 @@ class Drags extends React.Component {
                             <div>I track my deltas</div>
                             <div>x: {deltaPosition.x.toFixed(0)}, y: {deltaPosition.y.toFixed(0)}</div>
                         </Card>
-                    </Draggable>
+                    </Draggable>*/}
                     {
                         this.dragItems.map((item) => {
                             return (
@@ -170,7 +169,7 @@ class Drags extends React.Component {
                         openKeys={this.state.openKeys}
                         onClick={this.handleClick}
                     >
-                        <SubMenu
+                       {/* <SubMenu
                             key='deep'
                             title={<span><Icon type="apple"/>最底部背景</span>}
                         >
@@ -198,8 +197,8 @@ class Drags extends React.Component {
                                     onChange={this.changeDeltaStyle('x')}
                                 />
                             </Menu.Item>
-                        </SubMenu>
-                        <SubMenu
+                        </SubMenu>*/}
+                       {/* <SubMenu
                             key='middle'
                             title={<span><Icon type="apple"/>中部背景</span>}
                         >
@@ -237,24 +236,50 @@ class Drags extends React.Component {
                                     onChange={deltaPositions['middle'] && this.changeDeltaStyles('middle', 'x')}
                                 />
                             </Menu.Item>
-                        </SubMenu>
-                        <SubMenu
-                            key='latest'
-                            title={<span><Icon type="apple"/>其他组件</span>}
-                        >
-                            <Menu.Item key="5">
-                                <input type="text" placeholder="width" size="default"/>
-                            </Menu.Item>
-                            <Menu.Item key="6">
-                                <input type="text" placeholder="height" size="default"/>
-                            </Menu.Item>
-                            <Menu.Item key="7">
-                                <input type="text" placeholder="top" size="default"/>
-                            </Menu.Item>
-                            <Menu.Item key="8">
-                                <input type="text" placeholder="left" size="default"/>
-                            </Menu.Item>
-                        </SubMenu>
+                        </SubMenu>*/}
+                        {
+                            this.dragItems.map((item)=>
+                                <SubMenu
+                                    key={item}
+                                    title={<span><Icon type="apple"/>{item}背景</span>}
+                                >
+                                    <Menu.Item key="9">
+                                        <input
+                                            type="text"
+                                            placeholder="width"
+                                            value={deltaPositions[item] && deltaPositions[item].width}
+                                            onChange={this.changeDeltaStyles(item, 'width')}
+                                            size="default"/>
+                                    </Menu.Item>
+                                    <Menu.Item key="10">
+                                        <input
+                                            type="text"
+                                            value={deltaPositions[item] && deltaPositions[item].height}
+                                            placeholder="height"
+                                            onChange={this.changeDeltaStyles(item, 'height')}
+                                            size="default"/>
+                                    </Menu.Item>
+                                    <Menu.Item key="11">
+                                        <input
+                                            type="text"
+                                            placeholder="top"
+                                            size="default"
+                                            value={deltaPositions[item] && deltaPositions[item].y}
+                                            onChange={deltaPositions[item] && this.changeDeltaStyles(item, 'y')}
+                                        />
+                                    </Menu.Item>
+                                    <Menu.Item key="12">
+                                        <input
+                                            type="text"
+                                            placeholder="left"
+                                            size="default"
+                                            value={deltaPositions[item] && deltaPositions[item].x}
+                                            onChange={deltaPositions[item] && this.changeDeltaStyles(item, 'x')}
+                                        />
+                                    </Menu.Item>
+                                </SubMenu>
+                            )
+                        }
                     </Menu>
                 </div>
             </div>
