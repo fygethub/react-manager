@@ -8,7 +8,6 @@ import {bindActionCreators} from 'redux';
 import {fetchData, receiveData} from '@/action';
 import axios from '../../axios';
 import md5 from 'js-md5';
-import App from '../../utils/App.jsx';
 const FormItem = Form.Item;
 
 class Login extends React.Component {
@@ -18,12 +17,7 @@ class Login extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        const {auth: nextAuth = {}} = nextProps;
-        const {router} = this.props;
-        if (nextAuth.data && nextAuth.data.uid) {   // 判断是否登陆
-            localStorage.setItem('user', JSON.stringify(nextAuth.data));
-            router.push('/');
-        }
+
     }
 
     handleSubmit = (e) => {
@@ -47,8 +41,6 @@ class Login extends React.Component {
                 if (dataStr.length == 0) {
                     dataStr = null;
                 }
-                console.log('Received values of form: ', dataStr);
-                const {fetchData} = this.props;
                 axios.post('adm/admin/signin', dataStr).then((data) => {
                     console.log(data);
                 });
