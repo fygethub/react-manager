@@ -142,12 +142,6 @@ class SiderCustom extends Component {
                         <Menu.Item key="/app/auth/routerEnter"><Link
                             to={'/app/auth/routerEnter'}>路由拦截</Link></Menu.Item>
                     </SubMenu>
-                    <SubMenu
-                        key="/app/atest"
-                        title={<span><Icon type="safety"/><span className="nav-text">atest</span></span>}
-                    >
-                        <Menu.Item key="/app/atest/css-module"><Link to={'/app/atest/css-module'}>cssMoudule</Link></Menu.Item>
-                    </SubMenu>
                 </Menu>
                 <style>
                     {`

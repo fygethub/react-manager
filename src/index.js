@@ -40,12 +40,6 @@ const Wysiwyg = (location, cb) => {     // 按需加载富文本配置
     }, 'Wysiwyg');
 };
 
-const CssModuleT = (location, cb) => {
-    require.ensure([], require => {
-        cb(null, require('./atest').default);
-    }, 'CssModuleT');
-}
-
 const routes =
     <Route path={'/'} components={Page}>
         <IndexRedirect to="/app/dashboard/index"/>
@@ -82,9 +76,6 @@ const routes =
             <Route path="auth">
                 <Route path="basic" component={AuthBasic}/>
                 <Route path="routerEnter" component={RouterEnter}/>
-            </Route>
-            <Route path="atest">
-                <Route path="css-module" getComponent={CssModuleT}/>
             </Route>
         </Route>
         <Route path={'login'} components={Login}/>

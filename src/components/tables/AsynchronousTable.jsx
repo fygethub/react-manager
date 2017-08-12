@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { Table, Button, Row, Col, Card } from 'antd';
-import { getPros } from '../../axios';
+// import { getPros } from '../../axios';
 import BreadcrumbCustom from '../BreadcrumbCustom';
 
 const columns = [{
@@ -36,7 +36,7 @@ class AsynchronousTable extends React.Component {
     }
     start = () => {
         this.setState({ loading: true });
-        getPros().then(res => {
+        /*getPros().then(res => {
             this.setState({
                 data: [...res.data.map(val => {
                     val.key = val.id;
@@ -44,7 +44,7 @@ class AsynchronousTable extends React.Component {
                 })],
                 loading: false
             });
-        });
+        });*/
     };
     onSelectChange = (selectedRowKeys) => {
         console.log('selectedRowKeys changed: ', selectedRowKeys);
