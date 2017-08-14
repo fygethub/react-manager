@@ -82,7 +82,7 @@ const removeCookie = (k) => cookie.remove(k);
 
 const api = (url, params, options) => {
     params = params || {};
-    let sessionId = getCookie('admin-sessid');
+    let sessionId = getCookie('x-admin-sess');
     if (U.str.isNotEmpty(sessionId)) {
         params['x-admin-sess'] = sessionId;
     }
@@ -116,7 +116,7 @@ const api = (url, params, options) => {
                 if (error) {
                     if (error.code == 5) {
                         //登录会话过期
-                        removeCookie('admin-sessid');
+                        removeCookie('x-admin-sessid');
                     }
                     rejectWrap(error.msg);
                 }
