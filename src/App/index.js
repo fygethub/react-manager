@@ -2,6 +2,7 @@
  * Created by hao.cheng on 2017/4/16.
  */
 import axios from 'axios';
+import {hashHistory} from 'react-router';
 import {message} from 'antd';
 import cookie from 'js-cookie';
 import U from '../utils';
@@ -82,9 +83,9 @@ const removeCookie = (k) => cookie.remove(k);
 
 const api = (url, params, options) => {
     params = params || {};
-    let sessionId = getCookie('x-admin-sess');
+    let sessionId = getCookie('x-adm-sess');
     if (U.str.isNotEmpty(sessionId)) {
-        params['x-admin-sess'] = sessionId;
+        params['x-adm-sess'] = sessionId;
     }
     let defaultError = {'code': 0, 'msg': '网络错误'};
     let apiPromise = function (resolve, reject) {
@@ -116,7 +117,8 @@ const api = (url, params, options) => {
                 if (error) {
                     if (error.code == 5) {
                         //登录会话过期
-                        removeCookie('x-admin-sessid');
+                        removeCookie('x-adm-sessid');
+                        hashHistory.push('login');
                     }
                     rejectWrap(error.msg);
                 }
