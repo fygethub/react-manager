@@ -2,7 +2,7 @@
  * Created by hao.cheng on 2017/4/28.
  */
 import React from 'react';
-import {Menu, Icon, Card, Input} from 'antd';
+import {Menu, Icon, Card, Input, message} from 'antd';
 import BreadcrumbCustom from '../../BreadcrumbCustom';
 import Draggable from 'react-draggable';
 import './draggable.less';
@@ -20,24 +20,28 @@ class Drags extends React.Component {
             deltaPositions: {},
             openKeys: [],
             dragHandle: '',
+            title: '风景图',
+            priority: 1,
+            state: 2,
+            category: 3,
         };
         this.DrawBoard = null;
         // this.dragItems = ['deep', 'middle', 'latest', 'text', 'img'];
-        this.dragItems = ['text_1', 'text_2', 'img_background', 'img_layer'];
+        this.dragItems = ['text_1', 'text_2', 'text_3', 'img_background', 'img_layer'];
         this.editStyles = [
-            'height',
-            'width',
+            'h',
+            'w',
             'x',
             'y',
+            'movable',
             'zIndex',
             'backgroundColor',
-            'color',
+            'fontColor',
             'align',
             'fontSize',
             'fontFamily',
         ];
-
-
+        this.uploadConstructor = this.uploadConstructor.bind(this);
         this.eidtStylesFun = this.eidtStylesFun.bind(this);
         this.getDrawBoardStyle = this.getDrawBoardStyle.bind(this);
     }
@@ -48,65 +52,21 @@ class Drags extends React.Component {
         const _this = this;
         this.dragItems.forEach(item => {
             deltaPositions[item] = {
-                height: 200,
-                width: 200,
+                h: 200,
+                w: 200,
                 x: 0,
                 y: 0,
-                zIndex: 0,
-                backgroundColor: '#fff',
-                color: '#000'
+                movable: 0,
+                align: 1,
+                fontFamily: '宋体',
+                fontSize: 16,
+                //zIndex: 0,
+                //backgroundColor: '#fff',
+                //background: 'https://cdn.pixabay.com/photo/2017/08/08/14/32/adler-2611528__340.jpg',
+                fontColor: '000000'
             };
         });
 
-
-        /* App.api('adm/compound/save', {
-         compound: JSON.stringify({
-         /!*合成图结构体*!/
-         "title": "风景图2",
-         "category": 1,
-         "priority": 1,
-         "hotspots": [
-         {
-         "w": 50,
-         "fontColor": "667799",
-         "align": 2,
-         "movable": 1,
-         "fontFamily": "宋体",
-         "fontSize": 15,
-         "y": 200,
-         "h": 20,
-         "x": 100
-         },
-         {
-         "w": 1,
-         "fontColor": "ffffff",
-         "align": 3,
-         "movable": 0,
-         "fontFamily": "黑体",
-         "fontSize": 8,
-         "y": 0,
-         "h": 1,
-         "x": 0
-         }
-         ],
-         "createdAt": "2017-08-01T07:23:34.039Z",
-         "background": {
-         "height": 428,
-         "width": 384,
-         "url": "https://cdn.pixabay.com/photo/2017/08/02/22/46/peach-2573836__340.jpg"
-         },
-         "state": 2,
-         "layer": {
-         "height": 300,
-         "width": 420,
-         "url": "https://cdn.pixabay.com/photo/2017/08/03/18/49/wolf-in-sheeps-clothing-2577813_960_720.jpg"
-         }
-         })
-         }).then((data) => {
-         console.log(data);
-
-         });
-         */
         App.api('adm/compound/list', {
             marker: null,
             category: 1,
@@ -151,6 +111,52 @@ class Drags extends React.Component {
         })
     };
 
+    uploadConstructor = () => {
+        let hotspots = [];
+        let background = {};
+        let layer = {};
+        let category = this.state.category;
+        let title = this.state.title;
+        let priority = this.state.priority;
+        let state = this.state.state;
+        let createdAt = new Date().toISOString();
+        let _this = this;
+        let deltaPositions = this.state.deltaPositions;
+        this.dragItems.forEach((item) => {
+            let editItem = deltaPositions[item];
+            if (item.indexOf('text') > -1) {
+                editItem['fontColor'] = editItem['fontColor'].replace(/#/, '');
+                hotspots.push(editItem);
+            }
+            if (item.indexOf('background') > -1) {
+                background.height = editItem.h;
+                background.width = editItem.w;
+                background.url = 'https://cdn.pixabay.com/photo/2017/08/08/14/32/adler-2611528__340.jpg';
+
+            }
+            if (item.indexOf('layer') > -1) {
+                layer.height = editItem.h;
+                layer.width = editItem.w;
+                layer.url = 'https://cdn.pixabay.com/photo/2017/08/03/18/49/wolf-in-sheeps-clothing-2577813__340.jpg';
+            }
+        });
+
+        App.api('adm/compound/save', {
+            compound: JSON.stringify({
+                title,
+                category,
+                priority,
+                hotspots,
+                createdAt,
+                background,
+                state,
+                layer,
+            })
+        }).then((data) => {
+            message.info('保存成功!')
+        });
+    };
+
     eidtStylesFun(item) {
         let styles = {};
         const {deltaPositions} = this.state;
@@ -159,6 +165,9 @@ class Drags extends React.Component {
             if (!isNaN(value - 0)) {
                 value = value - 0;
             }
+            attr = attr == 'h' ? 'height' : attr;
+            attr = attr == 'w' ? 'width' : attr;
+            attr = attr == 'fontColor' ? 'color' : attr;
             styles[attr] = value;
         });
         return styles;
@@ -234,9 +243,9 @@ class Drags extends React.Component {
                     </Menu>
                     <div className="submit">
                         <div className="view">
-
+                            {/*{JSON.stringify(this.state.deltaPositions)}*/}
                         </div>
-                        <div className="button">提交</div>
+                        <div className="button" onClick={this.uploadConstructor}>提交</div>
                     </div>
                 </div>
             </div>
