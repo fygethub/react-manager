@@ -596,10 +596,7 @@ let U = (function () {
         document.title = t;
     };
 
-<<<<<<< Updated upstream
-    return {
-        log: log,
-=======
+
     const queryString = () => {
         let _queryString = {};
         const _query = window.location.search.substr(1);
@@ -622,7 +619,6 @@ let U = (function () {
     return {
         log: log,
         queryString: queryString,
->>>>>>> Stashed changes
         judgeWeixinBridge,
         isLogEnabled: isLogEnabled,
         enableLog: enableLog,
