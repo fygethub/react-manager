@@ -28,7 +28,6 @@ class App extends Component {
     };
 
     render() {
-        console.log(this.props.auth);
         const {auth, router} = this.props;
         return (
             <Layout className="ant-layout-has-sider">

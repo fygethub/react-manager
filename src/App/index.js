@@ -26,7 +26,6 @@ const instanceFactory = () => {
 // 添加请求拦截器
     instance.interceptors.request.use((config) => {
         console.log('interceptors request');
-
         return config;
     }, function (error) {
         // 对请求错误做些什么
@@ -36,9 +35,10 @@ const instanceFactory = () => {
 // 添加响应拦截器
     instance.interceptors.response.use(function (response) {
         // 对响应数据做点什么
-        console.log(response, 'interceptors response');
+        console.log('interceptors response');
         if (response.data.error) {
-            message.warn(response.data.error.msg);
+            //message.warn(response.data.error.msg);
+
             return response;
         }
         return response;
@@ -51,10 +51,14 @@ const instanceFactory = () => {
     return instance;
 };
 
+const go = function (hash, context) {
+    context = context || this;
+    context.props.router.push(hash);
+};
 
 const saveCookie = (k, v, opt) => {
     let expiresDate = null;
-    if (opt && !opt.expires) {
+    if (!opt || !opt.expires) {
         expiresDate = new Date();
         expiresDate.setTime(expiresDate.getTime() + 60 * 60 * 1000);
     } else {
@@ -126,8 +130,19 @@ const api = (url, params, options) => {
     return new Promise(apiPromise);
 };
 
+const uuid = function () {
+    function S4() {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    }
+
+    return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+};
+
+
 export default {
+    go,
     api,
+    uuid,
     saveCookie,
     getCookie,
     removeCookie,

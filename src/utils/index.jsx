@@ -1,33 +1,33 @@
-var U = (function () {
-    var _logEnabled = false;
-    var log = function () {
+let U = (function () {
+    let _logEnabled = false;
+    let log = function () {
         if (!_logEnabled || !console || !console.log) {
             return;
         }
         console.log.apply(console, arguments);
     };
-    var isLogEnabled = function () {
+    let isLogEnabled = function () {
         return _logEnabled;
     };
-    var enableLog = function (enabled) {
+    let enableLog = function (enabled) {
         _logEnabled = enabled;
     };
 
-    var isNull = function (s) {
+    let isNull = function (s) {
         return (typeof s === 'undefined' || s === null);
     };
-    var isNotNull = function (s) {
+    let isNotNull = function (s) {
         return !isNull(s);
     };
-    // var isNumber = function (s) {
+    // let isNumber = function (s) {
     //     if (isEmpty(s)) {
     //         return false;
     //     }
     //     return /^[0-9]*$/.test(s);
     // };
 
-    var str = (function () {
-        var isEmpty = function (s) {
+    let str = (function () {
+        let isEmpty = function (s) {
             if (isNull(s)) {
                 return true;
             }
@@ -36,18 +36,18 @@ var U = (function () {
             }
             return s.length == 0;
         };
-        var isNotEmpty = function (s) {
+        let isNotEmpty = function (s) {
             return !isEmpty(s);
         };
-        var startsWith = function (s, prefix) {
+        let startsWith = function (s, prefix) {
             return s.indexOf(prefix) == 0;
         };
 
-        var endsWith = function (str, suffix) {
+        let endsWith = function (str, suffix) {
             return str.indexOf(suffix, str.length - suffix.length) !== -1;
         };
 
-        var replaceAll = function (s, s1, s2) {
+        let replaceAll = function (s, s1, s2) {
             return s.replace(new RegExp(s1, "gm"), s2);
         };
 
@@ -60,30 +60,30 @@ var U = (function () {
         };
     })();
 
-    var date = (function () {
-        var pad = function (n) {
+    let date = (function () {
+        let pad = function (n) {
             return n < 10 ? '0' + n : n;
         };
 
-        var inAnHour = function (date) {
-            var mins = parseInt((Math.floor(new Date()) - Math.floor(new Date(date)) ) / (1000 * 60));
+        let inAnHour = function (date) {
+            let mins = parseInt((Math.floor(new Date()) - Math.floor(new Date(date)) ) / (1000 * 60));
             if (mins > -60)
                 return true;
             return false;
         };
 
-        var in24Hour = function (date) {
-            var mins = parseInt((Math.floor(new Date()) - Math.floor(new Date(date)) ) / (1000 * 60));
+        let in24Hour = function (date) {
+            let mins = parseInt((Math.floor(new Date()) - Math.floor(new Date(date)) ) / (1000 * 60));
             if (mins > -1440)
                 return true;
             return false;
         };
 
-        var countdownTimers = function (date) {
-            var timers = [0, 0, 0, 0];
-            var time = parseInt(Math.floor(new Date(date) - Math.floor(new Date())) / 1000 / 60);
+        let countdownTimers = function (date) {
+            let timers = [0, 0, 0, 0];
+            let time = parseInt(Math.floor(new Date(date) - Math.floor(new Date())) / 1000 / 60);
 
-            var mins = parseInt(time / 60);
+            let mins = parseInt(time / 60);
 
             if (mins < 10) {
                 timers[0] = 0;
@@ -93,7 +93,7 @@ var U = (function () {
                 timers[1] = parseInt(mins % 10);
             }
 
-            var seconds = time % 60;
+            let seconds = time % 60;
             if (seconds < 10) {
                 timers[2] = 0;
                 timers[3] = seconds;
@@ -105,7 +105,7 @@ var U = (function () {
             return timers;
         };
 
-        var foreshowTimeout = function (timers) {
+        let foreshowTimeout = function (timers) {
 
             if (timers[0] === 0 && timers[1] === 0 && timers[2] === 0 && timers[3] === 0) {
                 return true;
@@ -114,7 +114,7 @@ var U = (function () {
 
         };
 
-        var foreshowTimeouted = function (timers) {
+        let foreshowTimeouted = function (timers) {
 
             if (timers[0] <= 0 && timers[1] <= 0 && timers[2] <= 0 && timers[3] <= 0) {
                 return true;
@@ -123,7 +123,7 @@ var U = (function () {
 
         };
 
-        var seconds2MS = function (time) {
+        let seconds2MS = function (time) {
             let m = 0, s = 0, ret = '';
 
             time = Math.floor(time % 3600);
@@ -137,7 +137,7 @@ var U = (function () {
             return ret;
         };
 
-        var seconds2HMS = function (time) {
+        let seconds2HMS = function (time) {
             let h = 0,
                 m = 0,
                 s = 0,
@@ -161,11 +161,11 @@ var U = (function () {
             return ret;
         };
 
-        var format = function (date, fmt) {
+        let format = function (date, fmt) {
             if (!date || !fmt) {
                 return null;
             }
-            var o = {
+            let o = {
                 "M+": date.getMonth() + 1, // 月份
                 "d+": date.getDate(), // 日
                 "h+": date.getHours() % 12 == 0 ? 12 : date.getHours() % 12, // 小时
@@ -175,7 +175,7 @@ var U = (function () {
                 "q+": Math.floor((date.getMonth() + 3) / 3), // 季度
                 "S": date.getMilliseconds()
             };
-            var week = {
+            let week = {
                 "0": "\u65e5",
                 "1": "\u4e00",
                 "2": "\u4e8c",
@@ -197,7 +197,7 @@ var U = (function () {
                             : "")
                         + week[date.getDay() + ""]);
             }
-            for (var k in o) {
+            for (let k in o) {
                 if (new RegExp("(" + k + ")").test(fmt)) {
                     fmt = fmt.replace(RegExp.$1,
                         (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k])
@@ -207,7 +207,7 @@ var U = (function () {
             return fmt;
         };
 
-        var formatISO8601 = function (d) {
+        let formatISO8601 = function (d) {
             if (!d) {
                 return null;
             }
@@ -216,9 +216,9 @@ var U = (function () {
                 + pad(d.getUTCMinutes()) + ':' + pad(d.getUTCSeconds())
                 + 'Z';
         };
-        var getInt = function (s) {
-            var offset = 0;
-            for (var i = 0; i < s.length; i++) {
+        let getInt = function (s) {
+            let offset = 0;
+            for (let i = 0; i < s.length; i++) {
                 if (s.charAt(i) == '0') {
                     continue;
                 }
@@ -230,29 +230,29 @@ var U = (function () {
             }
             return parseInt(s.substr(offset));
         };
-        var parse = function (v, timezoneOffset) {
+        let parse = function (v, timezoneOffset) {
             if (!v) {
                 return null;
             }
             // yyyy-MM-ddTHH:mm:ssZ
             // yyyy-MM-ddTHH:mm:ss.SSSZ
             // yyyy-MM-dd HH:mm:ss.SSS
-            var index = 0;
-            var year = getInt(v.substr(index, 4));
+            let index = 0;
+            let year = getInt(v.substr(index, 4));
             index += 5;
-            var month = getInt(v.substr(index, 2)) - 1;
+            let month = getInt(v.substr(index, 2)) - 1;
             index += 3;
-            var day = getInt(v.substr(index, 2));
+            let day = getInt(v.substr(index, 2));
             index += 3;
-            var hour = index >= v.length ? 0 : getInt(v.substr(index, 2));
+            let hour = index >= v.length ? 0 : getInt(v.substr(index, 2));
             index += 3;
-            var minute = index >= v.length ? 0 : getInt(v.substr(index, 2));
+            let minute = index >= v.length ? 0 : getInt(v.substr(index, 2));
             index += 3;
-            var second = index >= v.length ? 0 : getInt(v.substr(index, 2));
+            let second = index >= v.length ? 0 : getInt(v.substr(index, 2));
             // TODO more format
             if (v.charAt(v.length - 1) == 'Z') {
-                var millSecond = v.indexOf('.') > 0 ? getInt(v.substring(v.indexOf('.') + 1, v.length - 1)) : 0;
-                var d = new Date();
+                let millSecond = v.indexOf('.') > 0 ? getInt(v.substring(v.indexOf('.') + 1, v.length - 1)) : 0;
+                let d = new Date();
                 d.setUTCFullYear(year);
                 d.setUTCMonth(month);
                 d.setUTCDate(day);
@@ -262,39 +262,39 @@ var U = (function () {
                 d.setUTCMilliseconds(millSecond);
                 return d;
             } else {
-                var millSecond = v.indexOf('.') > 0 ? getInt(v.substring(v.indexOf('.') + 1)) : 0;
-                var date = new Date(year, month, day, hour, minute, second,
+                let millSecond = v.indexOf('.') > 0 ? getInt(v.substring(v.indexOf('.') + 1)) : 0;
+                let date = new Date(year, month, day, hour, minute, second,
                     millSecond);
                 if (!isNull(timezoneOffset)) {
-                    var diff = timezoneOffset - date.getTimezoneOffset();
+                    let diff = timezoneOffset - date.getTimezoneOffset();
                     date.setTime(date.getTime() - diff * 60 * 1000);
                 }
                 return date;
             }
         };
 
-        var splashTime = function (date) {
+        let splashTime = function (date) {
 
-            var date3 = (Math.floor(new Date()) - Math.floor(new Date(date)) ) / 1000;
+            let date3 = (Math.floor(new Date()) - Math.floor(new Date(date)) ) / 1000;
 
-            var months = Math.floor(date3 / (30 * 24 * 3600));
+            let months = Math.floor(date3 / (30 * 24 * 3600));
             if (months > 0)
                 return +months + " 月前";
 
-            var days = Math.floor(date3 / (24 * 3600));
+            let days = Math.floor(date3 / (24 * 3600));
             if (days > 0)
                 return +days + " 天前";
 
 
-            var hours = Math.floor(date3 / 3600);
+            let hours = Math.floor(date3 / 3600);
             if (hours > 0)
                 return hours + " 小时前";
 
-            var minutes = Math.floor(date3 / 60);
+            let minutes = Math.floor(date3 / 60);
 
             if (minutes > 0)
                 return minutes + " 分钟前";
-            var seconds = Math.floor(date3 / 60) > 0 ? Math.floor(date3 / 60) : '刚刚';
+            let seconds = Math.floor(date3 / 60) > 0 ? Math.floor(date3 / 60) : '刚刚';
             return seconds;
 
         };
@@ -305,8 +305,8 @@ var U = (function () {
             return d === today;
         };
 
-        var countDownStr = function (t) {
-            var time = parse(t);
+        let countDownStr = function (t) {
+            let time = parse(t);
             let timeStr = '',
                 days = Math.floor(time / (24 * 3600)),
                 hour = parseInt(time / 3600),
@@ -335,9 +335,9 @@ var U = (function () {
             format: format,
             formatISO8601: formatISO8601,
             getDayOfYear: function (date) {
-                var start = new Date(date.getFullYear(), 0, 0);
-                var diff = date.getTime() - start.getTime();
-                var oneDay = 1000 * 60 * 60 * 24;
+                let start = new Date(date.getFullYear(), 0, 0);
+                let diff = date.getTime() - start.getTime();
+                let oneDay = 1000 * 60 * 60 * 24;
                 return Math.floor(diff / oneDay);
             },
             splashTime
@@ -421,26 +421,26 @@ var U = (function () {
         }
     })();
 
-    var getHashParameter = function (name) {
-        var hash = window.location.hash;
+    let getHashParameter = function (name) {
+        let hash = window.location.hash;
         if (!hash) {
             return null;
         }
-        var offset = hash.indexOf('?');
+        let offset = hash.indexOf('?');
         if (offset < 0) {
             return null;
         }
         hash = hash.substr(offset + 1);
-        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-        var r = hash.match(reg);
+        let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        let r = hash.match(reg);
         if (r == null) {
             return null;
         }
         return unescape(r[2]);
     };
-    var getParameter = function (name) {
-        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-        var r = window.location.search.substr(1).match(reg);
+    let getParameter = function (name) {
+        let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        let r = window.location.search.substr(1).match(reg);
         if (r != null) {
             return unescape(r[2]);
         }
@@ -448,19 +448,19 @@ var U = (function () {
     };
 
 
-    var getDomainFromUrl = function (url) {
-        var offset = url.indexOf("//");
-        var offset2 = url.indexOf("/", offset + 2);
+    let getDomainFromUrl = function (url) {
+        let offset = url.indexOf("//");
+        let offset2 = url.indexOf("/", offset + 2);
         if (offset2 == -1) {
             return url.substring(offset + 2);
         }
         return url.substring(offset + 2, offset2);
     };
 
-    var getShopIdFromUrl = function () {
+    let getShopIdFromUrl = function () {
         let url = window.location.pathname;
-        var offset = url.indexOf("/");
-        var offset2 = url.indexOf("?", offset + 1);
+        let offset = url.indexOf("/");
+        let offset2 = url.indexOf("?", offset + 1);
         if (offset2 == -1) {
             offset2 = url.indexOf("#", offset + 1);
             if (offset2 == -1) {
@@ -470,7 +470,7 @@ var U = (function () {
         return url.substring(offset + 4, offset2);
     };
 
-    var countryCode = [
+    let countryCode = [
         {
             code: '86',
             name: '中国'
@@ -504,7 +504,7 @@ var U = (function () {
             name: '马来西亚'
         }];
 
-    var shortNumber = function (num) {
+    let shortNumber = function (num) {
         let val = parseInt(num);
         if (val < 1000) {
             return val;
@@ -517,20 +517,20 @@ var U = (function () {
         }
     }
 
-    var convertBigDecimal = function (num) {
+    let convertBigDecimal = function (num) {
         if (num > 10000) {
             return (num / 10000).toFixed(1) + '万';
         }
         return num;
     };
 
-    var isIOS = function () {
+    let isIOS = function () {
         let u = navigator.userAgent;
-        var isIOS = /(iPhone|iPad|iPod|iOS)/i.test(u);
+        let isIOS = /(iPhone|iPad|iPod|iOS)/i.test(u);
         return isIOS;
     };
 
-    var formatCurrency = function (num) {
+    let formatCurrency = function (num) {
         if (num) {
             //将num中的$,去掉，将num变成一个纯粹的数据格式字符串
             num = num.toString().replace(/\$|\,/g, '');
@@ -539,9 +539,9 @@ var U = (function () {
                 return 'Not a Number ! ';
             }
             //如果num是负数，则获取她的符号
-            var sign = num.indexOf("-") > 0 ? '-' : '';
+            let sign = num.indexOf("-") > 0 ? '-' : '';
             //如果存在小数点，则获取数字的小数部分
-            var cents = num.indexOf(".") > 0 ? num.substr(num.indexOf(".")) : '';
+            let cents = num.indexOf(".") > 0 ? num.substr(num.indexOf(".")) : '';
             cents = cents.length > 1 ? cents : '';//注意：这里如果是使用change方法不断的调用，小数是输入不了的
             //获取数字的整数数部分
             num = num.indexOf(".") > 0 ? num.substring(0, (num.indexOf("."))) : num;
@@ -563,7 +563,7 @@ var U = (function () {
              字符串长度为0/1/2/3时都不用添加
              字符串长度大于3的时候，从右往左数，有三位字符就加一个逗号，然后继续往前数，直到不到往前数少于三位字符为止
              */
-            for (var i = 0; i < Math.floor((num.length - (1 + i)) / 3); i++) {
+            for (let i = 0; i < Math.floor((num.length - (1 + i)) / 3); i++) {
                 num = num.substring(0, num.length - (4 * i + 3)) + ',' + num.substring(num.length - (4 * i + 3));
             }
             //将数据（符号、整数部分、小数部分）整体组合返回
