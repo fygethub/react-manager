@@ -24,10 +24,11 @@ class Drags extends React.Component {
             priority: 1,
             state: 2,
             category: 3,
+            dragItems: ['img_background', 'img_layer', 'text_1', 'text_2', 'text_3',],
         };
         this.DrawBoard = null;
         // this.dragItems = ['deep', 'middle', 'latest', 'text', 'img'];
-        this.dragItems = ['text_1', 'text_2', 'text_3', 'img_background', 'img_layer'];
+        //this.dragItems = ['text_1', 'text_2', 'text_3', 'img_background', 'img_layer'];
         this.editStyles = [
             'h',
             'w',
@@ -44,13 +45,15 @@ class Drags extends React.Component {
         this.uploadConstructor = this.uploadConstructor.bind(this);
         this.eidtStylesFun = this.eidtStylesFun.bind(this);
         this.getDrawBoardStyle = this.getDrawBoardStyle.bind(this);
+        this.addFontEditor = this.addFontEditor.bind(this);
+        this.removeFontEditor = this.removeFontEditor.bind(this);
     }
 
     componentDidMount() {
         this.DrawBoard = document.getElementById('draw-board');
-        let deltaPositions = {};
         const _this = this;
-        this.dragItems.forEach(item => {
+        let deltaPositions = {};
+        this.state.dragItems.forEach(item => {
             deltaPositions[item] = {
                 h: 200,
                 w: 200,
@@ -60,9 +63,6 @@ class Drags extends React.Component {
                 align: 1,
                 fontFamily: '宋体',
                 fontSize: 16,
-                //zIndex: 0,
-                //backgroundColor: '#fff',
-                //background: 'https://cdn.pixabay.com/photo/2017/08/08/14/32/adler-2611528__340.jpg',
                 fontColor: '000000'
             };
         });
@@ -79,11 +79,11 @@ class Drags extends React.Component {
     }
 
 
-    getDrawBoardStyle(style) {
+    getDrawBoardStyle = (style) => {
         if (!style) {
             return this.DrawBoard.getBoundingClientRect();
         }
-    }
+    };
 
     onStart = (key) => () => {
         this.setState({openKeys: [key]})
@@ -122,10 +122,16 @@ class Drags extends React.Component {
         let createdAt = new Date().toISOString();
         let _this = this;
         let deltaPositions = this.state.deltaPositions;
-        this.dragItems.forEach((item) => {
+        let judge = true;
+        this.state.dragItems.forEach((item) => {
             let editItem = deltaPositions[item];
             if (item.indexOf('text') > -1) {
                 editItem['fontColor'] = editItem['fontColor'].replace(/#/, '');
+                if (editItem['fontColor'].length !== 6) {
+                    message.error(item + ':颜色码应该为6位数,请检查');
+                    judge = false;
+                }
+
                 hotspots.push(editItem);
             }
             if (item.indexOf('background') > -1) {
@@ -141,7 +147,7 @@ class Drags extends React.Component {
             }
         });
 
-        App.api('adm/compound/save', {
+        judge && App.api('adm/compound/save', {
             compound: JSON.stringify({
                 title,
                 category,
@@ -157,7 +163,7 @@ class Drags extends React.Component {
         });
     };
 
-    eidtStylesFun(item) {
+    eidtStylesFun = (item) => {
         let styles = {};
         const {deltaPositions} = this.state;
         this.editStyles.forEach((attr) => {
@@ -171,7 +177,42 @@ class Drags extends React.Component {
             styles[attr] = value;
         });
         return styles;
-    }
+    };
+
+    addFontEditor = () => {
+        let editLength = this.state.dragItems.filter((item) => item.indexOf('text') > -1).length;
+        let key = 'text_' + (editLength + 1);
+        let dragItems = this.state.dragItems;
+        let deltaPositions = this.state.deltaPositions;
+        dragItems.push(key);
+        deltaPositions[key] = {
+            h: 200,
+            w: 200,
+            x: 0,
+            y: 0,
+            movable: 0,
+            align: 1,
+            fontFamily: '宋体',
+            fontSize: 16,
+            fontColor: '000000'
+        };
+
+        this.setState({
+            dragItems,
+            deltaPositions,
+        });
+    };
+
+    removeFontEditor = () => {
+        let dragItems = this.state.dragItems;
+        let deltaPositions = this.state.deltaPositions;
+        let key = dragItems.pop();
+        delete deltaPositions[key];
+        this.setState({
+            dragItems,
+            deltaPositions,
+        })
+    };
 
     render() {
         const {deltaPosition, deltaPositions} = this.state;
@@ -181,7 +222,7 @@ class Drags extends React.Component {
             <div className="gutter-example button-demo">
                 <BreadcrumbCustom first="UI" second="拖拽"/>
                 <div className="draw-board" id="draw-board">
-                    { _this.dragItems.map((item) => {
+                    { _this.state.dragItems.map((item) => {
                         let doms = '';
                         if (item.indexOf('text') > -1) {
                             doms = <FontEditor id={App.uuid()}/>
@@ -218,7 +259,22 @@ class Drags extends React.Component {
                         mode="inline"
                         openKeys={_this.state.openKeys}
                         onOpenChange={_this.onOpenChange}>
-                        { _this.dragItems.map((item) =>
+                        <SubMenu
+                            key="eidt-btn"
+                            title="文本框增加"
+                        >
+                            <Menu.Item
+                                key="eidt-btn-add"
+                            >
+                                <p className="edit-add" onClick={this.addFontEditor}>增加文本框</p>
+                            </Menu.Item>
+                            <Menu.Item
+                                key="eidt-btn-remove"
+                            >
+                                <p className="edit-remove" onClick={this.removeFontEditor}>删除文本框</p>
+                            </Menu.Item>
+                        </SubMenu>
+                        { _this.state.dragItems.map((item) =>
                             <SubMenu
                                 key={item}
                                 title={<span><Icon type="apple"/>{item}</span>}>
