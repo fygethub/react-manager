@@ -7,9 +7,11 @@ import BreadcrumbCustom from '../../BreadcrumbCustom';
 import Draggable from 'react-draggable';
 import './draggable.less';
 import FontEditor from './FontEditor';
-
+import App from '../../../App/index.js';
+import PictureEditor from './PictureEditor';
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
+
 
 class Drags extends React.Component {
     constructor(props) {
@@ -17,10 +19,23 @@ class Drags extends React.Component {
         this.state = {
             deltaPositions: {},
             openKeys: [],
+            dragHandle: '',
         };
         this.DrawBoard = null;
-        this.dragItems = ['deep', 'middle', 'latest', 'text', 'text1'];
-        this.editStyles = ['height', 'width', 'x', 'y', 'zIndex', 'backgroundColor', 'color'];
+        // this.dragItems = ['deep', 'middle', 'latest', 'text', 'img'];
+        this.dragItems = ['text_1', 'text_2', 'img_background', 'img_layer'];
+        this.editStyles = [
+            'height',
+            'width',
+            'x',
+            'y',
+            'zIndex',
+            'backgroundColor',
+            'color',
+            'align',
+            'fontSize',
+            'fontFamily',
+        ];
 
 
         this.eidtStylesFun = this.eidtStylesFun.bind(this);
@@ -42,9 +57,65 @@ class Drags extends React.Component {
                 color: '#000'
             };
         });
+
+
+        /* App.api('adm/compound/save', {
+         compound: JSON.stringify({
+         /!*合成图结构体*!/
+         "title": "风景图2",
+         "category": 1,
+         "priority": 1,
+         "hotspots": [
+         {
+         "w": 50,
+         "fontColor": "667799",
+         "align": 2,
+         "movable": 1,
+         "fontFamily": "宋体",
+         "fontSize": 15,
+         "y": 200,
+         "h": 20,
+         "x": 100
+         },
+         {
+         "w": 1,
+         "fontColor": "ffffff",
+         "align": 3,
+         "movable": 0,
+         "fontFamily": "黑体",
+         "fontSize": 8,
+         "y": 0,
+         "h": 1,
+         "x": 0
+         }
+         ],
+         "createdAt": "2017-08-01T07:23:34.039Z",
+         "background": {
+         "height": 428,
+         "width": 384,
+         "url": "https://cdn.pixabay.com/photo/2017/08/02/22/46/peach-2573836__340.jpg"
+         },
+         "state": 2,
+         "layer": {
+         "height": 300,
+         "width": 420,
+         "url": "https://cdn.pixabay.com/photo/2017/08/03/18/49/wolf-in-sheeps-clothing-2577813_960_720.jpg"
+         }
+         })
+         }).then((data) => {
+         console.log(data);
+
+         });
+         */
+        App.api('adm/compound/list', {
+            marker: null,
+            category: 1,
+            "offset": 0,
+            "limit": 10,
+        }).then((data) => {
+            console.log(data);
+        });
         this.setState({deltaPositions});
-
-
     }
 
 
@@ -84,7 +155,11 @@ class Drags extends React.Component {
         let styles = {};
         const {deltaPositions} = this.state;
         this.editStyles.forEach((attr) => {
-            styles[attr] = deltaPositions[item] && deltaPositions[item][attr];
+            let value = deltaPositions[item] && deltaPositions[item][attr];
+            if (!isNaN(value - 0)) {
+                value = value - 0;
+            }
+            styles[attr] = value;
         });
         return styles;
     }
@@ -99,10 +174,13 @@ class Drags extends React.Component {
                 <div className="draw-board" id="draw-board">
                     { _this.dragItems.map((item) => {
                         let doms = '';
-                        if (item === 'text') {
-                            doms = <FontEditor/>
-
+                        if (item.indexOf('text') > -1) {
+                            doms = <FontEditor id={App.uuid()}/>
                         }
+                        if (item.indexOf('img') > -1) {
+                            doms = <PictureEditor id={App.uuid()}/>
+                        }
+
                         return <Draggable
                             key={item}
                             onStop={_this.handleOnStop(item)}
@@ -139,21 +217,27 @@ class Drags extends React.Component {
                                     <Menu.Item key={item + attr}>
                                         <label htmlFor={item + attr} style={{
                                             position: 'absolute',
-                                            marginLeft: '-40',
-                                            width: '40',
+                                            marginLeft: -40,
+                                            width: 40,
                                             overflow: 'hidden'
                                         }}>{attr}</label>
                                         <input
                                             id={item + attr}
                                             type="text"
                                             placeholder={attr}
-                                            value={deltaPositions[item] && deltaPositions[item][attr]}
+                                            value={deltaPositions[item] && deltaPositions[item][attr] || ''}
                                             onChange={_this.changeDeltaStyles(item, attr)}/>
                                     </Menu.Item>)
                                 }
                             </SubMenu>)
                         }
                     </Menu>
+                    <div className="submit">
+                        <div className="view">
+
+                        </div>
+                        <div className="button">提交</div>
+                    </div>
                 </div>
             </div>
         )

@@ -10,6 +10,7 @@ export default class FontEditor extends React.Component {
             showEditor: true,
         };
         this.handClick = this.handClick.bind(this);
+        this.id = this.props.id;
     }
 
     handClick() {
@@ -20,11 +21,11 @@ export default class FontEditor extends React.Component {
 
     componentDidMount() {
         const _this = this;
-        const pellDom = document.getElementById('pell');
+        const pellDom = document.getElementById('pell' + this.id);
         const editor = pellDom && pell.init({
                 element: pellDom,
                 onChange: html => {
-                    document.getElementById('text-output').innerHTML = html
+                    document.getElementById('text-output' + this.id).innerHTML = html
                 },
                 styleWithCSS: true,
                 actions: [
@@ -57,8 +58,8 @@ export default class FontEditor extends React.Component {
     render() {
         const show = this.state.showEditor;
         return (<div className="font-editor">
-                <div id="text-output" onClick={this.handClick}/>
-                <div id="pell" style={{display: show ? 'block' : 'none'}}/>
+                <div id={"text-output" + this.id} onClick={this.handClick} className="dragText"/>
+                <div id={"pell" + this.id} style={{display: show ? 'block' : 'none'}} className="no-cursor"/>
             </div>
         )
     }
