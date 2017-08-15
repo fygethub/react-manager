@@ -56,7 +56,7 @@ class Drags extends React.Component {
         this.state.dragItems.forEach(item => {
             deltaPositions[item] = {
                 h: 200,
-                w: 200,
+                w: 400,
                 x: 0,
                 y: 0,
                 movable: 0,
@@ -188,7 +188,7 @@ class Drags extends React.Component {
         dragItems.push(key);
         deltaPositions[key] = {
             h: 200,
-            w: 200,
+            w: 400,
             x: 0,
             y: 0,
             movable: 0,

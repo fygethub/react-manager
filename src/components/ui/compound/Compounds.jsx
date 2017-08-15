@@ -1,6 +1,6 @@
 import React from 'react';
 import antd from 'antd';
-import {Row, Col, Input, Button, message, Popconfirm, Card} from 'antd';
+import {Row, Col, Input, Button, message, Popconfirm, Card, Tooltip} from 'antd';
 import './compound.less';
 import App from '../../../common/App.jsx';
 
@@ -22,7 +22,7 @@ export default class Compounds extends React.Component {
         };
 
         this.columns = [
-            {title: 'id', dataIndex: 'id', key: 'id', fixed: 'left'},
+            {title: 'id', dataIndex: 'id', key: 'id'},
             {title: '名称', dataIndex: 'title', key: 'title'},
             {title: 'category', dataIndex: 'category', key: 'category'},
             {title: 'state', dataIndex: 'state', key: 'state'},
@@ -102,15 +102,70 @@ export default class Compounds extends React.Component {
     };
 
     expandedRowRender = (record) => {
-        return <div>
-            <Row gutter={16}>
-                <Col className="gutter-row" span={24}>
-                    <div className="gutter-box">
-                        详细内容
+        const background = record.background;
+        let title = `height:${background.height} width:${background.width}
+                ${background.url ? 'url:' + background.url : ''}`;
+        let defaultUrl =
+            "https://cdn.pixabay.com/photo/2017/08/03/18/49/wolf-in-sheeps-clothing-2577813__340.jpg";
+        let background_url = background.url || defaultUrl;
+        let layer_url = background.url || defaultUrl;
+        let hotspots = record.hotspots.map((item, key) => {
+            item.key = key;
+            item.movable = item.movable == 0 ? '不可移动' : '可以移动';
+            return item;
+        });
+        let columns = [
+            {title: 'align', dataIndex: 'align', key: 'align'},
+            {title: '宽', dataIndex: 'w', key: 'w'},
+            {title: '高', dataIndex: 'h', key: 'h'},
+            {title: 'x', dataIndex: 'x', key: 'x'},
+            {title: 'y', dataIndex: 'y', key: 'y'},
+            {title: '是否可移动', dataIndex: 'movable', key: 'movable'},
+            {title: '字体颜色', dataIndex: 'fontColor', key: 'fontColor'},
+            {title: '字体', dataIndex: 'fontFamily', key: 'fontFamily'},
+            {title: '字号', dataIndex: 'fontSize', key: 'fontSize'},
+        ];
+        return <Row gutter={16}>
+            <Col className="gutter-row" span={24}>
+                <div className="gutter-box">
+                    <div className="layer">
+                        <div className="background">
+                            <div>
+                                <span className="name">background:</span>
+                                <span>{title}</span>
+                            </div>
+                            <Tooltip placement="top"
+                                     title={title}>
+                                <img
+                                    className="background-img"
+                                    src={background_url}
+                                />
+                            </Tooltip>
+                        </div>
+                        <div className="background">
+                            <div>
+                                <span className="name">layer:</span>
+                                <span>{title}</span>
+                            </div>
+                            <Tooltip placement="top"
+                                     title={title}>
+                                <img
+                                    className="background-img"
+                                    src={layer_url}
+                                />
+                            </Tooltip>
+                        </div>
                     </div>
-                </Col>
-            </Row>
-        </div>;
+                    <div className="hotspots">
+                        <Table
+                            dataSource={hotspots}
+                            columns={columns}
+                        />
+                    </div>
+                </div>
+
+            </Col>
+        </Row>
     };
 
     tableOnchange = (pagination) => {
