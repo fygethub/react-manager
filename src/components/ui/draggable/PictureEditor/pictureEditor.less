@@ -3,17 +3,33 @@
   width: 100%;
   top: 0;
   bottom: 0;
+  overflow: hidden;
   img {
     width: 100%;
     border: 0;
+    cursor:no-drop;
   }
 
-  input[type='text'] {
+  input[type='file'] {
     position: absolute;
     height: 20px;
     left: 0;
     width: 100%;
     bottom: 0;
     outline: none;
+    z-index: 2;
+    opacity: 0;
+    cursor: pointer;
+    font-size:999px;
+  }
+  .upload-text {
+    position: absolute;
+    height: 20px;
+    left: 0;
+    width: 100%;
+    bottom: 0;
+    outline: none;
+    text-align: center;
+    border: 1px solid #e1e1e1;
   }
 }

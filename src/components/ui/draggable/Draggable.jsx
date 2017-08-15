@@ -7,7 +7,7 @@ import BreadcrumbCustom from '../../BreadcrumbCustom';
 import Draggable from 'react-draggable';
 import './draggable.less';
 import FontEditor from './FontEditor';
-import App from '../../../App/index.js';
+import App from '../../../common/App.jsx';
 import PictureEditor from './PictureEditor';
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
@@ -27,8 +27,6 @@ class Drags extends React.Component {
             dragItems: ['img_background', 'img_layer', 'text_1', 'text_2', 'text_3',],
         };
         this.DrawBoard = null;
-        // this.dragItems = ['deep', 'middle', 'latest', 'text', 'img'];
-        //this.dragItems = ['text_1', 'text_2', 'text_3', 'img_background', 'img_layer'];
         this.editStyles = [
             'h',
             'w',
@@ -47,6 +45,7 @@ class Drags extends React.Component {
         this.getDrawBoardStyle = this.getDrawBoardStyle.bind(this);
         this.addFontEditor = this.addFontEditor.bind(this);
         this.removeFontEditor = this.removeFontEditor.bind(this);
+        this.layerUpload = this.layerUpload.bind(this);
     }
 
     componentDidMount() {
@@ -137,13 +136,14 @@ class Drags extends React.Component {
             if (item.indexOf('background') > -1) {
                 background.height = editItem.h;
                 background.width = editItem.w;
-                background.url = 'https://cdn.pixabay.com/photo/2017/08/08/14/32/adler-2611528__340.jpg';
+                background.url = this.state.deltaPositions[item].url || 'https://cdn.pixabay.com/photo/2017/08/03/18/49/wolf-in-sheeps-clothing-2577813__340.jpg';
 
             }
             if (item.indexOf('layer') > -1) {
                 layer.height = editItem.h;
                 layer.width = editItem.w;
-                layer.url = 'https://cdn.pixabay.com/photo/2017/08/03/18/49/wolf-in-sheeps-clothing-2577813__340.jpg';
+                layer.url = this.state.deltaPositions[item].url || 'https://cdn.pixabay.com/photo/2017/08/03/18/49/wolf-in-sheeps-clothing-2577813__340.jpg';
+
             }
         });
 
@@ -214,6 +214,18 @@ class Drags extends React.Component {
         })
     };
 
+    /*
+     * 上传图片
+     * @params: layer  图层
+     * */
+    layerUpload = (layer) => (url) => {
+        let deltaPositions = this.state.deltaPositions;
+        deltaPositions[layer].url = url;
+        this.setState({
+            deltaPositions
+        })
+    };
+
     render() {
         const {deltaPosition, deltaPositions} = this.state;
         const dragHandlers = {onStop: this.onStop};
@@ -228,7 +240,7 @@ class Drags extends React.Component {
                             doms = <FontEditor id={App.uuid()}/>
                         }
                         if (item.indexOf('img') > -1) {
-                            doms = <PictureEditor id={App.uuid()}/>
+                            doms = <PictureEditor id={App.uuid()} uploadFile={this.layerUpload(item)}/>
                         }
 
                         return <Draggable

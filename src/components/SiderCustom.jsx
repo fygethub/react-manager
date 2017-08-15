@@ -75,27 +75,28 @@ class SiderCustom extends Component {
                         title={<span><Icon type="scan"/><span className="nav-text">UI</span></span>}
                     >
 
-                        <Menu.Item key="/app/ui/buttons"><Link to={'/app/ui/buttons'}>按钮</Link></Menu.Item>
-                        <Menu.Item key="/app/ui/icons"><Link to={'/app/ui/icons'}>图标</Link></Menu.Item>
-                        <Menu.Item key="/app/ui/spins"><Link to={'/app/ui/spins'}>加载中</Link></Menu.Item>
-                        <Menu.Item key="/app/ui/modals"><Link to={'/app/ui/modals'}>对话框</Link></Menu.Item>
-                        <Menu.Item key="/app/ui/notifications"><Link
-                            to={'/app/ui/notifications'}>通知提醒框</Link></Menu.Item>
-                        <Menu.Item key="/app/ui/tabs"><Link to={'/app/ui/tabs'}>标签页</Link></Menu.Item>
-                        <Menu.Item key="/app/ui/banners"><Link to={'/app/ui/banners'}>轮播图</Link></Menu.Item>
-                        <Menu.Item key="/app/ui/wysiwyg"><Link to={'/app/ui/wysiwyg'}>富文本</Link></Menu.Item>
+                        {/*<Menu.Item key="/app/ui/buttons"><Link to={'/app/ui/buttons'}>按钮</Link></Menu.Item>
+                         <Menu.Item key="/app/ui/icons"><Link to={'/app/ui/icons'}>图标</Link></Menu.Item>
+                         <Menu.Item key="/app/ui/spins"><Link to={'/app/ui/spins'}>加载中</Link></Menu.Item>
+                         <Menu.Item key="/app/ui/modals"><Link to={'/app/ui/modals'}>对话框</Link></Menu.Item>
+                         <Menu.Item key="/app/ui/notifications"><Link
+                         to={'/app/ui/notifications'}>通知提醒框</Link></Menu.Item>
+                         <Menu.Item key="/app/ui/tabs"><Link to={'/app/ui/tabs'}>标签页</Link></Menu.Item>
+                         <Menu.Item key="/app/ui/banners"><Link to={'/app/ui/banners'}>轮播图</Link></Menu.Item>
+                         <Menu.Item key="/app/ui/wysiwyg"><Link to={'/app/ui/wysiwyg'}>富文本</Link></Menu.Item>*/}
                         <Menu.Item key="/app/ui/drags"><Link to={'/app/ui/drags'}>拖拽</Link></Menu.Item>
-                        <Menu.Item key="/app/ui/gallery"><Link to={'/app/ui/gallery'}>画廊</Link></Menu.Item>
+                        <Menu.Item key="/app/ui/imageUpload"><Link to={'/app/ui/image-upload'}>图片上传</Link></Menu.Item>
+                        {/*<Menu.Item key="/app/ui/gallery"><Link to={'/app/ui/gallery'}>画廊</Link></Menu.Item>*/}
                     </SubMenu>
-                    <SubMenu
-                        key="/app/animation"
-                        title={<span><Icon type="rocket"/><span className="nav-text">动画</span></span>}
-                    >
+                    {/*<SubMenu
+                     key="/app/animation"
+                     title={<span><Icon type="rocket"/><span className="nav-text">动画</span></span>}
+                     >
 
-                        <Menu.Item key="/app/animation/basicAnimations"><Link
-                            to={'/app/animation/basicAnimations'}>基础动画</Link></Menu.Item>
-                        <Menu.Item key="/app/animation/exampleAnimations"><Link to={'/app/animation/exampleAnimations'}>动画案例</Link></Menu.Item>
-                    </SubMenu>
+                     <Menu.Item key="/app/animation/basicAnimations"><Link
+                     to={'/app/animation/basicAnimations'}>基础动画</Link></Menu.Item>
+                     <Menu.Item key="/app/animation/exampleAnimations"><Link to={'/app/animation/exampleAnimations'}>动画案例</Link></Menu.Item>
+                     </SubMenu>*/}
                     <SubMenu
                         key="/app/table"
                         title={<span><Icon type="copy"/><span className="nav-text">表格</span></span>}
@@ -108,21 +109,21 @@ class SiderCustom extends Component {
                         <Menu.Item key="/app/table/asynchronousTable"><Link
                             to={'/app/table/asynchronousTable'}>异步表格</Link></Menu.Item>
                     </SubMenu>
-                    <SubMenu
-                        key="/app/form"
-                        title={<span><Icon type="edit"/><span className="nav-text">表单</span></span>}
-                    >
+                    {/*<SubMenu
+                     key="/app/form"
+                     title={<span><Icon type="edit"/><span className="nav-text">表单</span></span>}
+                     >
 
-                        <Menu.Item key="/app/basicForm"><Link to={'/app/form/basicForm'}>基础表单</Link></Menu.Item>
-                    </SubMenu>
-                    <SubMenu
-                        key="/app/chart"
-                        title={<span><Icon type="area-chart"/><span className="nav-text">图表</span></span>}
-                    >
-                        <Menu.Item key="/app/chart/echarts"><Link to={'/app/chart/echarts'}>echarts</Link></Menu.Item>
-                        <Menu.Item key="/app/chart/recharts"><Link
-                            to={'/app/chart/recharts'}>recharts</Link></Menu.Item>
-                    </SubMenu>
+                     <Menu.Item key="/app/basicForm"><Link to={'/app/form/basicForm'}>基础表单</Link></Menu.Item>
+                     </SubMenu>
+                     <SubMenu
+                     key="/app/chart"
+                     title={<span><Icon type="area-chart"/><span className="nav-text">图表</span></span>}
+                     >
+                     <Menu.Item key="/app/chart/echarts"><Link to={'/app/chart/echarts'}>echarts</Link></Menu.Item>
+                     <Menu.Item key="/app/chart/recharts"><Link
+                     to={'/app/chart/recharts'}>recharts</Link></Menu.Item>
+                     </SubMenu>*/}
                     <SubMenu
                         key="sub4"
                         title={<span><Icon type="switcher"/><span className="nav-text">页面</span></span>}

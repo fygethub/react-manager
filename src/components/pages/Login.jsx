@@ -5,8 +5,8 @@ import React from 'react';
 import {Form, Icon, Input, Button, Checkbox, message} from 'antd';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {fetchData, receiveData} from '@/action';
-import App from '../../App/index.js';
+import {receiveData} from '@/action';
+import App from '../../common/App.jsx';
 import md5 from 'js-md5';
 const FormItem = Form.Item;
 
@@ -90,7 +90,6 @@ const mapStateToProps = state => {
     return {auth};
 };
 const mapDispatchToProps = dispatch => ({
-    fetchData: bindActionCreators(fetchData, dispatch),
     receiveData: bindActionCreators(receiveData, dispatch)
 });
 

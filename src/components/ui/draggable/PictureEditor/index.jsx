@@ -1,6 +1,7 @@
 import React from 'react';
+import {message} from 'antd';
 import './pictureEditor.less';
-
+import OSSWrap from '../../../../common/OSSWrap.jsx';
 export default class PictureEditor extends React.Component {
 
     constructor(props) {
@@ -10,8 +11,8 @@ export default class PictureEditor extends React.Component {
             show: false,
             value: '',
         };
+        this.doUpload = this.doUpload.bind(this);
         this.toggleShow = this.toggleShow.bind(this);
-        this.inputOnChange = this.inputOnChange.bind(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -26,22 +27,43 @@ export default class PictureEditor extends React.Component {
         })
     }
 
-    inputOnChange(e) {
-        this.setState({
-            value: e.target.value
-        })
-    }
+    doUpload = (position) => (e) => {
+        let _this = this;
+        let file = e.target.files[0];
+        if (!file) {
+            return;
+        }
+        if (position === 'background') {
+            OSSWrap.upload('compound-background', file).then(function (result) {
+                _this.setState({
+                    value: result.url,
+                }, () => {
+                    _this.props.uploadFile(result.url);
+                });
+            }, (error) => message.error(error));
+        } else {
+            OSSWrap.upload('compound-layer', file).then(function (result) {
+                _this.setState({
+                    value: result.url,
+                }, () => {
+                    _this.props.uploadFile(result.url);
+                });
+            }, (error) => message.error(error));
+        }
+
+    };
 
     render() {
-        let imgStyle = {
-            width: this.props.imgWidth,
-            height: this.props.imgHeight,
-        };
         return <div className="picture-editor">
             <img src={this.state.value || 'https://cdn.pixabay.com/photo/2017/08/08/14/32/adler-2611528__340.jpg'}
                  alt=""/>
             { !this.state.show &&
-            <input type="text" value={this.state.value} id="img_url" onChange={this.inputOnChange}/>}
+            <input placeholder="选择文件" type="file" id="img_url" onChange={this.doUpload(this.props.layer)}/>}
+            { !this.state.show && <div className="upload-text">点击上传文件</div>}
         </div>
     }
+}
+
+PictureEditor.propTypes = {
+    uploadFile: React.PropTypes.func.isRequired,
 }
