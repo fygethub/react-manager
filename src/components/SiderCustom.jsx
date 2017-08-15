@@ -84,8 +84,8 @@ class SiderCustom extends Component {
                          <Menu.Item key="/app/ui/tabs"><Link to={'/app/ui/tabs'}>标签页</Link></Menu.Item>
                          <Menu.Item key="/app/ui/banners"><Link to={'/app/ui/banners'}>轮播图</Link></Menu.Item>
                          <Menu.Item key="/app/ui/wysiwyg"><Link to={'/app/ui/wysiwyg'}>富文本</Link></Menu.Item>*/}
-                        <Menu.Item key="/app/ui/drags"><Link to={'/app/ui/drags'}>拖拽</Link></Menu.Item>
-                        <Menu.Item key="/app/ui/imageUpload"><Link to={'/app/ui/image-upload'}>图片上传</Link></Menu.Item>
+                        <Menu.Item key="/app/ui/drags"><Link to={'/app/ui/drags'}>合成图编辑</Link></Menu.Item>
+                        <Menu.Item key="/app/ui/imageUpload"><Link to={'/app/ui/compounds'}>合成图管理</Link></Menu.Item>
                         {/*<Menu.Item key="/app/ui/gallery"><Link to={'/app/ui/gallery'}>画廊</Link></Menu.Item>*/}
                     </SubMenu>
                     {/*<SubMenu

@@ -41,10 +41,11 @@ const Wysiwyg = (location, cb) => {     // 按需加载富文本配置
     }, 'Wysiwyg');
 };
 
-const UploadImg = (location, cb) => {
+
+const Compounds = (location, cb) => {
     require.ensure([], require => {
-        cb(null, require('./components/ui/upload/ImageUpload.jsx').default);
-    }, 'UploadImg');
+        cb(null, require('./components/ui/compound/Compounds.jsx').default);
+    }, 'Compounds');
 };
 
 const routes =
@@ -74,7 +75,7 @@ const routes =
                 <Route path={'wysiwyg'} getComponent={Wysiwyg}/>
                 <Route path={'drags'} component={Drags}/>
                 <Route path={'gallery'} component={Gallery}/>
-                <Route path={'image-upload'} getComponent={UploadImg}/>
+                <Route path={'compounds'} getComponent={Compounds}/>
             </Route>
             <Route path={'animation'}>
                 <Route path={'basicAnimations'} component={BasicAnimations}/>

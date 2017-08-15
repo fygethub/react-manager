@@ -1,7 +1,7 @@
 import React from 'react';
 import antd from 'antd';
 import OSSWrap from '../../../common/OSSWrap.jsx';
-import './imageUpload.less';
+import './compound.less';
 import App from '../../../common/App.jsx';
 
 let Table = antd.Table;
@@ -35,6 +35,9 @@ export default class ImageUpload extends React.Component {
         ];
     }
 
+    componentDidMount(){
+
+    }
 
     renderAction = () => {
         return <a href="javascript:;">删除</a>;
@@ -44,35 +47,14 @@ export default class ImageUpload extends React.Component {
         return <p>{record.description}</p>;
     };
 
-    doUpload = (position) => (e) => {
-        let _this = this;
-        let file = e.target.files[0];
-        if (!file) {
-            return;
-        }
-        if (position === 'background') {
-            OSSWrap.upload('compound-background', file).then(function (result) {
-                console.log(result);
-            });
-        } else {
-            OSSWrap.upload('compound-layer', file).then(function (result) {
-                console.log(result);
-            });
-        }
-
-    };
-
-
     render() {
-        return <div className="image-upload">
+        return <div className="compounds">
             <div className="uploadArea">
                 <div className="background">
-                    <label htmlFor="uploadBackground">上传背景图片</label>
-                    <input type="file" id="uploadBackground" onChange={this.doUpload('background')}/>
+
                 </div>
                 <div className="laye">
-                    <label htmlFor="uploadLayer">上传合成图图层</label>
-                    <input type="file" id="uploadLayer" onChange={this.doUpload('layer')}/>
+
                 </div>
             </div>
             <div className="tables">

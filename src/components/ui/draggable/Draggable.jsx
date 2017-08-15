@@ -40,6 +40,7 @@ class Drags extends React.Component {
             'fontSize',
             'fontFamily',
         ];
+        this.editMsg = this.editMsg.bind(this);
         this.uploadConstructor = this.uploadConstructor.bind(this);
         this.eidtStylesFun = this.eidtStylesFun.bind(this);
         this.getDrawBoardStyle = this.getDrawBoardStyle.bind(this);
@@ -206,13 +207,24 @@ class Drags extends React.Component {
     removeFontEditor = () => {
         let dragItems = this.state.dragItems;
         let deltaPositions = this.state.deltaPositions;
-        let key = dragItems.pop();
-        delete deltaPositions[key];
+        if (dragItems.length > 2) {
+            delete deltaPositions[key];
+            let key = dragItems.pop();
+        } else {
+            message.info('图层不能删除!')
+        }
         this.setState({
             dragItems,
             deltaPositions,
         })
     };
+
+    editMsg = (info) => (e) => {
+        this.setState({
+            [info]: e.target.value,
+        })
+    };
+
 
     /*
      * 上传图片
@@ -232,7 +244,7 @@ class Drags extends React.Component {
         const _this = this;
         return (
             <div className="gutter-example button-demo">
-                <BreadcrumbCustom first="UI" second="拖拽"/>
+                <BreadcrumbCustom first="UI" second="合成图编辑"/>
                 <div className="draw-board" id="draw-board">
                     { _this.state.dragItems.map((item) => {
                         let doms = '';
@@ -273,7 +285,7 @@ class Drags extends React.Component {
                         onOpenChange={_this.onOpenChange}>
                         <SubMenu
                             key="eidt-btn"
-                            title="文本框增加"
+                            title="基本操作"
                         >
                             <Menu.Item
                                 key="eidt-btn-add"
@@ -284,6 +296,24 @@ class Drags extends React.Component {
                                 key="eidt-btn-remove"
                             >
                                 <p className="edit-remove" onClick={this.removeFontEditor}>删除文本框</p>
+                            </Menu.Item>
+                            <Menu.Item
+                                key="editTitle"
+                            >
+                                <input className="edit-remove" value={this.state.title}
+                                       onChange={this.editMsg('title')}/>
+                            </Menu.Item>
+                            <Menu.Item
+                                key="editCategory"
+                            >
+                                <input className="edit-remove" value={this.state.category}
+                                       onChange={this.editMsg('category')}/>
+                            </Menu.Item>
+                            <Menu.Item
+                                key="editPriority"
+                            >
+                                <input className="edit-remove" value={this.state.priority}
+                                       onChange={this.editMsg('priority')}/>
                             </Menu.Item>
                         </SubMenu>
                         { _this.state.dragItems.map((item) =>
