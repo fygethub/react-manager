@@ -53,7 +53,7 @@ class Drags extends React.Component {
             x: 0,
             y: 0,
             movable: 0,
-            text: 'wakkaa',
+            text: '空白',
             align: 1,
             fontFamily: '宋体',
             fontSize: 16,
@@ -224,6 +224,12 @@ class Drags extends React.Component {
         })
     };
 
+    fontEditorChange = (item) => (html) => {
+        let deltaPositions = this.state.deltaPositions;
+        deltaPositions[item].text = html;
+        this.setState({deltaPositions})
+    }
+
     render() {
         const {deltaPosition, deltaPositions} = this.state;
         const dragHandlers = {onStop: this.onStop};
@@ -236,7 +242,7 @@ class Drags extends React.Component {
                         let doms = '';
                         let id = App.uuid();
                         if (item.indexOf('text') > -1) {
-                            doms = <FontEditor id={id}/>
+                            doms = <FontEditor id={id} onChange={this.fontEditorChange(item)}/>
                         }
                         if (item.indexOf('img') > -1) {
                             doms = <PictureEditor id={id}

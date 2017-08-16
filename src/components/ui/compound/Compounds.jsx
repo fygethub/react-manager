@@ -103,8 +103,7 @@ export default class Compounds extends React.Component {
 
     expandedRowRender = (record) => {
         const background = record.background;
-        let title = `height:${background.height} width:${background.width}
-                ${background.url ? 'url:' + background.url : ''}`;
+        let title = `height:${background.height} width:${background.width}`;
         let defaultUrl =
             "https://cdn.pixabay.com/photo/2017/08/03/18/49/wolf-in-sheeps-clothing-2577813__340.jpg";
         let background_url = background.url || defaultUrl;
@@ -120,6 +119,7 @@ export default class Compounds extends React.Component {
             {title: '高', dataIndex: 'h', key: 'h'},
             {title: 'x', dataIndex: 'x', key: 'x'},
             {title: 'y', dataIndex: 'y', key: 'y'},
+            {title: 'text', dataIndex: 'text', key: 'text'},
             {title: '是否可移动', dataIndex: 'movable', key: 'movable'},
             {title: '字体颜色', dataIndex: 'fontColor', key: 'fontColor'},
             {title: '字体', dataIndex: 'fontFamily', key: 'fontFamily'},
@@ -132,7 +132,7 @@ export default class Compounds extends React.Component {
                         <div className="background">
                             <div>
                                 <span className="name">background:</span>
-                                <span>{title}</span>
+                                <span>{`${background.url ? 'url:' + background.url : ''}`}</span>
                             </div>
                             <Tooltip placement="top"
                                      title={title}>
@@ -212,7 +212,7 @@ export default class Compounds extends React.Component {
                             <div className="gutter-box">
                                 <Card title="固定列" bordered={false}>
                                     <Table
-                                        scroll={{x: 1300}}
+                                        scroll={{x: 1800}}
                                         rowKey={record => record.id}
                                         columns={this.columns}
                                         expandedRowRender={this.expandedRowRender}
