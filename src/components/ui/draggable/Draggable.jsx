@@ -10,7 +10,6 @@ import FontEditor from './FontEditor';
 import App from '../../../common/App.jsx';
 import PictureEditor from './PictureEditor';
 const SubMenu = Menu.SubMenu;
-const MenuItemGroup = Menu.ItemGroup;
 
 
 class Drags extends React.Component {
@@ -54,7 +53,7 @@ class Drags extends React.Component {
             x: 0,
             y: 0,
             movable: 0,
-            text: '空白',
+            text: '未编辑文字!',
             align: 1,
             fontFamily: '宋体',
             fontSize: 16,
