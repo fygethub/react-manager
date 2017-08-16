@@ -56,7 +56,7 @@ class Drags extends React.Component {
             x: 0,
             y: 0,
             movable: 0,
-            text: '未编辑文字!',
+            text: '未编辑文字',
             align: 1,
             fontFamily: '宋体',
             fontSize: 16,
@@ -175,39 +175,36 @@ class Drags extends React.Component {
                 layer.url = this.state.deltaPositions[item].url || 'http://sandbox-f1.cyjx.com/wk/2017/8/16/5993a64bcfab571aa9eae82e0yph74LP.jpg';
             }
         });
+        let uploadDate = {
+            title,
+            category,
+            priority,
+            hotspots,
+            createdAt,
+            background,
+            state,
+            layer,
+        };
+        if (this.state.preview.url) {
+            uploadDate.preview = this.state.preview
+        }
         if (id) {
+            uploadDate.id = this.state.id;
             judge && App.api('adm/compound/save', {
                 compound: JSON.stringify({
-                    id,
-                    title,
-                    category,
-                    priority,
-                    hotspots,
-                    createdAt,
-                    background,
-                    state,
-                    layer,
-                    preview,
+                    ...uploadDate
                 })
             }).then((data) => {
                 message.info('保存成功!')
-            });
+            }, (data) => message.error(data.key + '检查一下是不是负数'));
         } else {
             judge && App.api('adm/compound/save', {
                 compound: JSON.stringify({
-                    title,
-                    category,
-                    priority,
-                    hotspots,
-                    createdAt,
-                    background,
-                    state,
-                    layer,
-                    preview,
+                    ...uploadDate
                 })
             }).then((data) => {
                 message.info('保存成功!')
-            });
+            }, (data) => message.error(data.key + '检查一下是不是负数'));
         }
     };
 
@@ -234,7 +231,7 @@ class Drags extends React.Component {
         let dragItems = this.state.dragItems;
         let deltaPositions = this.state.deltaPositions;
         dragItems.push(key);
-        deltaPositions[key] = this.initStyle;
+        deltaPositions[key] = {...this.initStyle};
 
         this.setState({
             dragItems,
@@ -440,9 +437,9 @@ class Drags extends React.Component {
                         }
                     </Menu>
                     <div className="submit">
-                        <div className="view">
-                            {/*{JSON.stringify(this.state.deltaPositions)}*/}
-                        </div>
+                      {/*  <div className="view">
+                            /!*{JSON.stringify(this.state.deltaPositions)}*!/
+                        </div>*/}
                         <div className="button" onClick={this.uploadConstructor}>提交</div>
                     </div>
                 </div>

@@ -13,14 +13,20 @@ export default class FontEditor extends React.Component {
         const _this = this;
         const pellDom = document.getElementById('pell' + this.id);
         var editor = new MediumEditor(pellDom, {
+            delay: 1000,
             toolbar: {
                 buttons: ['bold', 'italic', 'underline', 'strikethrough', 'quote', 'anchor', 'image', 'justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull', 'superscript', 'subscript', 'orderedlist', 'unorderedlist', 'pre', 'outdent', 'indent', 'h2', 'h3'],
                 static: true,
                 sticky: true
             }
         });
+        _this.timer = -1;
         editor.subscribe('editableInput', function (event, editable) {
-            _this.props.onChange(editable.innerText);
+            clearTimeout(_this.timer);
+            _this.timer = setTimeout(() => {
+                console.log(editable, editable.innerText.replace(/[\n\r]/g, ''));
+                _this.props.onChange(editable.innerText.replace(/[\n\r]/g, ''));
+            }, 1000);
         });
     }
 
