@@ -47,6 +47,18 @@ class Drags extends React.Component {
         this.addFontEditor = this.addFontEditor.bind(this);
         this.removeFontEditor = this.removeFontEditor.bind(this);
         this.layerUpload = this.layerUpload.bind(this);
+        this.initStyle = {
+            h: 200,
+            w: 400,
+            x: 0,
+            y: 0,
+            movable: 0,
+            text: 'wakkaa',
+            align: 1,
+            fontFamily: '宋体',
+            fontSize: 16,
+            fontColor: '000000'
+        }
     }
 
     componentDidMount() {
@@ -55,26 +67,10 @@ class Drags extends React.Component {
         let deltaPositions = {};
         this.state.dragItems.forEach(item => {
             deltaPositions[item] = {
-                h: 200,
-                w: 400,
-                x: 0,
-                y: 0,
-                movable: 0,
-                align: 1,
-                fontFamily: '宋体',
-                fontSize: 16,
-                fontColor: '000000'
+                ...this.initStyle
             };
         });
 
-        App.api('adm/compound/list', {
-            marker: null,
-            category: 1,
-            "offset": 0,
-            "limit": 10,
-        }).then((data) => {
-            console.log(data);
-        });
         this.setState({deltaPositions});
     }
 
@@ -137,14 +133,13 @@ class Drags extends React.Component {
             if (item.indexOf('background') > -1) {
                 background.height = editItem.h;
                 background.width = editItem.w;
-                background.url = this.state.deltaPositions[item].url || 'https://cdn.pixabay.com/photo/2017/08/03/18/49/wolf-in-sheeps-clothing-2577813__340.jpg';
+                background.url = this.state.deltaPositions[item].url || 'http://sandbox-f1.cyjx.com/wk/2017/8/16/5993a6a6cfab571aa9eae830EKPQvRYJ.jpg';
 
             }
             if (item.indexOf('layer') > -1) {
                 layer.height = editItem.h;
                 layer.width = editItem.w;
-                layer.url = this.state.deltaPositions[item].url || 'https://cdn.pixabay.com/photo/2017/08/03/18/49/wolf-in-sheeps-clothing-2577813__340.jpg';
-
+                layer.url = this.state.deltaPositions[item].url || 'http://sandbox-f1.cyjx.com/wk/2017/8/16/5993a64bcfab571aa9eae82e0yph74LP.jpg';
             }
         });
 
@@ -169,12 +164,13 @@ class Drags extends React.Component {
         const {deltaPositions} = this.state;
         this.editStyles.forEach((attr) => {
             let value = deltaPositions[item] && deltaPositions[item][attr];
+            if (!value) return;
             if (!isNaN(value - 0)) {
                 value = value - 0;
             }
             attr = attr == 'h' ? 'height' : attr;
             attr = attr == 'w' ? 'width' : attr;
-            attr = attr == 'fontColor' ? 'color' : attr;
+            attr = attr == 'fontColor' ? ['color', value = '#' + (value + '').replace(/#/, '')][0] : attr;
             styles[attr] = value;
         });
         return styles;
@@ -186,17 +182,7 @@ class Drags extends React.Component {
         let dragItems = this.state.dragItems;
         let deltaPositions = this.state.deltaPositions;
         dragItems.push(key);
-        deltaPositions[key] = {
-            h: 200,
-            w: 400,
-            x: 0,
-            y: 0,
-            movable: 0,
-            align: 1,
-            fontFamily: '宋体',
-            fontSize: 16,
-            fontColor: '000000'
-        };
+        deltaPositions[key] = this.initStyle;
 
         this.setState({
             dragItems,
@@ -248,17 +234,22 @@ class Drags extends React.Component {
                 <div className="draw-board" id="draw-board">
                     { _this.state.dragItems.map((item) => {
                         let doms = '';
+                        let id = App.uuid();
                         if (item.indexOf('text') > -1) {
-                            doms = <FontEditor id={App.uuid()}/>
+                            doms = <FontEditor id={id}/>
                         }
                         if (item.indexOf('img') > -1) {
-                            doms = <PictureEditor id={App.uuid()} uploadFile={this.layerUpload(item)}/>
+                            doms = <PictureEditor id={id}
+                                                  layer={item.indexOf('background') > -1 ? 'background' : 'layer'}
+                                                  uploadFile={this.layerUpload(item)}/>
                         }
 
                         return <Draggable
                             key={item}
+                            cancel='.no-cursor'
                             onStop={_this.handleOnStop(item)}
                             onStart={_this.onStart(item)}
+
                             position={{
                                 x: deltaPositions[item] && deltaPositions[item].x - 0,
                                 y: deltaPositions[item] && deltaPositions[item].y - 0
@@ -300,19 +291,19 @@ class Drags extends React.Component {
                             <Menu.Item
                                 key="editTitle"
                             >
-                                <input className="edit-remove" value={this.state.title}
+                                <input className="edit-remove" placeholder="title" value={this.state.title}
                                        onChange={this.editMsg('title')}/>
                             </Menu.Item>
                             <Menu.Item
                                 key="editCategory"
                             >
-                                <input className="edit-remove" value={this.state.category}
+                                <input className="edit-remove" placeholder="(1,2,3,4)种类型" value={this.state.category}
                                        onChange={this.editMsg('category')}/>
                             </Menu.Item>
                             <Menu.Item
                                 key="editPriority"
                             >
-                                <input className="edit-remove" value={this.state.priority}
+                                <input className="edit-remove" placeholder="priority" value={this.state.priority}
                                        onChange={this.editMsg('priority')}/>
                             </Menu.Item>
                         </SubMenu>

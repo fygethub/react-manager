@@ -1,9 +1,17 @@
 .font-editor {
+  ::-webkit-scrollbar {
+    width: 1px;
+    height: 1px;
+  }
+
   width: 100%;
   position: absolute;
   top: 0;
   bottom: 0;
   overflow: scroll;
+  .dragText {
+    margin-bottom: 30px;
+  }
   .pell-actionbar-custom-name {
     display: flex;
     .pell-button-custom-name {
@@ -13,7 +21,7 @@
   }
   .pell-content-custom-name {
     width: 100%;
-    bottom: 0px;
+    bottom: 0;
     height: 200px;
     overflow: scroll;
     cursor: text;

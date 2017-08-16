@@ -55,8 +55,11 @@ export default class PictureEditor extends React.Component {
 
     render() {
         return <div className="picture-editor">
-            <img src={this.state.value || 'https://cdn.pixabay.com/photo/2017/08/08/14/32/adler-2611528__340.jpg'}
-                 alt=""/>
+            <img
+                src={this.state.value || 'http://sandbox-f1.cyjx.com/wk/2017/8/16/5993a64bcfab571aa9eae82e0yph74LP.jpg'}
+                alt='img'
+                draggable="false"
+            />
             { !this.state.show &&
             <input placeholder="选择文件" type="file" id="img_url" onChange={this.doUpload(this.props.layer)}/>}
             { !this.state.show && <div className="upload-text">点击上传文件</div>}

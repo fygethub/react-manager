@@ -52,13 +52,15 @@ export default class FontEditor extends React.Component {
             });
         // editor.content<HTMLElement>
         // To change the editor's content:
-        editor.content.innerHTML = '<b><u><i>Initial content!</i></u></b>'
+        editor.content.innerHTML = 'Initial content!'
     }
 
     render() {
         const show = this.state.showEditor;
         return (<div className="font-editor">
-                <div id={"text-output" + this.id} onClick={this.handClick} className="dragText"/>
+                <div id={"text-output" + this.id} onClick={this.handClick} className="dragText">
+                    Initial content!
+                </div>
                 <div id={"pell" + this.id} style={{display: show ? 'block' : 'none'}} className="no-cursor"/>
             </div>
         )
