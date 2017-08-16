@@ -1,12 +1,12 @@
 import React from 'react';
 import antd from 'antd';
-import {Row, Col, Input, Button, message, Popconfirm, Card, Tooltip} from 'antd';
+import {Row, Col, Button, message, Popconfirm, Card, Tooltip, Select} from 'antd';
 import {hashHistory} from 'react-router';
 import './compound.less';
 import App from '../../../common/App.jsx';
 
 let Table = antd.Table;
-const Search = Input.Search;
+const Option = Select.Option;
 export default class Compounds extends React.Component {
     constructor(props) {
         super(props);
@@ -205,13 +205,14 @@ export default class Compounds extends React.Component {
                     <Col className="gutter-row" span={24}>
                         <div className="gutter-box">
                             <label htmlFor="category">查询类型</label>
-                            <Search
-                                id="category"
-                                placeholder="category"
-                                onSearch={(v) => this.setState({
-                                    category: v,
-                                }, this.loadData)}
-                            />
+                            <Select defaultValue="1" style={{width: '100%'}} onChange={(v) => this.setState({
+                                category: v,
+                            }, this.loadData)}>
+                                <Option value="1">课程</Option>
+                                <Option value="2">专栏</Option>
+                                <Option value="3">商品</Option>
+                                <Option value="4">轮播图</Option>
+                            </Select>
                         </div>
                     </Col>
                 </Row>

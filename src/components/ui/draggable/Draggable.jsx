@@ -2,16 +2,17 @@
  * Created by hao.cheng on 2017/4/28.
  */
 import React from 'react';
-import {Menu, Icon, Card, Input, message} from 'antd';
+import {Menu, Icon, Card, Input, message, Select} from 'antd';
 import BreadcrumbCustom from '../../BreadcrumbCustom';
 import Draggable from 'react-draggable';
 import './draggable.less';
 import FontEditor from './FontEditor';
+import OSSWrap from '../../../common/OSSWrap.jsx';
 import App from '../../../common/App.jsx';
 import PictureEditor from './PictureEditor';
 const SubMenu = Menu.SubMenu;
 
-
+const Option = Select.Option;
 class Drags extends React.Component {
     constructor(props) {
         super(props);
@@ -47,6 +48,7 @@ class Drags extends React.Component {
         this.addFontEditor = this.addFontEditor.bind(this);
         this.removeFontEditor = this.removeFontEditor.bind(this);
         this.layerUpload = this.layerUpload.bind(this);
+        this.uploadDesign = this.uploadDesign.bind(this);
         this.initStyle = {
             h: 200,
             w: 400,
@@ -251,11 +253,33 @@ class Drags extends React.Component {
     };
 
     editMsg = (info) => (e) => {
-        this.setState({
-            [info]: e.target.value,
-        })
+        if (typeof e == 'string') {
+            this.setState({
+                [info]: e,
+            })
+        } else {
+            this.setState({
+                [info]: e.target.value,
+            })
+        }
+
     };
 
+    uploadDesign = (e) => {
+        let _this = this;
+        let file = e.target.files[0];
+        if (!file) {
+            return;
+        }
+        /*OSSWrap.upload('compound-layer', file).then(function (result) {
+         _this.setState({
+         value: result.url,
+         }, () => {
+         _this.props.uploadFile(result.url);
+         });
+         }, (error) => message.error(error));*/
+
+    };
 
     /*
      * 上传图片
@@ -282,6 +306,9 @@ class Drags extends React.Component {
         return (
             <div className="gutter-example button-demo">
                 <BreadcrumbCustom first="UI" second="合成图编辑"/>
+                <div className="uplaodMain">
+
+                </div>
                 <div className="draw-board" id="draw-board">
                     { _this.state.dragItems.map((item) => {
                         let doms = '';
@@ -329,35 +356,46 @@ class Drags extends React.Component {
                         onOpenChange={_this.onOpenChange}>
                         <SubMenu
                             key="eidt-btn"
-                            title="基本操作"
-                        >
+                            title="基本操作">
                             <Menu.Item
-                                key="eidt-btn-add"
-                            >
+                                key="eidt-btn-add">
                                 <p className="edit-add" onClick={this.addFontEditor}>增加文本框</p>
                             </Menu.Item>
                             <Menu.Item
-                                key="eidt-btn-remove"
-                            >
+                                key="eidt-btn-remove">
                                 <p className="edit-remove" onClick={this.removeFontEditor}>删除文本框</p>
                             </Menu.Item>
+
                             <Menu.Item
-                                key="editTitle"
-                            >
-                                <input className="edit-remove" placeholder="title" value={this.state.title}
+                                key="editCategory">
+                                <Select defaultValue="1" style={{width: '100%'}} onChange={this.editMsg('category')}>
+                                    <Option value="1">课程</Option>
+                                    <Option value="2">专栏</Option>
+                                    <Option value="3">商品</Option>
+                                    <Option value="4">轮播图</Option>
+                                </Select>
+                                {/*<input className="edit-remove"
+                                 placeholder="(1,2,3,4)种类型"
+                                 value={this.state.category}
+                                 onChange={this.editMsg('category')}/>*/}
+                            </Menu.Item>
+                            <Menu.Item
+                                key="editTitle">
+                                <input className="edit-remove"
+                                       placeholder="title"
+                                       value={this.state.title}
                                        onChange={this.editMsg('title')}/>
                             </Menu.Item>
                             <Menu.Item
-                                key="editCategory"
-                            >
-                                <input className="edit-remove" placeholder="(1,2,3,4)种类型" value={this.state.category}
-                                       onChange={this.editMsg('category')}/>
-                            </Menu.Item>
-                            <Menu.Item
-                                key="editPriority"
-                            >
-                                <input className="edit-remove" placeholder="priority" value={this.state.priority}
-                                       onChange={this.editMsg('priority')}/>
+                                key="uploadDesign">
+                                <div style={{position: 'relative',}}>
+                                    上传设计图
+                                    <input type="file"
+                                           style={{position: 'absolute', left: 0, top: 0, opacity: 0}}
+                                           className="edit-remove"
+                                           onChange={this.uploadDesign}/>
+                                </div>
+
                             </Menu.Item>
                         </SubMenu>
                         { _this.state.dragItems.map((item) =>

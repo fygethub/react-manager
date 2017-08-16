@@ -17,8 +17,6 @@ class App extends Component {
         const {receiveData} = this.props;
         const user = JSON.parse(localStorage.getItem('user'));
         user && receiveData(user, 'auth');
-        // receiveData({a: 213}, 'auth');
-        // fetchData({funcName: 'admin', stateName: 'auth'});
     }
 
     toggle = () => {
@@ -38,6 +36,7 @@ class App extends Component {
                         {this.props.children}
                     </Content>
                     <Footer style={{textAlign: 'center'}}>
+                        Wakkaa 后台管理
                     </Footer>
                 </Layout>
             </Layout>

@@ -121,7 +121,9 @@ const api = (url, params, options) => {
                         removeCookie('x-adm-sessid');
                         hashHistory.push('login');
                     }
+                    message.error(error.msg);
                     rejectWrap(error.msg);
+                    return;
                 }
                 resolve(response.data.result);
             }, (error) => {
