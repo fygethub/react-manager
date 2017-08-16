@@ -113,11 +113,17 @@ export default class Compounds extends React.Component {
 
     expandedRowRender = (record) => {
         const background = record.background;
+        const preview = record.preview || {};
+        const layer = record.layer || {};
         let title = `height:${background.height} width:${background.width}`;
+        let layer_title = `height:${layer.height} width:${layer.width}`;
+        let preview_title = `height:${preview.height} width:${preview.width}`;
         let defaultUrl =
             "https://cdn.pixabay.com/photo/2017/08/03/18/49/wolf-in-sheeps-clothing-2577813__340.jpg";
         let background_url = background.url || defaultUrl;
         let layer_url = record.layer.url || defaultUrl;
+
+        let preview_url = preview && preview.url || defaultUrl;
         let hotspots = record.hotspots.map((item, key) => {
             item.key = key;
             item.movable = item.movable == 0 ? '不可移动' : '可以移动';
@@ -144,7 +150,7 @@ export default class Compounds extends React.Component {
                                 <span className="name">background:</span>
                                 <span><a
                                     target="_blank"
-                                    href={`${background.url ? background.url : ''}`}>{`${background.url ? 'url:[' + background.url + ']' : ''}`}</a></span>
+                                    href={`${background_url ? background_url : ''}`}>{`${background.url ? 'url:[' + background.url + ']' : ''}`}</a></span>
                             </div>
                             <Tooltip placement="top"
                                      title={title}>
@@ -162,10 +168,25 @@ export default class Compounds extends React.Component {
                                     href={`${ record.layer.url ? record.layer.url : ''}`}>{`${ record.layer.url ? 'url:[' + record.layer.url + ']' : ''}`}</a></span>
                             </div>
                             <Tooltip placement="top"
-                                     title={title}>
+                                     title={layer_title}>
                                 <img
                                     className="background-img"
                                     src={layer_url}
+                                />
+                            </Tooltip>
+                        </div>
+                        <div className="background">
+                            <div>
+                                <span className="name">preview:</span>
+                                <span><a
+                                    target="_blank"
+                                    href={`${ preview_url ? preview_url : ''}`}>{`${ preview_url ? 'url:[' + preview_url + ']' : ''}`}</a></span>
+                            </div>
+                            <Tooltip placement="top"
+                                     title={preview_title}>
+                                <img
+                                    className="background-img"
+                                    src={preview_url}
                                 />
                             </Tooltip>
                         </div>

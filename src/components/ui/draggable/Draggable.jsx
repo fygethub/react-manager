@@ -24,6 +24,7 @@ class Drags extends React.Component {
             dragHandle: '',
             title: '风景图',
             priority: 1,
+            preview: {},
             state: 2,
             category: 3,
             dragItems: [],
@@ -89,6 +90,7 @@ class Drags extends React.Component {
                     }
                 });
                 this.setState({
+                    ...data,
                     id,
                     dragItems,
                     deltaPositions,
@@ -146,6 +148,7 @@ class Drags extends React.Component {
         let title = this.state.title;
         let priority = this.state.priority;
         let state = this.state.state;
+        let preview = this.state.preview;
         let createdAt = new Date().toISOString();
         let _this = this;
         let deltaPositions = this.state.deltaPositions;
@@ -184,6 +187,7 @@ class Drags extends React.Component {
                     background,
                     state,
                     layer,
+                    preview,
                 })
             }).then((data) => {
                 message.info('保存成功!')
@@ -199,6 +203,7 @@ class Drags extends React.Component {
                     background,
                     state,
                     layer,
+                    preview,
                 })
             }).then((data) => {
                 message.info('保存成功!')
@@ -271,13 +276,25 @@ class Drags extends React.Component {
         if (!file) {
             return;
         }
-        /*OSSWrap.upload('compound-layer', file).then(function (result) {
-         _this.setState({
-         value: result.url,
-         }, () => {
-         _this.props.uploadFile(result.url);
-         });
-         }, (error) => message.error(error));*/
+
+        OSSWrap.upload('compound-preview', file).then(function (result) {
+            let preview = _this.state.preview;
+            preview.url = result.url;
+            let image = new Image();
+            let width = 0;
+            let height = 0;
+
+            image.onload = function () {
+                width = image.width;
+                height = image.height;
+                preview.width = width;
+                preview.height = height;
+                _this.setState({
+                    preview,
+                });
+            };
+            image.src = result.url;
+        });
 
     };
 
@@ -307,7 +324,7 @@ class Drags extends React.Component {
             <div className="gutter-example button-demo">
                 <BreadcrumbCustom first="UI" second="合成图编辑"/>
                 <div className="uplaodMain">
-
+                    <img src={this.state.preview && this.state.preview.url} alt="img"/>
                 </div>
                 <div className="draw-board" id="draw-board">
                     { _this.state.dragItems.map((item) => {
@@ -368,7 +385,8 @@ class Drags extends React.Component {
 
                             <Menu.Item
                                 key="editCategory">
-                                <Select defaultValue="1" style={{width: '100%'}} onChange={this.editMsg('category')}>
+                                <Select value={this.state.category + ''} style={{width: '100%'}}
+                                        onChange={this.editMsg('category')}>
                                     <Option value="1">课程</Option>
                                     <Option value="2">专栏</Option>
                                     <Option value="3">商品</Option>
