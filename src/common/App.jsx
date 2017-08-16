@@ -122,7 +122,7 @@ const api = (url, params, options) => {
                         hashHistory.push('login');
                     }
                     message.error(error.msg);
-                    rejectWrap(error.msg);
+                    rejectWrap(error);
                     return;
                 }
                 resolve(response.data.result);

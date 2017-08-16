@@ -2,7 +2,7 @@
  * Created by hao.cheng on 2017/4/28.
  */
 import React from 'react';
-import {Menu, Icon, Card, Input, message, Select} from 'antd';
+import {Menu, Icon, Card, Input, message, Select, InputNumber} from 'antd';
 import BreadcrumbCustom from '../../BreadcrumbCustom';
 import Draggable from 'react-draggable';
 import './draggable.less';
@@ -132,9 +132,16 @@ class Drags extends React.Component {
     };
 
     changeDeltaStyles = (position, attr) => (e) => {
-        if (e.target && !(typeof ((e.target.value - 0)) === 'number')) return 0;
         let deltaPositions = this.state.deltaPositions;
-        deltaPositions[position][attr] = e.target.value;
+
+        if (typeof e == 'string') {
+            deltaPositions[position][attr] = e;
+            this.setState({
+                deltaPositions
+            });
+            return;
+        }
+        deltaPositions[position][attr] = e - 0;
         this.setState({
             deltaPositions
         })
@@ -196,7 +203,7 @@ class Drags extends React.Component {
                 })
             }).then((data) => {
                 message.info('保存成功!')
-            }, (data) => message.error(data.key + '检查一下是不是负数'));
+            }, (data) => message.error('字段:' + data.data.key));
         } else {
             judge && App.api('adm/compound/save', {
                 compound: JSON.stringify({
@@ -204,7 +211,7 @@ class Drags extends React.Component {
                 })
             }).then((data) => {
                 message.info('保存成功!')
-            }, (data) => message.error(data.key + '检查一下是不是负数'));
+            }, (data) => message.error('字段:' + data.data.key));
         }
     };
 
@@ -219,6 +226,10 @@ class Drags extends React.Component {
             }
             attr = attr == 'h' ? 'height' : attr;
             attr = attr == 'w' ? 'width' : attr;
+            if (attr == 'align') {
+                attr = 'textAlign';
+                value = value == 1 ? 'left' : value == 2 ? 'center' : 'right';
+            }
             attr = attr == 'fontColor' ? ['color', value = '#' + (value + '').replace(/#/, '')][0] : attr;
             styles[attr] = value;
         });
@@ -389,10 +400,6 @@ class Drags extends React.Component {
                                     <Option value="3">商品</Option>
                                     <Option value="4">轮播图</Option>
                                 </Select>
-                                {/*<input className="edit-remove"
-                                 placeholder="(1,2,3,4)种类型"
-                                 value={this.state.category}
-                                 onChange={this.editMsg('category')}/>*/}
                             </Menu.Item>
                             <Menu.Item
                                 key="editTitle">
@@ -413,33 +420,95 @@ class Drags extends React.Component {
 
                             </Menu.Item>
                         </SubMenu>
-                        { _this.state.dragItems.map((item) =>
-                            <SubMenu
+                        { _this.state.dragItems.map((item) => {
+                            return <SubMenu
                                 key={item}
                                 title={<span><Icon type="apple"/>{item}</span>}>
-                                { _this.editStyles.map((attr) =>
-                                    <Menu.Item key={item + attr}>
+                                { _this.editStyles.map((attr) => {
+                                    let sel = '';
+                                    if (attr == 'fontFamily') {
+                                        sel = <Select
+                                            value={deltaPositions[item][attr] || '宋体'}
+                                            style={{width: '100%'}}
+                                            onChange={_this.changeDeltaStyles(item, attr)}>
+                                            <Option value="宋体">宋体</Option>
+                                            <Option value="黑体">黑体</Option>
+                                            <Option value="fantasy">fantasy</Option>
+                                            <Option value="Helvetica Neue For Number">Helvetica Neue For Number</Option>
+                                            <Option value="BlinkMacSystemFont">BlinkMacSystemFont</Option>
+                                        </Select>
+                                    }
+                                    if (attr == 'fontColor') {
+                                        sel = <input type="color"
+                                                     value={'#' + deltaPositions[item][attr]}
+                                                     onChange={_this.changeDeltaStyles(item, attr)}/>
+                                    }
+
+                                    if (attr == 'backgroundColor') {
+                                        sel = <Select
+                                            value={deltaPositions[item][attr] || '#ffffff'}
+                                            style={{width: '100%'}}
+                                            onChange={_this.changeDeltaStyles(item, attr)}>
+                                            <Option value="transparent">透明</Option>
+                                            <Option value="#ffffff">白色</Option>
+                                        </Select>
+                                    }
+                                    if (attr == 'zIndex') {
+                                        sel = <Select
+                                            value={deltaPositions[item][attr] || '0'}
+                                            style={{width: '100%'}}
+                                            onChange={_this.changeDeltaStyles(item, attr)}>
+                                            <Option value="0">正常</Option>
+                                            <Option value="1">高一层</Option>
+                                            <Option value="2">高二层</Option>
+                                            <Option value="3">高三层</Option>
+                                            <Option value="4">最高层</Option>
+                                        </Select>
+                                    }
+                                    if (attr == 'align') {
+                                        sel = <Select
+                                            value={deltaPositions[item][attr] + ''}
+                                            style={{width: '100%'}}
+                                            onChange={_this.changeDeltaStyles(item, attr)}>
+                                            <Option value="1">left</Option>
+                                            <Option value="2">center</Option>
+                                            <Option value="3">right</Option>
+                                        </Select>
+                                    }
+
+                                    if (attr == 'movable') {
+                                        sel = <Select
+                                            value={deltaPositions[item][attr] || '1'}
+                                            style={{width: '100%'}}
+                                            onChange={_this.changeDeltaStyles(item, attr)}>
+                                            <Option value="1">可移动</Option>
+                                            <Option value="0">不可移动</Option>
+                                        </Select>
+                                    }
+
+                                    return <Menu.Item key={item + attr}>
                                         <label htmlFor={item + attr} style={{
                                             position: 'absolute',
                                             marginLeft: -40,
                                             width: 40,
                                             overflow: 'hidden'
                                         }}>{attr}</label>
-                                        <input
+                                        {sel}
+                                        {!sel && <InputNumber
                                             id={item + attr}
-                                            type="text"
-                                            placeholder={attr}
                                             value={deltaPositions[item] && deltaPositions[item][attr] || ''}
-                                            onChange={_this.changeDeltaStyles(item, attr)}/>
-                                    </Menu.Item>)
+                                            onChange={_this.changeDeltaStyles(item, attr)}/>}
+                                    </Menu.Item>
+                                })
                                 }
-                            </SubMenu>)
+                            </SubMenu>
+                        })
                         }
                     </Menu>
                     <div className="submit">
-                      {/*  <div className="view">
-                            /!*{JSON.stringify(this.state.deltaPositions)}*!/
-                        </div>*/}
+                        {/*  <div className="view">
+                         /!*{JSON.stringify(this.state.deltaPositions)}*!/
+                         </div>*/}
                         <div className="button" onClick={this.uploadConstructor}>提交</div>
                     </div>
                 </div>
