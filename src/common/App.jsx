@@ -111,6 +111,7 @@ const api = (url, params, options) => {
             .then((response) => {
                 if (!response) {
                     rejectWrap('服务器 未返回数据,检查是否传参数有误,或者与服务器确认!  :' + response);
+                    message.error('噢噢 !-.- 网络错误请重新提交..')
                     return;
                 }
                 let error = response.data && response.data.error;

@@ -9,8 +9,9 @@ export default class PictureEditor extends React.Component {
         this.state = {
             showEditor: false,
             show: false,
-            value: '',
+            value: this.props.pictureUrl,
         };
+        this.defaultUrl = '';
         this.doUpload = this.doUpload.bind(this);
         this.toggleShow = this.toggleShow.bind(this);
     }
@@ -56,7 +57,7 @@ export default class PictureEditor extends React.Component {
     render() {
         return <div className="picture-editor">
             <img
-                src={this.state.value || 'http://sandbox-f1.cyjx.com/wk/2017/8/16/5993a64bcfab571aa9eae82e0yph74LP.jpg'}
+                src={this.state.value || this.defaultUrl }
                 alt='img'
                 draggable="false"
             />

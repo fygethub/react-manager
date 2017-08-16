@@ -73,7 +73,7 @@ const routes =
                 <Route path={'tabs'} component={Tabs}/>
                 <Route path={'banners'} component={Banners}/>
                 <Route path={'wysiwyg'} getComponent={Wysiwyg}/>
-                <Route path={'drags'} component={Drags}/>
+                <Route path={'drags/:id'} component={Drags}/>
                 <Route path={'gallery'} component={Gallery}/>
                 <Route path={'compounds'} getComponent={Compounds}/>
             </Route>

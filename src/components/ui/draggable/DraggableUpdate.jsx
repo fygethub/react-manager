@@ -17,8 +17,6 @@ class Drags extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            id: '',
-            update: false,
             deltaPositions: {},
             openKeys: [],
             dragHandle: '',
@@ -26,7 +24,7 @@ class Drags extends React.Component {
             priority: 1,
             state: 2,
             category: 3,
-            dragItems: [],
+            dragItems: ['img_background', 'img_layer', 'text_1', 'text_2', 'text_3',],
         };
         this.DrawBoard = null;
         this.editStyles = [
@@ -45,6 +43,7 @@ class Drags extends React.Component {
         this.editMsg = this.editMsg.bind(this);
         this.uploadConstructor = this.uploadConstructor.bind(this);
         this.eidtStylesFun = this.eidtStylesFun.bind(this);
+        this.getDrawBoardStyle = this.getDrawBoardStyle.bind(this);
         this.addFontEditor = this.addFontEditor.bind(this);
         this.removeFontEditor = this.removeFontEditor.bind(this);
         this.layerUpload = this.layerUpload.bind(this);
@@ -63,53 +62,24 @@ class Drags extends React.Component {
     }
 
     componentDidMount() {
+        this.DrawBoard = document.getElementById('draw-board');
         const _this = this;
         let deltaPositions = {};
-        let id = this.props.params.id;
-        if (id !== 'no') {
-            App.api('adm/compound/detail', {
-                compoundId: id,
-            }).then(data => {
-                let dragItems = ['img_background', 'img_layer'];
-                let deltaPositions = this.state.deltaPositions;
-                deltaPositions['img_background'] = {
-                    ...this.initStyle,
-                    ...data.background,
-                };
-                deltaPositions['img_layer'] = {
-                    ...this.initStyle,
-                    ...data.layer,
-                };
-                data.hotspots.forEach((item, key) => {
-                    dragItems.push('text' + key);
-                    deltaPositions['text' + key] = {
-                        ...this.initStyle,
-                        ...item,
-                    }
-                });
-                this.setState({
-                    id,
-                    dragItems,
-                    deltaPositions,
-                })
-            })
+        this.state.dragItems.forEach(item => {
+            deltaPositions[item] = {
+                ...this.initStyle
+            };
+        });
 
-
-        } else {
-            let dragItems = ['img_background', 'img_layer', 'text_1', 'text_2', 'text_3'];
-            dragItems.forEach(item => {
-                deltaPositions[item] = {
-                    ...this.initStyle
-                };
-            });
-            this.setState({
-                dragItems,
-                deltaPositions
-            });
-        }
-
+        this.setState({deltaPositions});
     }
 
+
+    getDrawBoardStyle = (style) => {
+        if (!style) {
+            return this.DrawBoard.getBoundingClientRect();
+        }
+    };
 
     onStart = (key) => () => {
         this.setState({openKeys: [key]})
@@ -149,7 +119,6 @@ class Drags extends React.Component {
         let _this = this;
         let deltaPositions = this.state.deltaPositions;
         let judge = true;
-        let id = this.state.id;
         this.state.dragItems.forEach((item) => {
             let editItem = deltaPositions[item];
             if (item.indexOf('text') > -1) {
@@ -158,12 +127,14 @@ class Drags extends React.Component {
                     message.error(item + ':颜色码应该为6位数,请检查');
                     judge = false;
                 }
+
                 hotspots.push(editItem);
             }
             if (item.indexOf('background') > -1) {
                 background.height = editItem.h;
                 background.width = editItem.w;
                 background.url = this.state.deltaPositions[item].url || 'http://sandbox-f1.cyjx.com/wk/2017/8/16/5993a6a6cfab571aa9eae830EKPQvRYJ.jpg';
+
             }
             if (item.indexOf('layer') > -1) {
                 layer.height = editItem.h;
@@ -171,38 +142,21 @@ class Drags extends React.Component {
                 layer.url = this.state.deltaPositions[item].url || 'http://sandbox-f1.cyjx.com/wk/2017/8/16/5993a64bcfab571aa9eae82e0yph74LP.jpg';
             }
         });
-        if (id) {
-            judge && App.api('adm/compound/save', {
-                compound: JSON.stringify({
-                    id,
-                    title,
-                    category,
-                    priority,
-                    hotspots,
-                    createdAt,
-                    background,
-                    state,
-                    layer,
-                })
-            }).then((data) => {
-                message.info('保存成功!')
-            });
-        } else {
-            judge && App.api('adm/compound/save', {
-                compound: JSON.stringify({
-                    title,
-                    category,
-                    priority,
-                    hotspots,
-                    createdAt,
-                    background,
-                    state,
-                    layer,
-                })
-            }).then((data) => {
-                message.info('保存成功!')
-            });
-        }
+
+        judge && App.api('adm/compound/save', {
+            compound: JSON.stringify({
+                title,
+                category,
+                priority,
+                hotspots,
+                createdAt,
+                background,
+                state,
+                layer,
+            })
+        }).then((data) => {
+            message.info('保存成功!')
+        });
     };
 
     eidtStylesFun = (item) => {
@@ -288,12 +242,10 @@ class Drags extends React.Component {
                         let doms = '';
                         let id = App.uuid();
                         if (item.indexOf('text') > -1) {
-                            doms = <FontEditor id={id} initText={this.state.deltaPositions[item].text}
-                                               onChange={this.fontEditorChange(item)}/>
+                            doms = <FontEditor id={id} onChange={this.fontEditorChange(item)}/>
                         }
                         if (item.indexOf('img') > -1) {
                             doms = <PictureEditor id={id}
-                                                  pictureUrl={this.state.deltaPositions[item] && this.state.deltaPositions[item].url}
                                                   layer={item.indexOf('background') > -1 ? 'background' : 'layer'}
                                                   uploadFile={this.layerUpload(item)}/>
                         }

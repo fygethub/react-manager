@@ -1,6 +1,7 @@
 import React from 'react';
 import antd from 'antd';
 import {Row, Col, Input, Button, message, Popconfirm, Card, Tooltip} from 'antd';
+import {hashHistory} from 'react-router';
 import './compound.less';
 import App from '../../../common/App.jsx';
 
@@ -30,7 +31,7 @@ export default class Compounds extends React.Component {
             {title: 'cratedAt', dataIndex: 'createdAt', key: 'createdAt'},
             {
                 title: '操作',
-                width: 250,
+                width: 290,
                 dataIndex: 'option',
                 key: 'option',
                 render: this.renderAction,
@@ -42,6 +43,7 @@ export default class Compounds extends React.Component {
         this.loadData = this.loadData.bind(this);
         this.expandedRowRender = this.expandedRowRender.bind(this);
         this.removeCompound = this.removeCompound.bind(this);
+        this.updateCompound = this.updateCompound.bind(this);
     }
 
     componentDidMount() {
@@ -67,7 +69,7 @@ export default class Compounds extends React.Component {
     };
 
     renderAction = (text, record) => {
-        return <div>
+        return <div style={{display: 'flex', justifyContent: 'space-around'}}>
             <Popconfirm placement="left" title="你想好了要删掉吗, 创建一个不容易的."
                         onConfirm={this.removeCompound('remove', record)}
                         okText="是的" cancelText="我再想想">
@@ -75,7 +77,7 @@ export default class Compounds extends React.Component {
             </Popconfirm>
             <Popconfirm placement="left" title="做好了吗就上架?.经过老大确认没."
                         onConfirm={this.removeCompound('enable', record)}
-                        okText="老大确认上架了" cancelText="好像没有确认">
+                        okText="老大确认了上架!" cancelText="好像没有确认,我再问问">
                 <Button>上架</Button>
             </Popconfirm>
             <Popconfirm placement="left" title="为什么下架, 没做好吗? 上架的时候为森马不多想想."
@@ -83,11 +85,19 @@ export default class Compounds extends React.Component {
                         okText="老大说的下架" cancelText="我就点着玩">
                 <Button>下架</Button>
             </Popconfirm>
+            <Popconfirm placement="left" title="需要重新编辑一下吗?."
+                        onConfirm={this.updateCompound(record)}
+                        okText="是的我有个更好看的方案" cancelText="我就点着玩">
+                <Button>编辑</Button>
+            </Popconfirm>
         </div>
     };
 
+    updateCompound = (record) => (e) => {
+        hashHistory.push('app/ui/drags/' + record.id);
+    };
+
     removeCompound = (text, record) => (e) => {
-        console.log(text);
         let summary = '';
         let url = text === 'remove' ? ['adm/compound/remove', summary = '删除成功,恢复不了了哦'][0] :
             text === 'enable' ? ['adm/compound/enable', summary = '上架成功,马上就有用户了'][0] :
@@ -107,7 +117,7 @@ export default class Compounds extends React.Component {
         let defaultUrl =
             "https://cdn.pixabay.com/photo/2017/08/03/18/49/wolf-in-sheeps-clothing-2577813__340.jpg";
         let background_url = background.url || defaultUrl;
-        let layer_url = background.url || defaultUrl;
+        let layer_url = record.layer.url || defaultUrl;
         let hotspots = record.hotspots.map((item, key) => {
             item.key = key;
             item.movable = item.movable == 0 ? '不可移动' : '可以移动';
@@ -132,7 +142,9 @@ export default class Compounds extends React.Component {
                         <div className="background">
                             <div>
                                 <span className="name">background:</span>
-                                <span>{`${background.url ? 'url:' + background.url : ''}`}</span>
+                                <span><a
+                                    target="_blank"
+                                    href={`${background.url ? background.url : ''}`}>{`${background.url ? 'url:[' + background.url + ']' : ''}`}</a></span>
                             </div>
                             <Tooltip placement="top"
                                      title={title}>
@@ -145,7 +157,9 @@ export default class Compounds extends React.Component {
                         <div className="background">
                             <div>
                                 <span className="name">layer:</span>
-                                <span>{title}</span>
+                                <span><a
+                                    target="_blank"
+                                    href={`${ record.layer.url ? record.layer.url : ''}`}>{`${ record.layer.url ? 'url:[' + record.layer.url + ']' : ''}`}</a></span>
                             </div>
                             <Tooltip placement="top"
                                      title={title}>

@@ -6,7 +6,7 @@ export default class FontEditor extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            html: '输入文字',
+            html: this.props.initText || '输入文字',
             showEditor: true,
         };
         this.handClick = this.handClick.bind(this);
