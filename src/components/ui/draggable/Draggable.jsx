@@ -28,6 +28,7 @@ class Drags extends React.Component {
             state: 2,
             category: 3,
             dragItems: [],
+            clear: 0,
         };
         this.DrawBoard = null;
         this.editStyles = [
@@ -50,6 +51,7 @@ class Drags extends React.Component {
         this.removeFontEditor = this.removeFontEditor.bind(this);
         this.layerUpload = this.layerUpload.bind(this);
         this.uploadDesign = this.uploadDesign.bind(this);
+        this.initData = this.initData.bind(this);
         this.initStyle = {
             h: 200,
             w: 400,
@@ -67,6 +69,10 @@ class Drags extends React.Component {
 
     componentDidMount() {
         const _this = this;
+        this.initData();
+    }
+
+    initData = () => {
         let deltaPositions = {};
         let id = this.props.params.id;
         let state = localStorage.getItem('state') && JSON.parse(localStorage.getItem('state'));
@@ -119,8 +125,7 @@ class Drags extends React.Component {
                 deltaPositions
             });
         }
-
-    }
+    };
 
 
     onStart = (key) => () => {
@@ -217,8 +222,12 @@ class Drags extends React.Component {
             createdAt,
             background,
             state,
-            layer,
         };
+
+        if (layer.url) {
+            uploadDate.layer = layer;
+        }
+
         if (this.state.preview.url) {
             uploadDate.preview = this.state.preview
         }
