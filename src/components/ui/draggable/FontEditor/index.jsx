@@ -11,10 +11,10 @@ export default class FontEditor extends React.Component {
 
     componentDidMount() {
         const _this = this;
-       const pellDom = document.getElementById('pell' + this.id);
-        var editor = new MediumEditor(pellDom, {
+        const pellDom = document.getElementById('pell' + this.id);
+        let editor = new MediumEditor(pellDom, {
             delay: 1000,
-            toolbar:false,
+            toolbar: false,
         });
         _this.timer = -1;
         editor.subscribe('editableInput', function (event, editable) {

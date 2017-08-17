@@ -403,7 +403,7 @@ class Drags extends React.Component {
                         onOpenChange={_this.onOpenChange}>
                         <SubMenu
                             key="eidt-btn"
-                            title="基本操作">
+                            title={<span><Icon type="bars"/>"基本操作"</span>}>
                             <Menu.Item
                                 key="eidt-btn-add">
                                 <p className="edit-add" onClick={this.addFontEditor}>增加文本框</p>
@@ -445,7 +445,7 @@ class Drags extends React.Component {
                         { _this.state.dragItems.map((item) => {
                             return <SubMenu
                                 key={item}
-                                title={<span><Icon type="apple"/>{item}</span>}>
+                                title={<span><Icon type="edit"/>{item}</span>}>
                                 { _this.editStyles.map((attr) => {
                                     let sel = '';
                                     if (attr == 'fontFamily') {
