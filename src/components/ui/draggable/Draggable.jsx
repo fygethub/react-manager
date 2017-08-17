@@ -55,7 +55,7 @@ class Drags extends React.Component {
             w: 400,
             x: 0,
             y: 0,
-            movable: 0,
+            movable: 1,
             text: '未编辑文字',
             align: 1,
             fontFamily: '宋体',
@@ -233,7 +233,7 @@ class Drags extends React.Component {
         }).then((data) => {
             message.info('保存成功!');
             localStorage.removeItem('state');
-        }, (data) => message.error('字段:' + data.data.key));
+        }, (data) => message.error('字段:' + data.data && data.data.key));
 
     };
 
@@ -444,119 +444,100 @@ class Drags extends React.Component {
                         </SubMenu>
                         { _this.state.dragItems.map((item) => {
                             return <SubMenu
-                                    key={item}
-                                    title={<span><Icon type="apple"/>{item}</span>}>
-                                    { _this.editStyles.map((attr) => {
-                                        let sel = '';
-                                        if (attr == 'fontFamily') {
-                                            sel = <Select
-                                                value={deltaPositions[item][attr] || '宋体'}
-                                                style={{width: '100%'}}
-                                                onChange={_this.changeDeltaStyles(item, attr)}>
-                                                <Option value="宋体">宋体</Option>
-                                                <Option value="黑体">黑体</Option>
-                                                <Option value="fantasy">fantasy</Option>
-                                                <Option value="Helvetica Neue For Number">Helvetica Neue For
-                                                    Number</Option>
-                                                <Option value="BlinkMacSystemFont">BlinkMacSystemFont</Option>
-                                            </Select>
-                                        }
-                                        {/* if (attr == 'fontColor') {
-                                         sel = <input type="color"
-                                         value={'#' + deltaPositions[item][attr]}
-                                         onChange={_this.changeDeltaStyles(item, attr)}/>
-                                         */
-                                        }
-
-                                        {/*if (attr == 'fontColor') {
-                                         sel = <input
-                                         id={item + attr}
-                                         value={deltaPositions[item] && deltaPositions[item][attr] || ''}
-                                         onChange={_this.changeDeltaStyles(item, attr)}/>
-                                         }*/
-                                        }
-
-                                        if (attr == 'fontColor') {
-                                            sel = <input type="text"
-                                                         value={deltaPositions[item][attr]}
-                                                         onChange={_this.changeDeltaStyles(item, attr)}/>
-
-                                        }
-                                        if (attr == 'backgroundColor') {
-                                            sel = <Select
-                                                value={deltaPositions[item][attr] || '#ffffff'}
-                                                style={{width: '100%'}}
-                                                onChange={_this.changeDeltaStyles(item, attr)}>
-                                                <Option value="transparent">透明</Option>
-                                                <Option value="#ffffff">白色</Option>
-                                            </Select>
-                                        }
-                                        if (attr == 'zIndex') {
-                                            sel = <Select
-                                                value={deltaPositions[item][attr] || '0'}
-                                                style={{width: '100%'}}
-                                                onChange={_this.changeDeltaStyles(item, attr)}>
-                                                <Option value="0">正常</Option>
-                                                <Option value="1">高一层</Option>
-                                                <Option value="2">高二层</Option>
-                                                <Option value="3">高三层</Option>
-                                                <Option value="4">最高层</Option>
-                                            </Select>
-                                        }
-                                        if (attr == 'align') {
-                                            sel = <Select
-                                                value={deltaPositions[item][attr] + ''}
-                                                style={{width: '100%'}}
-                                                onChange={_this.changeDeltaStyles(item, attr)}>
-                                                <Option value="1">left</Option>
-                                                <Option value="2">center</Option>
-                                                <Option value="3">right</Option>
-                                            </Select>
-                                        }
-
-                                        if (attr == 'movable') {
-                                            sel = <Select
-                                                value={deltaPositions[item][attr] || '1'}
-                                                style={{width: '100%'}}
-                                                onChange={_this.changeDeltaStyles(item, attr)}>
-                                                <Option value="1">可移动</Option>
-                                                <Option value="0">不可移动</Option>
-                                            </Select>
-                                        }
-
-                                        return <Menu.Item key={item + attr}>
-                                            <label htmlFor={item + attr} style={{
-                                                position: 'absolute',
-                                                marginLeft: -40,
-                                                width: 40,
-                                                overflow: 'hidden'
-                                            }}>{attr}</label>
-                                            {sel}
-                                            {!sel && <InputNumber
-                                                id={item + attr}
-                                                value={deltaPositions[item] && deltaPositions[item][attr] || ''}
-                                                onChange={_this.changeDeltaStyles(item, attr)}/>}
-                                        </Menu.Item>
-                                    })
+                                key={item}
+                                title={<span><Icon type="apple"/>{item}</span>}>
+                                { _this.editStyles.map((attr) => {
+                                    let sel = '';
+                                    if (attr == 'fontFamily') {
+                                        sel = <Select
+                                            value={deltaPositions[item][attr] || '宋体'}
+                                            style={{width: '100%'}}
+                                            onChange={_this.changeDeltaStyles(item, attr)}>
+                                            <Option value="宋体">宋体</Option>
+                                            <Option value="黑体">黑体</Option>
+                                            <Option value="fantasy">fantasy</Option>
+                                            <Option value="Helvetica Neue For Number">Helvetica Neue For Number</Option>
+                                            <Option value="BlinkMacSystemFont">BlinkMacSystemFont</Option>
+                                        </Select>
                                     }
-                                        </SubMenu>
-                                        })
+                                    if (attr == 'fontColor') {
+                                        sel = <input type="text"
+                                                     value={deltaPositions[item][attr]}
+                                                     onChange={_this.changeDeltaStyles(item, attr)}/>
                                     }
-                                </Menu>
-                                < div
-                            className = "submit" >
-                                {
-                                    /*  <div className="view">
-                                     /!*{JSON.stringify(this.state.deltaPositions)}*!/
-                                     </div>*/
+
+                                    if (attr == 'backgroundColor') {
+                                        sel = <Select
+                                            value={deltaPositions[item][attr] || '#ffffff'}
+                                            style={{width: '100%'}}
+                                            onChange={_this.changeDeltaStyles(item, attr)}>
+                                            <Option value="transparent">透明</Option>
+                                            <Option value="#ffffff">白色</Option>
+                                        </Select>
+                                    }
+                                    if (attr == 'zIndex') {
+                                        sel = <Select
+                                            value={deltaPositions[item][attr] || '0'}
+                                            style={{width: '100%'}}
+                                            onChange={_this.changeDeltaStyles(item, attr)}>
+                                            <Option value="0">正常</Option>
+                                            <Option value="1">高一层</Option>
+                                            <Option value="2">高二层</Option>
+                                            <Option value="3">高三层</Option>
+                                            <Option value="4">最高层</Option>
+                                        </Select>
+                                    }
+                                    if (attr == 'align') {
+                                        sel = <Select
+                                            value={deltaPositions[item][attr] + ''}
+                                            style={{width: '100%'}}
+                                            onChange={_this.changeDeltaStyles(item, attr)}>
+                                            <Option value="1">left</Option>
+                                            <Option value="2">center</Option>
+                                            <Option value="3">right</Option>
+                                        </Select>
+                                    }
+
+                                    if (attr == 'movable') {
+                                        sel = <Select
+                                            value={deltaPositions[item][attr] + '' || '1'}
+                                            style={{width: '100%'}}
+                                            onChange={_this.changeDeltaStyles(item, attr)}>
+                                            <Option value="1">可移动</Option>
+                                            <Option value="0">不可移动</Option>
+                                        </Select>
+                                    }
+
+                                    return <Menu.Item key={item + attr}>
+                                        <label htmlFor={item + attr} style={{
+                                            position: 'absolute',
+                                            marginLeft: -40,
+                                            width: 40,
+                                            overflow: 'hidden'
+                                        }}>{attr}</label>
+                                        {sel}
+                                        {!sel && <InputNumber
+                                            id={item + attr}
+                                            value={deltaPositions[item] && deltaPositions[item][attr] || ''}
+                                            onChange={_this.changeDeltaStyles(item, attr)}/>}
+                                    </Menu.Item>
+                                })
                                 }
-                            <div className="button" onClick={this.uploadConstructor}>提交</div>
-                            < / div >
-                            < / div >
-                            < / div >
-                            )
+                            </SubMenu>
+                        })
                         }
-                        }
+                    </Menu>
+                    <div className="submit">
+                        {/*  <div className="view">
+                         /!*{JSON.stringify(this.state.deltaPositions)}*!/
+                         </div>*/}
+                        <div className="button" onClick={this.uploadConstructor}>提交</div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+}
 
 
-                        export default Drags;
+export default Drags;

@@ -94,6 +94,7 @@ export default class Compounds extends React.Component {
     };
 
     updateCompound = (record) => (e) => {
+        localStorage.removeItem('state');
         hashHistory.push('app/ui/drags/' + record.id);
     };
 
