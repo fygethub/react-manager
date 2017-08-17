@@ -206,7 +206,7 @@ class Drags extends React.Component {
             if (item.indexOf('layer') > -1) {
                 layer.height = editItem.h;
                 layer.width = editItem.w;
-                layer.url = this.state.deltaPositions[item].url || 'http://sandbox-f1.cyjx.com/wk/2017/8/16/5993a64bcfab571aa9eae82e0yph74LP.jpg';
+                layer.url = this.state.deltaPositions[item].url || '';
             }
         });
         let uploadDate = {

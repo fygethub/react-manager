@@ -20,7 +20,7 @@ export default class FontEditor extends React.Component {
         editor.subscribe('editableInput', function (event, editable) {
             clearTimeout(_this.timer);
             _this.timer = setTimeout(() => {
-                _this.props.onChange(editable.innerText);
+                _this.props.onChange(editable.innerText && editable.innerText.replace(/\n\r\s*$/, ''));
             }, 1000);
         });
     }

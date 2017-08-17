@@ -5,11 +5,16 @@ import React from 'react';
 import BreadcrumbCustom from '../BreadcrumbCustom';
 
 class Dashboard extends React.Component {
+
+    handleClick = () => {
+        localStorage.clear();
+    }
+
     render() {
         return (
             <div className="gutter-example button-demo">
                 <BreadcrumbCustom />
-                Welcome
+                <button onClick={this.handleClick}>清除缓存</button>
             </div>
         )
     }
