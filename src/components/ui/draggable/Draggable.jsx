@@ -2,7 +2,7 @@
  * Created by hao.cheng on 2017/4/28.
  */
 import React from 'react';
-import {Menu, Icon, Card, Input, message, Select, InputNumber} from 'antd';
+import {Menu, Icon, Card, Input, message, Select, InputNumber, Popconfirm, Button} from 'antd';
 import BreadcrumbCustom from '../../BreadcrumbCustom';
 import Draggable from 'react-draggable';
 import './draggable.less';
@@ -10,9 +10,31 @@ import FontEditor from './FontEditor';
 import OSSWrap from '../../../common/OSSWrap.jsx';
 import App from '../../../common/App.jsx';
 import PictureEditor from './PictureEditor';
+import html2canvas from 'html2canvas';
+
 const SubMenu = Menu.SubMenu;
 
 const Option = Select.Option;
+
+const backgroundSize = {
+    '1': {
+        width: 750,
+        height: 423,
+    },
+    '2': {
+        width: 750,
+        height: 1000,
+    },
+    '3': {
+        width: 750,
+        height: 750,
+    },
+    '4': {
+        width: 750,
+        height: 423,
+    }
+};
+
 class Drags extends React.Component {
     constructor(props) {
         super(props);
@@ -29,6 +51,7 @@ class Drags extends React.Component {
             category: 3,
             dragItems: [],
             clear: 0,
+            canvas: false,
         };
         this.DrawBoard = null;
         this.editStyles = [
@@ -52,9 +75,10 @@ class Drags extends React.Component {
         this.layerUpload = this.layerUpload.bind(this);
         this.uploadDesign = this.uploadDesign.bind(this);
         this.initData = this.initData.bind(this);
+        this.handleReset = this.handleReset.bind(this);
         this.initStyle = {
-            h: 200,
-            w: 400,
+            h: 423,
+            w: 750,
             x: 0,
             y: 0,
             movable: 1,
@@ -63,13 +87,19 @@ class Drags extends React.Component {
             fontFamily: '宋体',
             fontSize: 16,
             fontColor: '000000'
-        }
+        };
         this.timer_save = -1;
     }
 
     componentDidMount() {
         const _this = this;
         this.initData();
+        document.onclick = function () {
+            console.log('docuemnt');
+            _this.setState({
+                canvas: false,
+            })
+        }
     }
 
     initData = () => {
@@ -89,6 +119,11 @@ class Drags extends React.Component {
             }).then(data => {
                 let dragItems = ['img_background', 'img_layer'];
                 let deltaPositions = this.state.deltaPositions;
+                if (!data.layer) {
+                    data.layer = {width: this.initStyle.w, height: this.initStyle.h};
+                }
+                data.layer.w = data.layer.width;
+                data.layer.h = data.layer.height;
                 deltaPositions['img_background'] = {
                     ...this.initStyle,
                     ...data.background,
@@ -111,22 +146,25 @@ class Drags extends React.Component {
                     deltaPositions,
                 })
             })
-
-
         } else {
-            let dragItems = ['img_background', 'img_layer', 'text_1', 'text_2', 'text_3'];
-            dragItems.forEach(item => {
-                deltaPositions[item] = {
-                    ...this.initStyle
-                };
-            });
-            this.setState({
-                dragItems,
-                deltaPositions
-            });
+            this.handleReset();
         }
     };
 
+
+    handleReset = () => {
+        let deltaPositions = {};
+        let dragItems = ['img_background', 'img_layer', 'text_1', 'text_2', 'text_3'];
+        dragItems.forEach(item => {
+            deltaPositions[item] = {
+                ...this.initStyle
+            };
+        });
+        this.setState({
+            dragItems,
+            deltaPositions
+        });
+    };
 
     onStart = (key) => () => {
         this.setState({openKeys: [key]})
@@ -190,7 +228,7 @@ class Drags extends React.Component {
         let _this = this;
         let deltaPositions = this.state.deltaPositions;
         let judge = true;
-        let id = this.state.id;
+        let id = this.props.params.id;
         this.state.dragItems.forEach((item) => {
             let editItem = deltaPositions[item];
             if (item.indexOf('text') > -1) {
@@ -211,6 +249,9 @@ class Drags extends React.Component {
             if (item.indexOf('layer') > -1) {
                 layer.height = editItem.h;
                 layer.width = editItem.w;
+                layer.movable = editItem.movable;
+                layer.x = editItem.x;
+                layer.y = editItem.y;
                 layer.url = this.state.deltaPositions[item].url || '';
             }
         });
@@ -242,7 +283,7 @@ class Drags extends React.Component {
         }).then((data) => {
             message.info('保存成功!');
             localStorage.removeItem('state');
-        }, (data) => message.error('字段:' + data.data && data.data.key));
+        }, (data) => message.error('字段:' + data && data.data && data.data.key));
 
     };
 
@@ -298,8 +339,16 @@ class Drags extends React.Component {
 
     editMsg = (info) => (e) => {
         if (typeof e == 'string') {
+            let deltaPositions = this.state.deltaPositions;
+            let background = this.state.deltaPositions['img_background'];
+            if (info == 'category') {
+                background.w = backgroundSize[e].width;
+                background.h = backgroundSize[e].height;
+            }
+
             this.setState({
                 [info]: e,
+                deltaPositions,
             })
         } else {
             this.setState({
@@ -355,192 +404,220 @@ class Drags extends React.Component {
         this.setState({deltaPositions})
     }
 
+    drawPicture = (e) => {
+        let _this = this;
+        e.preventDefault();
+        e.stopPropagation();
+        e.nativeEvent.stopImmediatePropagation();
+        this.setState({
+            canvas: true,
+        }, () => {
+            html2canvas(document.body)
+                .then(function (canvas) {
+                    document.querySelector('.canvas').appendChild(canvas);
+                });
+        });
+
+    };
+
     render() {
         const {deltaPosition, deltaPositions} = this.state;
         const dragHandlers = {onStop: this.onStop};
         const _this = this;
         return (
-            <div className="gutter-example button-demo">
-                <BreadcrumbCustom first="UI" second="合成图编辑"/>
+            <div className="drags-edit">
+                <div className="canvas" style={{display: this.state.canvas ? 'block' : 'none'}}>
+                    {/*<canvas id="canvas" style={{width: 300, height: 300}}/>*/}
+                </div>
+
                 <div className="uplaodMain">
                     <img src={this.state.preview && this.state.preview.url} alt="img"/>
                 </div>
-                <div className="draw-board" id="draw-board">
-                    { _this.state.dragItems.map((item) => {
-                        let doms = '';
-                        let id = App.uuid();
-                        if (item.indexOf('text') > -1) {
-                            doms = <FontEditor id={id} initText={this.state.deltaPositions[item].text}
-                                               onChange={this.fontEditorChange(item)}/>
-                        }
-                        if (item.indexOf('img') > -1) {
-                            doms = <PictureEditor id={id}
-                                                  pictureUrl={this.state.deltaPositions[item] && this.state.deltaPositions[item].url}
-                                                  layer={item.indexOf('background') > -1 ? 'background' : 'layer'}
-                                                  uploadFile={this.layerUpload(item)}/>
-                        }
-
-                        return <Draggable
-                            key={item}
-                            cancel='.no-cursor'
-                            onStop={_this.handleOnStop(item)}
-                            onStart={_this.onStart(item)}
-
-                            position={{
-                                x: deltaPositions[item] && deltaPositions[item].x - 0,
-                                y: deltaPositions[item] && deltaPositions[item].y - 0
-                            }}>
-                            <Card
-                                bordered={false}
-                                className='dragItem'
-                                style={_this.eidtStylesFun(item)}>
-                                {doms}
-                                {!doms && <div>x: {deltaPositions[item] && deltaPositions[item].x},
-                                    y: {deltaPositions[item] && deltaPositions[item].y}</div>
-                                }
-                            </Card>
-                        </Draggable>
-                    })
-                    }
-                </div>
-
-                <div className="line"></div>
-                <div className="rightTools">
-                    <Menu
-                        mode="inline"
-                        openKeys={_this.state.openKeys}
-                        onOpenChange={_this.onOpenChange}>
-                        <SubMenu
-                            key="eidt-btn"
-                            title={<span><Icon type="bars"/>"基本操作"</span>}>
-                            <Menu.Item
-                                key="eidt-btn-add">
-                                <p className="edit-add" onClick={this.addFontEditor}>增加文本框</p>
-                            </Menu.Item>
-                            <Menu.Item
-                                key="eidt-btn-remove">
-                                <p className="edit-remove" onClick={this.removeFontEditor}>删除文本框</p>
-                            </Menu.Item>
-
-                            <Menu.Item
-                                key="editCategory">
-                                <Select value={this.state.category + ''} style={{width: '100%'}}
-                                        onChange={this.editMsg('category')}>
-                                    <Option value="1">课程</Option>
-                                    <Option value="2">专栏</Option>
-                                    <Option value="3">商品</Option>
-                                    <Option value="4">轮播图</Option>
-                                </Select>
-                            </Menu.Item>
-                            <Menu.Item
-                                key="editTitle">
-                                <input className="edit-remove"
-                                       placeholder="title"
-                                       value={this.state.title}
-                                       onChange={this.editMsg('title')}/>
-                            </Menu.Item>
-                            <Menu.Item
-                                key="uploadDesign">
-                                <div style={{position: 'relative',}}>
-                                    上传设计图
-                                    <input type="file"
-                                           style={{position: 'absolute', left: 0, top: 0, opacity: 0}}
-                                           className="edit-remove"
-                                           onChange={this.uploadDesign}/>
-                                </div>
-
-                            </Menu.Item>
-                        </SubMenu>
+                <div className="gutter-example button-demo">
+                    <BreadcrumbCustom first="UI" second="合成图编辑"/>
+                    <div className="draw-board" id="draw-board">
                         { _this.state.dragItems.map((item) => {
-                            return <SubMenu
+                            let doms = '';
+                            let id = App.uuid();
+                            if (item.indexOf('text') > -1) {
+                                doms = <FontEditor id={id}
+                                                   initText={this.state.deltaPositions[item].text}
+                                                   fontColor={this.state.deltaPositions[item].fontColor}
+                                                   textAlign={_this.state.deltaPositions[item].align}
+                                                   onChange={this.fontEditorChange(item)}/>
+                            }
+                            if (item.indexOf('img') > -1) {
+                                doms = <PictureEditor id={id}
+                                                      pictureUrl={this.state.deltaPositions[item] && this.state.deltaPositions[item].url}
+                                                      layer={item.indexOf('background') > -1 ? 'background' : 'layer'}
+                                                      uploadFile={this.layerUpload(item)}/>
+                            }
+
+                            return <Draggable
                                 key={item}
-                                title={<span><Icon type="edit"/>{item}</span>}>
-                                { _this.editStyles.map((attr) => {
-                                    let sel = '';
-                                    if (attr == 'fontFamily') {
-                                        sel = <Select
-                                            value={deltaPositions[item][attr] || '宋体'}
-                                            style={{width: '100%'}}
-                                            onChange={_this.changeDeltaStyles(item, attr)}>
-                                            <Option value="宋体">宋体</Option>
-                                            <Option value="黑体">黑体</Option>
-                                            <Option value="fantasy">fantasy</Option>
-                                            <Option value="Helvetica Neue For Number">Helvetica Neue For Number</Option>
-                                            <Option value="BlinkMacSystemFont">BlinkMacSystemFont</Option>
-                                        </Select>
-                                    }
-                                    if (attr == 'fontColor') {
-                                        sel = <input type="text"
-                                                     value={deltaPositions[item][attr]}
-                                                     onChange={_this.changeDeltaStyles(item, attr)}/>
-                                    }
+                                cancel='.no-cursor'
+                                onStop={_this.handleOnStop(item)}
+                                onStart={_this.onStart(item)}
 
-                                    if (attr == 'backgroundColor') {
-                                        sel = <Select
-                                            value={deltaPositions[item][attr] || '#ffffff'}
-                                            style={{width: '100%'}}
-                                            onChange={_this.changeDeltaStyles(item, attr)}>
-                                            <Option value="transparent">透明</Option>
-                                            <Option value="#ffffff">白色</Option>
-                                        </Select>
+                                position={{
+                                    x: deltaPositions[item] && deltaPositions[item].x - 0,
+                                    y: deltaPositions[item] && deltaPositions[item].y - 0
+                                }}>
+                                <Card
+                                    bordered={false}
+                                    className='dragItem'
+                                    style={_this.eidtStylesFun(item)}>
+                                    {doms}
+                                    {!doms && <div>x: {deltaPositions[item] && deltaPositions[item].x},
+                                        y: {deltaPositions[item] && deltaPositions[item].y}</div>
                                     }
-                                    if (attr == 'zIndex') {
-                                        sel = <Select
-                                            value={deltaPositions[item][attr] || '0'}
-                                            style={{width: '100%'}}
-                                            onChange={_this.changeDeltaStyles(item, attr)}>
-                                            <Option value="0">正常</Option>
-                                            <Option value="1">高一层</Option>
-                                            <Option value="2">高二层</Option>
-                                            <Option value="3">高三层</Option>
-                                            <Option value="4">最高层</Option>
-                                        </Select>
-                                    }
-                                    if (attr == 'align') {
-                                        sel = <Select
-                                            value={deltaPositions[item][attr] + ''}
-                                            style={{width: '100%'}}
-                                            onChange={_this.changeDeltaStyles(item, attr)}>
-                                            <Option value="1">left</Option>
-                                            <Option value="2">center</Option>
-                                            <Option value="3">right</Option>
-                                        </Select>
-                                    }
-
-                                    if (attr == 'movable') {
-                                        sel = <Select
-                                            value={deltaPositions[item][attr] + '' || '1'}
-                                            style={{width: '100%'}}
-                                            onChange={_this.changeDeltaStyles(item, attr)}>
-                                            <Option value="1">可移动</Option>
-                                            <Option value="0">不可移动</Option>
-                                        </Select>
-                                    }
-
-                                    return <Menu.Item key={item + attr}>
-                                        <label htmlFor={item + attr} style={{
-                                            position: 'absolute',
-                                            marginLeft: -40,
-                                            width: 40,
-                                            overflow: 'hidden'
-                                        }}>{attr}</label>
-                                        {sel}
-                                        {!sel && <InputNumber
-                                            id={item + attr}
-                                            value={deltaPositions[item] && deltaPositions[item][attr] || ''}
-                                            onChange={_this.changeDeltaStyles(item, attr)}/>}
-                                    </Menu.Item>
-                                })
-                                }
-                            </SubMenu>
+                                </Card>
+                            </Draggable>
                         })
                         }
-                    </Menu>
-                    <div className="submit">
-                        {/*  <div className="view">
-                         /!*{JSON.stringify(this.state.deltaPositions)}*!/
-                         </div>*/}
-                        <div className="button" onClick={this.uploadConstructor}>提交</div>
+                    </div>
+
+                    <div className="line"></div>
+                    <div className="rightTools">
+                        <Menu
+                            mode="inline"
+                            openKeys={_this.state.openKeys}
+                            onOpenChange={_this.onOpenChange}>
+                            <SubMenu
+                                key="eidt-btn"
+                                title={<span><Icon type="bars"/>基本操作</span>}>
+                                <Menu.Item
+                                    key="eidt-btn-add">
+                                    <p className="edit-add" onClick={this.addFontEditor}>增加文本框</p>
+                                </Menu.Item>
+                                <Menu.Item
+                                    key="eidt-btn-remove">
+                                    <p className="edit-remove" onClick={this.removeFontEditor}>删除文本框</p>
+                                </Menu.Item>
+
+                                <Menu.Item
+                                    key="editCategory">
+                                    <Select value={this.state.category + ''} style={{width: '100%'}}
+                                            onChange={this.editMsg('category')}>
+                                        <Option value="1">课程</Option>
+                                        <Option value="2">专栏</Option>
+                                        <Option value="3">商品</Option>
+                                        <Option value="4">轮播图</Option>
+                                    </Select>
+                                </Menu.Item>
+                                <Menu.Item
+                                    key="editTitle">
+                                    <input className="edit-remove"
+                                           placeholder="title"
+                                           value={this.state.title}
+                                           onChange={this.editMsg('title')}/>
+                                </Menu.Item>
+                                <Menu.Item
+                                    key="uploadDesign">
+                                    <div style={{position: 'relative',}}>
+                                        上传设计图
+                                        <input type="file"
+                                               style={{position: 'absolute', left: 0, top: 0, opacity: 0}}
+                                               className="edit-remove"
+                                               onChange={this.uploadDesign}/>
+                                    </div>
+
+                                </Menu.Item>
+                            </SubMenu>
+                            { _this.state.dragItems.map((item) => {
+                                return <SubMenu
+                                    key={item}
+                                    title={<span><Icon type="edit"/>{item}</span>}>
+                                    { _this.editStyles.map((attr) => {
+                                        let sel = '';
+                                        if (attr == 'fontFamily') {
+                                            sel = <Select
+                                                value={deltaPositions[item][attr] || '宋体'}
+                                                style={{width: '100%'}}
+                                                onChange={_this.changeDeltaStyles(item, attr)}>
+                                                <Option value="宋体">宋体</Option>
+                                                <Option value="微软雅黑">微软雅黑</Option>
+                                                <Option value="黑体">黑体</Option>
+                                                <Option value="fantasy">fantasy</Option>
+                                                <Option value="Helvetica Neue For Number">Helvetica Neue For
+                                                    Number</Option>
+                                                <Option value="BlinkMacSystemFont">BlinkMacSystemFont</Option>
+                                            </Select>
+                                        }
+                                        if (attr == 'fontColor') {
+                                            sel = <input type="text"
+                                                         value={deltaPositions[item][attr]}
+                                                         onChange={_this.changeDeltaStyles(item, attr)}/>
+                                        }
+
+                                        if (attr == 'backgroundColor') {
+                                            sel = <Select
+                                                value={deltaPositions[item][attr] || 'transparent'}
+                                                style={{width: '100%'}}
+                                                onChange={_this.changeDeltaStyles(item, attr)}>
+                                                <Option value="transparent">透明</Option>
+                                                <Option value="#ffffff">白色</Option>
+                                            </Select>
+                                        }
+                                        if (attr == 'zIndex') {
+                                            sel = <Select
+                                                value={deltaPositions[item][attr] || '0'}
+                                                style={{width: '100%'}}
+                                                onChange={_this.changeDeltaStyles(item, attr)}>
+                                                <Option value="0">正常</Option>
+                                                <Option value="1">高一层</Option>
+                                                <Option value="2">高二层</Option>
+                                                <Option value="3">高三层</Option>
+                                                <Option value="4">最高层</Option>
+                                            </Select>
+                                        }
+                                        if (attr == 'align') {
+                                            sel = <Select
+                                                value={deltaPositions[item][attr] + ''}
+                                                style={{width: '100%'}}
+                                                onChange={_this.changeDeltaStyles(item, attr)}>
+                                                <Option value="1">left</Option>
+                                                <Option value="2">center</Option>
+                                                <Option value="3">right</Option>
+                                            </Select>
+                                        }
+
+                                        if (attr == 'movable') {
+                                            sel = <Select
+                                                value={deltaPositions[item][attr] + '' || '1'}
+                                                style={{width: '100%'}}
+                                                onChange={_this.changeDeltaStyles(item, attr)}>
+                                                <Option value="1">可移动</Option>
+                                                <Option value="0">不可移动</Option>
+                                            </Select>
+                                        }
+
+                                        return <Menu.Item key={item + attr}>
+                                            <label htmlFor={item + attr} style={{
+                                                position: 'absolute',
+                                                marginLeft: -40,
+                                                width: 40,
+                                                overflow: 'hidden'
+                                            }}>{attr}</label>
+                                            {sel}
+                                            {!sel && <InputNumber
+                                                id={item + attr}
+                                                value={deltaPositions[item] && deltaPositions[item][attr] || ''}
+                                                onChange={_this.changeDeltaStyles(item, attr)}/>}
+                                        </Menu.Item>
+                                    })
+                                    }
+                                </SubMenu>
+                            })
+                            }
+                        </Menu>
+                        <div className="submit">
+                            {/*  <div className="view">
+                             /!*{JSON.stringify(this.state.deltaPositions)}*!/
+                             </div>*/}
+                            <Button className="button" onClick={this.uploadConstructor}>提交</Button>
+                            <button className="button" onClick={this.drawPicture}>预览</button>
+                        </div>
                     </div>
                 </div>
             </div>

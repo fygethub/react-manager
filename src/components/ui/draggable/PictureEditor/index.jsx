@@ -51,7 +51,6 @@ export default class PictureEditor extends React.Component {
                 });
             }, (error) => message.error(error));
         }
-
     };
 
     render() {
@@ -63,7 +62,7 @@ export default class PictureEditor extends React.Component {
             />
             { !this.state.show &&
             <input placeholder="选择文件" type="file" id="img_url" onChange={this.doUpload(this.props.layer)}/>}
-            { !this.state.show && <div className="upload-text">点击上传文件</div>}
+            {/*{ !this.state.show && <div className="upload-text">点击上传文件</div>}*/}
         </div>
     }
 }

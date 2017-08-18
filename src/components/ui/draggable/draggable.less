@@ -1,58 +1,82 @@
-.gutter-example {
-  #draw-board {
-    position: absolute;
-    left: 0;
-    right: 200px;
-    bottom: 0;
-    top: 60px;
-    border: 1px dashed;
-  }
-  .rightTools {
-    position: absolute;
-    right: 0;
-    width: 200px;
-    top: 60px;
-    bottom: 0;
-    overflow: scroll;
-    background: #fff;
-  }
-  .dragItem {
-    width: 100px;
-    position: absolute;
+.drags-edit {
+  position: relative;
+  height: 1000px;
+
+  .canvas {
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background-color: rgba(0, 0, 0, .3);
+      z-index: 999;
+    }
   }
 
-  .submit {
-    width: 100%;
-    .view {
-      border: 1px solid #e1e1e1;
-      width: 100%;
-      height: 300px;
-      overflow: scroll;
-      word-break: break-word;
-    }
-    .button {
-      width: 100%;
-      height: 50px;
-      text-align: center;
-      line-height: 50px;
-      font-size: 20px;
-      outline: none;
-      background-color: #e1e1e1;
-      margin-top: 2px;
-      &:active {
-        box-shadow: 0 1px 2px rgba(100, 100, 20, .5);
+  .gutter-example {
+    #draw-board {
+      position: absolute;
+      left: 0;
+      right: 200px;
+      bottom: 0;
+      top: 60px;
+      border: 1px dashed;
+      .ant-card {
+        background: transparent;
       }
     }
-  }
+    .rightTools {
+      position: absolute;
+      right: 0;
+      width: 200px;
+      top: 60px;
+      bottom: 0;
+      overflow: scroll;
+      background: #fff;
+    }
+    .dragItem {
+      width: 100px;
+      position: absolute;
+    }
 
-  .ant-card-body {
-    padding: 0;
+    .submit {
+      width: 100%;
+      .view {
+        border: 1px solid #e1e1e1;
+        width: 100%;
+        height: 300px;
+        overflow: scroll;
+        word-break: break-word;
+      }
+      .ant-btn {
+        margin-left: 0;
+      }
+      .button {
+        width: 100%;
+        height: 50px;
+        text-align: center;
+        line-height: 50px;
+        font-size: 20px;
+        outline: none;
+        background-color: #e1e1e1;
+        margin-top: 2px;
+        &:active {
+          box-shadow: 0 1px 2px rgba(100, 100, 20, .5);
+        }
+      }
+    }
+
+    .ant-card-body {
+      padding: 0;
+    }
+
   }
 
   .uplaodMain {
     position: absolute;
-    left: 0;
-    right: 0;
+    top: 60px;
+    right: 200px;
     bottom: 0;
     height: 150px;
     border: 1px solid #e1e1e1;
@@ -62,9 +86,7 @@
       margin: 0 auto;
     }
   }
-
-}
-
-.ant-layout-content {
-  position: relative;
+  .ant-layout-content {
+    position: relative;
+  }
 }

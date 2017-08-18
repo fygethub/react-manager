@@ -7,30 +7,35 @@ export default class FontEditor extends React.Component {
     constructor(props) {
         super(props);
         this.id = this.props.id;
+        this.state = {
+            value: this.props.initText,
+        }
     }
 
     componentDidMount() {
         const _this = this;
-        const pellDom = document.getElementById('pell' + this.id);
-        let editor = new MediumEditor(pellDom, {
-            delay: 1000,
-            toolbar: false,
-        });
-        _this.timer = -1;
-        editor.subscribe('editableInput', function (event, editable) {
-            clearTimeout(_this.timer);
-            _this.timer = setTimeout(() => {
-                _this.props.onChange(editable.innerText && editable.innerText.replace(/\n\r\s*$/, ''));
-            }, 1000);
-        });
     }
 
+    handleChange = (e) => {
+        this.setState({
+            value: e.target.value,
+        }, () => {
+            this.props.onChange(this.state.value, '');
+        })
+
+    };
+
     render() {
+        let value = this.props.textAlign || 1;
+        value = value == 1 ? 'left' : value == 2 ? 'center' : 'right';
         return (<div className="font-editor">
                 <div className="dragText"/>
-                <div id={"pell" + this.id} className="no-cursor editable-text">
+                <textarea width='100%' value={this.state.value} id={"pell" + this.id}
+                          className="no-cursor editable-text"
+                          style={{textAlign: value, color: '#' + this.props.fontColor.replace(/#/g, '')}}
+                          onChange={this.handleChange}>
                     {this.props.initText}
-                </div>
+                </textarea>
             </div>
         )
     }
