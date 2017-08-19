@@ -15,7 +15,7 @@ const ENV_CONFIG = {
     },
     sandbox: {
         api: '//sandbox-api.wakkaa.com/1/',
-        log: true,
+        log: false,
         cookieDomain: window.location.hostname,
     }
 };
