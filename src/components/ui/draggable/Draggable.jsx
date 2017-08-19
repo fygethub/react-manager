@@ -405,7 +405,7 @@ class Drags extends React.Component {
     }
 
     drawPicture = (e) => {
-        let _this = this;
+       /* let _this = this;
         e.preventDefault();
         e.stopPropagation();
         e.nativeEvent.stopImmediatePropagation();
@@ -416,7 +416,7 @@ class Drags extends React.Component {
                 .then(function (canvas) {
                     document.querySelector('.canvas').appendChild(canvas);
                 });
-        });
+        });*/
 
     };
 
@@ -426,9 +426,9 @@ class Drags extends React.Component {
         const _this = this;
         return (
             <div className="drags-edit">
-                <div className="canvas" style={{display: this.state.canvas ? 'block' : 'none'}}>
-                    {/*<canvas id="canvas" style={{width: 300, height: 300}}/>*/}
-                </div>
+              {/*  <div className="canvas" style={{display: this.state.canvas ? 'block' : 'none'}}>
+                    /!*<canvas id="canvas" style={{width: 300, height: 300}}/>*!/
+                </div>*/}
 
                 <div className="uplaodMain">
                     <img src={this.state.preview && this.state.preview.url} alt="img"/>

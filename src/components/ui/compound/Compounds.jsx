@@ -122,7 +122,7 @@ export default class Compounds extends React.Component {
         let defaultUrl =
             "https://cdn.pixabay.com/photo/2017/08/03/18/49/wolf-in-sheeps-clothing-2577813__340.jpg";
         let background_url = background.url || defaultUrl;
-        let layer_url = record.layer.url || defaultUrl;
+        let layer_url =record&&record.layer&& record.layer.url || defaultUrl;
 
         let preview_url = preview && preview.url || defaultUrl;
         let hotspots = record.hotspots.map((item, key) => {
@@ -166,7 +166,7 @@ export default class Compounds extends React.Component {
                                 <span className="name">layer:</span>
                                 <span><a
                                     target="_blank"
-                                    href={`${ record.layer.url ? record.layer.url : ''}`}>{`${ record.layer.url ? 'url:[' + record.layer.url + ']' : ''}`}</a></span>
+                                    href={`${ record.layer&&record.layer.url ? record.layer&&record.layer.url : ''}`}>{`${ record.layer&&record.layer.url ? 'url:[' + record.layer&&record.layer.url + ']' : ''}`}</a></span>
                             </div>
                             <Tooltip placement="top"
                                      title={layer_title}>
