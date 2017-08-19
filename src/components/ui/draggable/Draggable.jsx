@@ -2,7 +2,7 @@
  * Created by hao.cheng on 2017/4/28.
  */
 import React from 'react';
-import {Menu, Icon, Card, Input, message, Select, InputNumber, Popconfirm, Button} from 'antd';
+import {Menu, Icon, Card, message, Select, InputNumber, Button} from 'antd';
 import BreadcrumbCustom from '../../BreadcrumbCustom';
 import Draggable from 'react-draggable';
 import './draggable.less';
@@ -10,7 +10,7 @@ import FontEditor from './FontEditor';
 import OSSWrap from '../../../common/OSSWrap.jsx';
 import App from '../../../common/App.jsx';
 import PictureEditor from './PictureEditor';
-import html2canvas from 'html2canvas';
+// import html2canvas from 'html2canvas';
 
 const SubMenu = Menu.SubMenu;
 
@@ -94,16 +94,9 @@ class Drags extends React.Component {
     componentDidMount() {
         const _this = this;
         this.initData();
-        document.onclick = function () {
-            console.log('docuemnt');
-            _this.setState({
-                canvas: false,
-            })
-        }
     }
 
     initData = () => {
-        let deltaPositions = {};
         let id = this.props.params.id;
         let state = localStorage.getItem('state') && JSON.parse(localStorage.getItem('state'));
         if (state) {
@@ -171,13 +164,41 @@ class Drags extends React.Component {
     };
 
     onOpenChange = (openKeys) => {
+        let deltaPositions = this.state.deltaPositions;
+
+        if (typeof openKeys == 'string') {
+            this.state.dragItems.forEach((item) => {
+                deltaPositions[item] && [deltaPositions[item]['zIndex'] = '0'];
+            });
+
+            deltaPositions[openKeys]['zIndex'] = '1';
+            this.setState({
+                openKeys: [openKeys],
+                deltaPositions,
+            });
+            return;
+        }
+
         const openkey = openKeys.filter((key) => key !== this.state.openKeys[0]);
-        this.setState({openKeys: openkey});
+        if (openkey.length > 0) {
+            this.state.dragItems.forEach((item) => {
+                deltaPositions[item]['zIndex'] = '0';
+            });
+            deltaPositions[openkey[0]] && [deltaPositions[openkey[0]]['zIndex'] = '1'];
+        }
+        this.setState({
+            openKeys: openkey,
+            deltaPositions
+        });
     };
 
 
     handleOnStop = (key) => (e, item) => {
         let deltaPositions = this.state.deltaPositions;
+        this.state.dragItems.forEach((item) => {
+            deltaPositions[item]['zIndex'] = '0';
+        });
+        deltaPositions[key]['zIndex'] = '1';
         deltaPositions[key].x = item.lastX;
         deltaPositions[key].y = item.lastY;
         this.setState({deltaPositions});
@@ -223,7 +244,6 @@ class Drags extends React.Component {
         let title = this.state.title;
         let priority = this.state.priority;
         let state = this.state.state;
-        let preview = this.state.preview;
         let createdAt = new Date().toISOString();
         let _this = this;
         let deltaPositions = this.state.deltaPositions;
@@ -280,7 +300,7 @@ class Drags extends React.Component {
             compound: JSON.stringify({
                 ...uploadDate
             })
-        }).then((data) => {
+        }).then(() => {
             message.info('保存成功!');
             localStorage.removeItem('state');
         }, (data) => message.error('字段:' + data && data.data && data.data.key));
@@ -404,19 +424,19 @@ class Drags extends React.Component {
         this.setState({deltaPositions})
     }
 
-    drawPicture = (e) => {
-       /* let _this = this;
-        e.preventDefault();
-        e.stopPropagation();
-        e.nativeEvent.stopImmediatePropagation();
-        this.setState({
-            canvas: true,
-        }, () => {
-            html2canvas(document.body)
-                .then(function (canvas) {
-                    document.querySelector('.canvas').appendChild(canvas);
-                });
-        });*/
+    drawPicture = () => {
+        /* let _this = this;
+         e.preventDefault();
+         e.stopPropagation();
+         e.nativeEvent.stopImmediatePropagation();
+         this.setState({
+         canvas: true,
+         }, () => {
+         html2canvas(document.body)
+         .then(function (canvas) {
+         document.querySelector('.canvas').appendChild(canvas);
+         });
+         });*/
 
     };
 
@@ -426,22 +446,55 @@ class Drags extends React.Component {
         const _this = this;
         return (
             <div className="drags-edit">
-              {/*  <div className="canvas" style={{display: this.state.canvas ? 'block' : 'none'}}>
-                    /!*<canvas id="canvas" style={{width: 300, height: 300}}/>*!/
-                </div>*/}
+                {/*  <div className="canvas" style={{display: this.state.canvas ? 'block' : 'none'}}>
+                 /!*<canvas id="canvas" style={{width: 300, height: 300}}/>*!/
+                 </div>*/}
 
                 <div className="uplaodMain">
                     <img src={this.state.preview && this.state.preview.url} alt="img"/>
                 </div>
                 <div className="gutter-example button-demo">
                     <BreadcrumbCustom first="UI" second="合成图编辑"/>
+                    <div className="selectItem">
+                        <Select value={this.state.category + ''} style={{width: '50%'}}
+                                onChange={this.editMsg('category')}>
+                            <Option value="1">课程</Option>
+                            <Option value="2">专栏</Option>
+                            <Option value="3">商品</Option>
+                            <Option value="4">轮播图</Option>
+                        </Select>
+
+                        <Select value={_this.state.openKeys} style={{width: '50%'}}
+                                onChange={_this.onOpenChange}>
+                            { _this.state.dragItems.map((item) => {
+
+                                return <Option key={item} value={item}>{item}</Option>
+                            })
+                            }
+                        </Select>
+                    </div>
+                    <div className="menu_selectItem">
+                        <input className="edit-remove"
+                               placeholder="title"
+                               value={this.state.title}
+                               onChange={this.editMsg('title')}/>
+
+                        <div>
+                            上传设计图
+                            <input type="file"
+                                   style={{position: 'absolute', left: 0, top: 0, opacity: 0}}
+                                   className="edit-remove"
+                                   onChange={this.uploadDesign}/>
+                        </div>
+                    </div>
+
                     <div className="draw-board" id="draw-board">
                         { _this.state.dragItems.map((item) => {
                             let doms = '';
                             let id = App.uuid();
                             if (item.indexOf('text') > -1) {
                                 doms = <FontEditor id={id}
-                                                   initText={this.state.deltaPositions[item].text}
+                                                   initText={item}
                                                    fontColor={this.state.deltaPositions[item].fontColor}
                                                    textAlign={_this.state.deltaPositions[item].align}
                                                    onChange={this.fontEditorChange(item)}/>
@@ -616,7 +669,7 @@ class Drags extends React.Component {
                              /!*{JSON.stringify(this.state.deltaPositions)}*!/
                              </div>*/}
                             <Button className="button" onClick={this.uploadConstructor}>提交</Button>
-                            <button className="button" onClick={this.drawPicture}>预览</button>
+                            {/*<button className="button" onClick={this.drawPicture}>预览</button>*/}
                         </div>
                     </div>
                 </div>

@@ -1,6 +1,6 @@
 import React from 'react';
-import pell from 'pell';
-import MediumEditor from 'medium-editor';
+// import pell from 'pell';
+// import MediumEditor from 'medium-editor';
 import './fontEditor.less';
 
 export default class FontEditor extends React.Component {
@@ -13,7 +13,6 @@ export default class FontEditor extends React.Component {
     }
 
     componentDidMount() {
-        const _this = this;
     }
 
     handleChange = (e) => {
