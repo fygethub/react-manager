@@ -77,7 +77,7 @@ class Drags extends React.Component {
         this.initData = this.initData.bind(this);
         this.handleReset = this.handleReset.bind(this);
         this.initStyle = {
-            h: 423,
+            h: 750,
             w: 750,
             x: 0,
             y: 0,
@@ -467,8 +467,16 @@ class Drags extends React.Component {
                         <Select value={_this.state.openKeys} style={{width: '50%'}}
                                 onChange={_this.onOpenChange}>
                             { _this.state.dragItems.map((item) => {
+                                let text = '';
+                                if (item.indexOf('background') > -1) {
+                                    text = 'background';
+                                }
+                                if (item.indexOf('layer') > -1) {
+                                    text = 'layer';
+                                }
 
-                                return <Option key={item} value={item}>{item}</Option>
+                                return <Option key={item}
+                                               value={item}>{text || this.state.deltaPositions[item] && this.state.deltaPositions[item].text}</Option>
                             })
                             }
                         </Select>
@@ -494,7 +502,7 @@ class Drags extends React.Component {
                             let id = App.uuid();
                             if (item.indexOf('text') > -1) {
                                 doms = <FontEditor id={id}
-                                                   initText={item}
+                                                   initText={this.state.deltaPositions[item].text || item}
                                                    fontColor={this.state.deltaPositions[item].fontColor}
                                                    textAlign={_this.state.deltaPositions[item].align}
                                                    onChange={this.fontEditorChange(item)}/>
