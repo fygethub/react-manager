@@ -8,6 +8,11 @@ import cookie from 'js-cookie';
 import U from '../utils';
 import {ENV} from './config.js';
 const ENV_CONFIG = {
+    prod: {
+        api: '//api.wakkaa.com/1/',
+        log: false,
+        cookieDomain: 'wakkaa.com',
+    },
     sandbox: {
         api: '//sandbox-api.wakkaa.com/1/',
         log: true,
