@@ -6,7 +6,7 @@ import {hashHistory} from 'react-router';
 import {message} from 'antd';
 import cookie from 'js-cookie';
 import U from '../utils';
-import {ENV} from './config.js';
+import ENV from './config.js';
 const ENV_CONFIG = {
     prod: {
         api: '//api.wakkaa.com/1/',
