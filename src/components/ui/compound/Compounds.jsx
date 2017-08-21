@@ -25,9 +25,6 @@ export default class Compounds extends React.Component {
         this.columns = [
             {title: 'id', dataIndex: 'id', key: 'id'},
             {title: '名称', dataIndex: 'title', key: 'title'},
-            {title: 'category', dataIndex: 'category', key: 'category'},
-            {title: 'state', dataIndex: 'state', key: 'state'},
-            {title: 'priority', dataIndex: 'priority', key: 'priority'},
             {title: 'cratedAt', dataIndex: 'createdAt', key: 'createdAt'},
             {
                 title: '操作',
@@ -56,10 +53,22 @@ export default class Compounds extends React.Component {
             offset: this.state.table.pageSize * (this.state.table.current - 1),
             limit: this.state.table.pageSize,
         }).then((result) => {
+
+            let items = result.items && result.items.map((item) => {
+                    item.hotspots = item.hotspots && item.hotspots.map((hotspot) => {
+                            hotspot.align = hotspot.align == 1 ? '靠左对齐' : hotspot.align == 2 ? '居中对齐' : '靠右对齐';
+                            hotspot.movable = hotspot.movable == 1 ? '可移动' : '不可移动';
+                            return hotspot;
+                        });
+
+                    item.createdAt = item.createdAt && new Date(item.createdAt).toISOString();
+                    return item;
+                });
+
             this.setState({
                 table: {
                     ...this.state.table,
-                    dataSource: result.items,
+                    dataSource: items,
                     pageSize: result.limit,
                     offset: result.offset,
                     total: result.total,
@@ -85,11 +94,7 @@ export default class Compounds extends React.Component {
                         okText="老大说的下架" cancelText="我就点着玩">
                 <Button>下架</Button>
             </Popconfirm>
-            <Popconfirm placement="left" title="需要重新编辑一下吗?."
-                        onConfirm={this.updateCompound(record)}
-                        okText="是的我有个更好看的方案" cancelText="我就点着玩">
-                <Button>编辑</Button>
-            </Popconfirm>
+            <Button onClick={this.updateCompound(record)}>编辑</Button>
         </div>
     };
 
@@ -117,12 +122,12 @@ export default class Compounds extends React.Component {
         const preview = record.preview || {};
         const layer = record.layer || {};
         let title = `height:${background.height} width:${background.width}`;
-        let layer_title = `height:${layer.height} width:${layer.width}`;
+        let layer_title = `height:${layer.height} width:${layer.width} x:${layer.x} y:${layer.y}`;
         let preview_title = `height:${preview.height} width:${preview.width}`;
         let defaultUrl =
             "https://cdn.pixabay.com/photo/2017/08/03/18/49/wolf-in-sheeps-clothing-2577813__340.jpg";
         let background_url = background.url || defaultUrl;
-        let layer_url =record&&record.layer&& record.layer.url || defaultUrl;
+        let layer_url = record && record.layer && record.layer.url || defaultUrl;
 
         let preview_url = preview && preview.url || defaultUrl;
         let hotspots = record.hotspots.map((item, key) => {
@@ -166,7 +171,7 @@ export default class Compounds extends React.Component {
                                 <span className="name">layer:</span>
                                 <span><a
                                     target="_blank"
-                                    href={`${ record.layer&&record.layer.url ? record.layer&&record.layer.url : ''}`}>{`${ record.layer&&record.layer.url ? 'url:[' + record.layer&&record.layer.url + ']' : ''}`}</a></span>
+                                    href={`${ record.layer && record.layer.url ? record.layer && record.layer.url : ''}`}>{`${ record.layer && record.layer.url ? 'url:[' + record.layer && record.layer.url + ']' : ''}`}</a></span>
                             </div>
                             <Tooltip placement="top"
                                      title={layer_title}>

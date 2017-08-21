@@ -236,7 +236,8 @@ class Drags extends React.Component {
 
     }
 
-    uploadConstructor = () => {
+    uploadConstructor = (value) => (e) => {
+        console.log(e);
         let hotspots = [];
         let background = {};
         let layer = {};
@@ -246,6 +247,7 @@ class Drags extends React.Component {
         let state = this.state.state;
         let createdAt = new Date().toISOString();
         let _this = this;
+        let save_other = value == 'other';
         let deltaPositions = this.state.deltaPositions;
         let judge = true;
         let id = this.props.params.id;
@@ -292,7 +294,8 @@ class Drags extends React.Component {
         if (this.state.preview.url) {
             uploadDate.preview = this.state.preview
         }
-        if (id) {
+
+        if (!save_other && id) {
             uploadDate.id = this.state.id;
         }
 
@@ -676,8 +679,10 @@ class Drags extends React.Component {
                             {/*  <div className="view">
                              /!*{JSON.stringify(this.state.deltaPositions)}*!/
                              </div>*/}
-                            <Button className="button" onClick={this.uploadConstructor}>提交</Button>
-                            {/*<button className="button" onClick={this.drawPicture}>预览</button>*/}
+                            <Button className="button"
+                                    onClick={this.uploadConstructor}>{this.props.params.id !== 'no' || this.state.id ? '修改' : '保存'}</Button>
+                            {(this.props.params.id !== 'no' || this.state.id) &&
+                            <Button className="button" onClick={this.uploadConstructor('other')}>另存为</Button>}
                         </div>
                     </div>
                 </div>
