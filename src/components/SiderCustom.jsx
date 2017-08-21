@@ -88,6 +88,19 @@ class SiderCustom extends Component {
                         <Menu.Item key="/app/ui/imageUpload"><Link to={'/app/ui/compounds'}>合成图管理</Link></Menu.Item>
                         {/*<Menu.Item key="/app/ui/gallery"><Link to={'/app/ui/gallery'}>画廊</Link></Menu.Item>*/}
                     </SubMenu>
+                    <SubMenu
+                        key="/app/system"
+                        title={<span><Icon type="setting"/><span className="nav-text">系统设置</span></span>}
+                    >
+                        <Menu.Item key="/app/system/config/"><Link to={'/app/system/config'}>系统设置</Link> </Menu.Item>
+
+                    </SubMenu>
+                    <SubMenu
+                        key="/app/user"
+                        title={<span><Icon type="user"/><span className="nav-text">用户管理</span></span>}
+                    >
+                        <Menu.Item key="/app/user/users"><Link to={'/app/user/users'}>用户列表</Link></Menu.Item>
+                    </SubMenu>
                     {/*<SubMenu
                      key="/app/animation"
                      title={<span><Icon type="rocket"/><span className="nav-text">动画</span></span>}

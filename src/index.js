@@ -50,44 +50,58 @@ const Compounds = (location, cb) => {
     }, 'Compounds');
 };
 
+const SystemConfig = (location, cb) => {
+    require.ensure([], require => {
+        cb(null, require('./components/system/SystemConfig.jsx').default);
+    }, 'SystemConfig');
+
+};
+
+const Apps = (location, cb) => {
+    require.ensure([], require => {
+        cb(null, require('./components/app/Apps').default);
+    }, 'Apps');
+};
+
+const Admins = (location, cb) => {
+    require.ensure([], require => {
+        cb(null, require('./components/admin/Admins').default);
+    }, 'Admins');
+};
+
+const Users = (location, cb) => {
+    require.ensure([], require => {
+        cb(null, require('./components/user/Users').default);
+    }, 'Users');
+};
+
+
 const routes =
     <Route path={'/'} components={Page}>
         <IndexRedirect to="/app/ui/compounds"/>
         <Route path={'app'} component={App}>
-            {/*<Route path={'form'}>*/}
-            {/*<Route path={'basicForm'} component={BasicForm}/>*/}
-            {/*</Route>*/}
-            {/*<Route path={'table'}>*/}
-            {/*<Route path={'basicTable'} component={BasicTable}/>*/}
-            {/*<Route path={'advancedTable'} components={AdvancedTable}/>*/}
-            {/*<Route path={'asynchronousTable'} components={AsynchronousTable}/>*/}
-            {/*</Route>*/}
-            {/*<Route path={'chart'}>*/}
-            {/*<Route path={'echarts'} component={Echarts}/>*/}
-            {/*<Route path={'recharts'} component={Recharts}/>*/}
-            {/*</Route>*/}
+            <Route path={'app'}>
+                <Route path={'apps'} getComponent={Apps}/>
+            </Route>
+            <Route path={'admin'}>
+                <Route path={'admins'} getComponent={Admins}/>
+            </Route>
+            <Route path={'user'}>
+                <Route path={'users'} getComponent={Users}/>
+            </Route>
+            <Route path={'system'}>
+                <Route path={'config'} getComponent={SystemConfig}/>
+            </Route>
+            {/*<Route path={'table'}>
+             <Route path={'basicTable'} component={BasicTable}/>
+             <Route path={'advancedTable'} components={AdvancedTable}/>
+             <Route path={'asynchronousTable'} components={AsynchronousTable}/>
+             </Route>*/}
             <Route path={'ui'}>
-                {/*<Route path={'icons'} component={Icons}/>*/}
-                {/*<Route path={'buttons'} component={Buttons}/>*/}
-                {/*<Route path={'spins'} component={Spins}/>*/}
-                {/*<Route path={'modals'} component={Modals}/>*/}
-                {/*<Route path={'notifications'} component={Notifications}/>*/}
-                {/*<Route path={'tabs'} component={Tabs}/>*/}
-                {/*<Route path={'banners'} component={Banners}/>*/}
-                {/*<Route path={'wysiwyg'} getComponent={Wysiwyg}/>*/}
                 <Route path={'drags/:id'} component={Drags}/>
-                {/*<Route path={'gallery'} component={Gallery}/>*/}
                 <Route path={'compounds'} getComponent={Compounds}/>
             </Route>
-            {/*<Route path={'animation'}>*/}
-            {/*<Route path={'basicAnimations'} component={BasicAnimations}/>*/}
-            {/*<Route path={'exampleAnimations'} component={ExampleAnimations}/>*/}
-            {/*</Route>*/}
             <Route path={'dashboard/index'} component={Dashboard}/>
-            {/*<Route path="auth">*/}
-            {/*<Route path="basic" component={AuthBasic}/>*/}
-            {/*<Route path="routerEnter" component={RouterEnter}/>*/}
-            {/*</Route>*/}
         </Route>
         <Route path={'login'} components={Login}/>
         {/*<Route path={'404'} component={NotFound}/>*/}
