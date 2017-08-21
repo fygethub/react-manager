@@ -680,7 +680,7 @@ class Drags extends React.Component {
                              /!*{JSON.stringify(this.state.deltaPositions)}*!/
                              </div>*/}
                             <Button className="button"
-                                    onClick={this.uploadConstructor}>{this.props.params.id !== 'no' || this.state.id ? '修改' : '保存'}</Button>
+                                    onClick={this.uploadConstructor('no')}>{this.props.params.id !== 'no' || this.state.id ? '修改' : '保存'}</Button>
                             {(this.props.params.id !== 'no' || this.state.id) &&
                             <Button className="button" onClick={this.uploadConstructor('other')}>另存为</Button>}
                         </div>
