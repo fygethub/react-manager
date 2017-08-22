@@ -5,27 +5,9 @@ import './index.css';
 import './style/lib/animate.css';
 import {Router, Route, hashHistory, IndexRedirect} from 'react-router';
 import Page from './components/Page';
-/*import BasicForm from './components/forms/BasicForm';
- import BasicTable from './components/tables/BasicTables';
- import AdvancedTable from './components/tables/AdvancedTables';
- import AsynchronousTable from './components/tables/AsynchronousTable';*/
 import Login from './components/pages/Login';
-/*import Echarts from './components/charts/Echarts';
- import Recharts from './components/charts/Recharts';
- import Icons from './components/ui/Icons';
- import Buttons from './components/ui/Buttons';
- import Spins from './components/ui/Spins';
- import Modals from './components/ui/Modals';
- import Notifications from './components/ui/Notifications';
- import Tabs from './components/ui/Tabs';
- import Banners from './components/ui/banners';*/
 import Drags from './components/ui/draggable/Draggable';
 import Dashboard from './components/dashboard/Dashboard';
-/*import Gallery from './components/ui/Gallery';
- import NotFound from './components/pages/NotFound';
- import BasicAnimations from './components/animation/BasicAnimations';
- import ExampleAnimations from './components/animation/ExampleAnimations';*/
-import registerServiceWorker from './registerServiceWorker';
 import {Provider} from 'react-redux';
 import thunk from 'redux-thunk';
 import {logger} from './middleware';
@@ -33,15 +15,6 @@ import {createStore, applyMiddleware} from 'redux';
 import reducer from './reducer';
 /*import AuthBasic from './components/auth/Basic';
  import RouterEnter from './components/auth/RouterEnter';*/
-
-/*
-
- const Wysiwyg = (location, cb) => {     // 按需加载富文本配置
- require.ensure([], require => {
- cb(null, require('./components/ui/Wysiwyg').default);
- }, 'Wysiwyg');
- };
- */
 
 
 const Compounds = (location, cb) => {
@@ -92,11 +65,6 @@ const routes =
             <Route path={'system'}>
                 <Route path={'config'} getComponent={SystemConfig}/>
             </Route>
-            {/*<Route path={'table'}>
-             <Route path={'basicTable'} component={BasicTable}/>
-             <Route path={'advancedTable'} components={AdvancedTable}/>
-             <Route path={'asynchronousTable'} components={AsynchronousTable}/>
-             </Route>*/}
             <Route path={'ui'}>
                 <Route path={'drags/:id'} component={Drags}/>
                 <Route path={'compounds'} getComponent={Compounds}/>
@@ -120,4 +88,3 @@ ReactDOM.render(
     ,
     document.getElementById('root')
 );
-registerServiceWorker();

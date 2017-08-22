@@ -246,13 +246,10 @@ export default class Compounds extends React.Component {
             </div>
             <div className="table">
                 <div className="backgroundTable">
-                    <div className="backgroundFilter">
-
-                    </div>
                     <Row gutter={16}>
                         <Col className="gutter-row" span={24}>
                             <div className="gutter-box">
-                                <Card title="固定列" bordered={false}>
+                                <Card title="合成图管理" bordered={false}>
                                     <Table
                                         scroll={{x: 1800}}
                                         rowKey={record => record.id}
