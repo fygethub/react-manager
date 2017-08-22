@@ -10,8 +10,10 @@ class Users extends React.Component {
         super(props);
         this.state = {
             data: [{nick: 1, key: '1'}],
-            inputNameText: '',
-            filterDropdownVisible: false,
+            inputText: '',
+            inputMobile: false,
+            inputId: false,
+            inputNick: false,
             table: {
                 dataSource: [],
                 offset: 0,
@@ -23,69 +25,9 @@ class Users extends React.Component {
             model: '',
             record: {},
         };
-
-        this.columns = [
-            {
-                title: '昵称',
-                dataIndex: 'nick',
-                key: 'nick',
-                filterDropdown: (
-                    <div className="custom-filter-dropdown">
-                        <Input
-                            ref={ele => this.InputName = ele}
-                            placeholder="search name"
-                            value={this.state.inputNameText}
-                            onChange={this.onInputChange}
-                            onPressEnter={this.onSearch}
-                        />
-                        <Button type='primary' onClick={this.onSearch}>搜索</Button>
-                    </div>
-                ),
-                filterIcon: <Icon type="search" style={{color: this.state.filtered ? '#108ee9' : '#aaa'}}/>,
-                filterDropdownVisible: this.state.filterDropdownVisible,
-                onFilterDropdownVisibleChange: (visible) => {
-                    this.setState({
-                        filterDropdownVisible: visible,
-                    }, () => this.InputName.focus());
-                },
-            },
-            {
-                title: '头像',
-                dataIndex: 'avatar',
-                key: 'avatar',
-                render: (text, record, index) => {
-                    return <div className="table-avatar">
-                        <img src={record.avatar} alt="picture"/>
-                    </div>
-                },
-            },
-            {
-                title: '姓名',
-                dataIndex: 'name',
-                key: 'name'
-            },
-            {
-                title: '手机',
-                dataIndex: 'mobile',
-                key: 'mobile'
-            },
-            {
-                title: '注册时间',
-                dataIndex: 'createdAt',
-                key: 'createdAt',
-                render: (text, record, index) => {
-                    return <span>{U.date.format(new Date(record.createdAt), 'yyyy-MM-dd hh:mm:ss')}</span>
-                }
-
-            }, {
-                title: '操作',
-                dataIndex: 'option',
-                key: 'option',
-                render: this.renderAction,
-                width: 200,
-                fixed: 'right',
-            }
-        ];
+        this.InputNick = null;
+        this.InputMobile = null;
+        this.InputId = null;
     }
 
     componentDidMount() {
@@ -110,12 +52,36 @@ class Users extends React.Component {
         })
     };
 
-    onSearch = () => {
+    onSearch = (type) => () => {
+        let searchText = this.state.inputText;
+        let search = {};
+        if (searchText && searchText.length > 0) {
+            search.type = this.state.type;
+            search.q = searchText;
+        }
 
+        App.api('adm/user/users', {
+            offset: this.state.table.pageSize * (this.state.table.current - 1),
+            limit: this.state.table.pageSize,
+            ...search,
+        }).then((result) => {
+            this.setState({
+                table: {
+                    ...this.state.table,
+                    dataSource: result.items,
+                    pageSize: result.limit,
+                    offset: result.offset,
+                    total: result.total,
+                },
+                inputMobile: false,
+                inputId: false,
+                inputNick: false,
+            })
+        })
     };
 
-    onInputChange = (e) => {
-        this.setState({searchText: e.target.value});
+    onInputChange = (type) => (e) => {
+        this.setState({inputText: e.target.value, type: type});
     };
 
     tableOnchange = (pagination) => {
@@ -252,6 +218,21 @@ class Users extends React.Component {
 
     };
 
+    filterDropdown = (type) => {
+        let input = type == 'id' ? 'InputId' : type === 'nick' ? 'InputNick' : 'InputMobile';
+        return (
+            <div className="custom-filter-dropdown">
+                <Input
+                    ref={ele => this[input] = ele}
+                    placeholder="search name"
+                    value={this.state.inputText}
+                    onChange={this.onInputChange(type)}
+                    onPressEnter={this.onSearch(type)}
+                />
+                <Button type='primary' onClick={this.onSearch(type)}>搜索</Button>
+            </div>
+        )
+    };
 
     render() {
         const pagination = {
@@ -261,6 +242,81 @@ class Users extends React.Component {
         };
         const type = this.state.model;
         const record = this.state.record;
+
+        let _this = this;
+        this.columns = [
+            {
+                title: 'ID',
+                dataIndex: 'id',
+                key: 'id',
+                filterDropdown: this.filterDropdown('id'),
+                render: () => <span>******</span>,
+                filterIcon: <Icon type="search"/>,
+                filterDropdownVisible: this.state.inputId,
+                onFilterDropdownVisibleChange: (visible) => {
+                    _this.setState({
+                        inputId: visible,
+                    }, () => _this.InputId.focus());
+                },
+            },
+            {
+                title: '昵称',
+                dataIndex: 'nick',
+                key: 'nick',
+                filterDropdown: this.filterDropdown('nick'),
+                filterIcon: <Icon type="search"/>,
+                filterDropdownVisible: this.state.inputNick,
+                onFilterDropdownVisibleChange: (visible) => {
+                    _this.setState({
+                        inputNick: visible,
+                    }, () => _this.InputNick.focus());
+                },
+            },
+            {
+                title: '头像',
+                dataIndex: 'avatar',
+                key: 'avatar',
+                render: (text, record, index) => {
+                    return <div className="table-avatar">
+                        <img src={record.avatar} alt="picture"/>
+                    </div>
+                },
+            },
+            {
+                title: '姓名',
+                dataIndex: 'name',
+                key: 'name'
+            },
+            {
+                title: '手机',
+                dataIndex: 'mobile',
+                key: 'mobile',
+                filterDropdown: this.filterDropdown('mobile'),
+                filterIcon: <Icon type="search"/>,
+                filterDropdownVisible: this.state.inputMobile,
+                onFilterDropdownVisibleChange: (visible) => {
+                    _this.setState({
+                        inputMobile: visible,
+                    }, () => _this.InputMobile.focus());
+                },
+            },
+            {
+                title: '注册时间',
+                dataIndex: 'createdAt',
+                key: 'createdAt',
+                render: (text, record, index) => {
+                    return <span>{U.date.format(new Date(record.createdAt), 'yyyy-MM-dd hh:mm:ss')}</span>
+                }
+
+            }, {
+                title: '操作',
+                dataIndex: 'option',
+                key: 'option',
+                render: this.renderAction,
+                width: 200,
+                fixed: 'right',
+            }
+        ];
         return (
             <div className="userDataList">
                 <BreadcrumbCustom first="用户" second="用户列表"/>
