@@ -1170,8 +1170,8 @@ function OSS(config) {
         let uploadId = null, parts = [], progress = 0;
 
         options = wrapOptions(options, file);
-        const partSize = Math.max(200 * 1024, options.partSize || 0);
-        const partCount = parseInt(file.size / partSize);
+        const partSize = Math.max(5 * 1024 * 1024, options.partSize || 0);
+        const partCount = parseInt(file.size / partSize) + (file.size % partSize == 0 ? 0 : 1);
         if (partCount <= 1) {
             return put(objectKey, file, options);
         }
