@@ -16,7 +16,7 @@ var OSSWrap = {
                 stsToken: cfg.stsToken,
                 bucket: cfg.bucket
             });
-            return client.multipartUpload(cfg.key, file, options).then(function () {
+            return client.put(cfg.key, file, options).then(function () {
                 return {'vendor': 'ali', 'bucket': cfg.bucket, 'key': cfg.key, 'url': cfg.url};
             });
         });

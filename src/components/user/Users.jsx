@@ -321,7 +321,7 @@ class Users extends React.Component {
             <div className="userDataList">
                 <BreadcrumbCustom first="用户" second="用户列表"/>
                 <Modal
-                    title={type === 'id' ? '提示' : ''}
+                    title={type === 'id' ? '提示(点击任意地方关闭窗口)' : '赠送店铺(点击任意地方关闭窗口)'}
                     visible={this.state.visible}
                     onOk={this.hideModel()}
                     onCancel={this.hideModel()}

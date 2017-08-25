@@ -77,6 +77,7 @@
     "analyze": "source-map-explorer build/static/js/main.*",
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
+    "sandbox": "node scripts/sandbox.js",
     "test": "node scripts/test.js --env=jsdom"
   },
   "jest": {
