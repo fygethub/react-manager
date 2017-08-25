@@ -3,7 +3,6 @@
 // Do this as the first thing so that any code reading it knows the right env.
 const minimist = require('minimist');
 
-
 const args = minimist(process.argv.slice(2)) || 'sandbox';
 console.log('this is a ..................' + args.env + '.........environment')
 
