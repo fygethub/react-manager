@@ -7,6 +7,7 @@ import {Router, Route, hashHistory, IndexRedirect} from 'react-router';
 import Page from './components/Page';
 import Login from './components/pages/Login';
 import Drags from './components/ui/draggable/Draggable';
+import DragsNew from './components/ui/draggable/DraggableNew';
 import Dashboard from './components/dashboard/Dashboard';
 import {Provider} from 'react-redux';
 import thunk from 'redux-thunk';
@@ -67,6 +68,7 @@ const routes =
             </Route>
             <Route path={'ui'}>
                 <Route path={'drags/:id'} component={Drags}/>
+                <Route path={'drags-new/:id'} component={DragsNew}/>
                 <Route path={'compounds'} getComponent={Compounds}/>
             </Route>
             <Route path={'dashboard/index'} component={Dashboard}/>

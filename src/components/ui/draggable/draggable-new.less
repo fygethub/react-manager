@@ -1,0 +1,125 @@
+@rightWidth: 200px;
+
+.ant-layout-content {
+  margin: 0 !important;
+}
+
+.drags-new-edit {
+  position: relative;
+  height: 1000px;
+
+  .uplaodMain {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 200px;
+    height: 300px;
+    borde: 1px solid #fff;
+    img {
+      width: 100%;
+    }
+  }
+  .operator {
+    position: relative;
+    height: 100%;
+    .header-operator {
+      position: absolute;
+      min-height: 50px;
+      width: 100%;
+      background-color: #fff;
+      .menu_selectItem {
+        display: flex;
+        .upload-design {
+          width: 100%;
+        }
+        input {
+          width: 50%;
+          flex: 1 1 auto;
+          outline: none;
+          height: 26px;
+          border: 1px solid #e1e1e1;
+          border-radius: 4px;
+        }
+        div {
+          &:active {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 28);
+          }
+          width: 50%;
+          flex: 1 1 auto;
+          border: 1px solid #e1e1e1;
+          background-color: #ffffff;
+          cursor: hand;
+          position: relative;
+        }
+      }
+    }
+    .flex {
+      display: flex;
+      position: absolute;
+      top: 50px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      .right-operator {
+        width: @rightWidth;
+        background: #fff;
+        transition: .8s;
+        .toggle-right-operator {
+          position: absolute;
+          width: 0;
+          height: 0;
+          border-top: 10px solid transparent;
+          border-bottom: 10px solid transparent;
+          border-right: 10px solid #000;
+          border-left: 10px solid transparent;
+          top: 50%;
+          transform: translateY(-50%) translateX(-100%);
+        }
+        .submit {
+          width: 100%;
+          .view {
+            border: 1px solid #e1e1e1;
+            width: 100%;
+            height: 300px;
+            overflow: scroll;
+            word-break: break-word;
+          }
+          .ant-btn {
+            margin-left: 0;
+          }
+          .button {
+            width: 100%;
+            height: 50px;
+            text-align: center;
+            line-height: 50px;
+            font-size: 20px;
+            outline: none;
+            background-color: rgba(225, 225, 225, 0.12);
+            margin-top: 2px;
+            &:active {
+              box-shadow: 0 1px 2px rgba(100, 100, 20, .5);
+            }
+          }
+        }
+      }
+      .content-operator {
+        position: relative;
+        flex: 1;
+        border: 1px dashed #333;
+      }
+    }
+
+    .picture-editor {
+      position: static;
+    }
+    .ant-card {
+      position: absolute;
+    }
+    .ant-card-body {
+      padding: 0;
+    }
+    .ant-input-number {
+      width: 100%;
+    }
+  }
+}

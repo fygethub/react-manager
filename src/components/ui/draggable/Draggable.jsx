@@ -1,6 +1,3 @@
-/**
- * Created by hao.cheng on 2017/4/28.
- */
 import React from 'react';
 import {Menu, Icon, Card, message, Select, InputNumber, Button} from 'antd';
 import BreadcrumbCustom from '../../BreadcrumbCustom';
@@ -10,7 +7,6 @@ import FontEditor from './FontEditor';
 import OSSWrap from '../../../common/OSSWrap.jsx';
 import App from '../../../common/App.jsx';
 import PictureEditor from './PictureEditor';
-// import html2canvas from 'html2canvas';
 
 const SubMenu = Menu.SubMenu;
 
@@ -248,9 +244,10 @@ class Drags extends React.Component {
         let createdAt = new Date().toISOString();
         let _this = this;
         let save_other = value == 'other';
+        let id = this.props.params.id;
         let deltaPositions = this.state.deltaPositions;
         let judge = true;
-        let id = this.props.params.id;
+
         this.state.dragItems.forEach((item) => {
             let editItem = deltaPositions[item];
             if (item.indexOf('text') > -1) {
@@ -494,7 +491,7 @@ class Drags extends React.Component {
                             上传设计图
                             <input type="file"
                                    style={{position: 'absolute', left: 0, top: 0, opacity: 0}}
-                                   className="edit-remove"
+                                   className="upload-design"
                                    onChange={this.uploadDesign}/>
                         </div>
                     </div>
@@ -676,9 +673,6 @@ class Drags extends React.Component {
                             }
                         </Menu>
                         <div className="submit">
-                            {/*  <div className="view">
-                             /!*{JSON.stringify(this.state.deltaPositions)}*!/
-                             </div>*/}
                             <Button className="button"
                                     onClick={this.uploadConstructor('no')}>{this.props.params.id !== 'no' || this.state.id ? '修改' : '保存'}</Button>
                             {(this.props.params.id !== 'no' || this.state.id) &&

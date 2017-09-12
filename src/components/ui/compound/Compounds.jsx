@@ -4,6 +4,7 @@ import {Row, Col, Button, message, Popconfirm, Card, Tooltip, Select} from 'antd
 import {hashHistory} from 'react-router';
 import './compound.less';
 import App from '../../../common/App.jsx';
+import enmu from '../../../common/Ctype'
 
 let Table = antd.Table;
 const Option = Select.Option;
@@ -26,6 +27,7 @@ export default class Compounds extends React.Component {
             {title: 'id', dataIndex: 'id', key: 'id'},
             {title: '名称', dataIndex: 'title', key: 'title'},
             {title: 'cratedAt', dataIndex: 'createdAt', key: 'createdAt'},
+            {title: '是否上架', dataIndex: 'state', key: 'state'},
             {
                 title: '操作',
                 width: 290,
@@ -55,12 +57,17 @@ export default class Compounds extends React.Component {
         }).then((result) => {
 
             let items = result.items && result.items.map((item) => {
-                    item.hotspots = item.hotspots && item.hotspots.map((hotspot) => {
-                            hotspot.align = hotspot.align == 1 ? '靠左对齐' : hotspot.align == 2 ? '居中对齐' : '靠右对齐';
-                            hotspot.movable = hotspot.movable == 1 ? '可移动' : '不可移动';
-                            return hotspot;
+                    item.layers = item.layers && item.layers.map((layer) => {
+                            if (layer.type == enmu.type.text) {
+                                layer.bold = layer.bold == enmu.bold.bold ? '加粗' : '正常';
+                                layer.italic = layer.italic == enmu.italic.italic ? '倾斜' : '正常';
+                                layer.align = layer.align == 1 ? '靠左对齐' : layer.align == 2 ? '居中对齐' : '靠右对齐';
+                            }
+                            layer.movable = layer.movable == 1 ? '可移动' : '不可移动';
+                            layer.type = layer.type == enmu.type.img ? '图片' : '文字';
+                            return layer;
                         });
-
+                    item.state = item.state === enmu.state.on ? '上架中' : '已下架';
                     item.createdAt = item.createdAt && new Date(item.createdAt).toISOString();
                     return item;
                 });
@@ -100,7 +107,7 @@ export default class Compounds extends React.Component {
 
     updateCompound = (record) => (e) => {
         localStorage.removeItem('state');
-        hashHistory.push('app/ui/drags/' + record.id);
+        hashHistory.push('app/ui/drags-new/' + record.id);
     };
 
     removeCompound = (text, record) => (e) => {
@@ -118,30 +125,27 @@ export default class Compounds extends React.Component {
     };
 
     expandedRowRender = (record) => {
-        const background = record.background;
         const preview = record.preview || {};
-        const layer = record.layer || {};
-        let title = `height:${background.height} width:${background.width}`;
-        let layer_title = `height:${layer.height} width:${layer.width} x:${layer.x} y:${layer.y}`;
         let preview_title = `height:${preview.height} width:${preview.width}`;
         let defaultUrl =
             "https://cdn.pixabay.com/photo/2017/08/03/18/49/wolf-in-sheeps-clothing-2577813__340.jpg";
-        let background_url = background.url || defaultUrl;
-        let layer_url = record && record.layer && record.layer.url || defaultUrl;
 
         let preview_url = preview && preview.url || defaultUrl;
-        let hotspots = record.hotspots.map((item, key) => {
+        let layers = record.layers.map((item, key) => {
             item.key = key;
             item.movable = item.movable == 0 ? '不可移动' : '可以移动';
             return item;
         });
         let columns = [
-            {title: 'align', dataIndex: 'align', key: 'align'},
             {title: '宽', dataIndex: 'w', key: 'w'},
             {title: '高', dataIndex: 'h', key: 'h'},
             {title: 'x', dataIndex: 'x', key: 'x'},
             {title: 'y', dataIndex: 'y', key: 'y'},
+            {title: 'url', dataIndex: 'url', key: 'url'},
             {title: 'text', dataIndex: 'text', key: 'text'},
+            {title: 'align', dataIndex: 'align', key: 'align'},
+            {title: 'italic', dataIndex: 'italic', key: 'italic'},
+            {title: '加粗', dataIndex: 'bold', key: 'bold'},
             {title: '是否可移动', dataIndex: 'movable', key: 'movable'},
             {title: '字体颜色', dataIndex: 'fontColor', key: 'fontColor'},
             {title: '字体', dataIndex: 'fontFamily', key: 'fontFamily'},
@@ -151,36 +155,22 @@ export default class Compounds extends React.Component {
             <Col className="gutter-row" span={24}>
                 <div className="gutter-box">
                     <div className="layer">
-                        <div className="background">
-                            <div>
-                                <span className="name">background:</span>
-                                <span><a
-                                    target="_blank"
-                                    href={`${background_url ? background_url : ''}`}>{`${background.url ? 'url:[' + background.url + ']' : ''}`}</a></span>
-                            </div>
-                            <Tooltip placement="top"
-                                     title={title}>
-                                <img
-                                    className="background-img"
-                                    src={background_url}
-                                />
-                            </Tooltip>
-                        </div>
-                        <div className="background">
-                            <div>
-                                <span className="name">layer:</span>
-                                <span><a
-                                    target="_blank"
-                                    href={`${ record.layer && record.layer.url ? record.layer && record.layer.url : ''}`}>{`${ record.layer && record.layer.url ? 'url:[' + record.layer && record.layer.url + ']' : ''}`}</a></span>
-                            </div>
-                            <Tooltip placement="top"
-                                     title={layer_title}>
-                                <img
-                                    className="background-img"
-                                    src={layer_url}
-                                />
-                            </Tooltip>
-                        </div>
+                        {/*<div className="background">
+                         <div>
+                         <span className="name">background:</span>
+                         <span><a
+                         target="_blank"
+                         href={`${background_url ? background_url : ''}`}>{`${background.url ? 'url:[' + background.url + ']' : ''}`}</a></span>
+                         </div>
+                         <Tooltip placement="top"
+                         title={title}>
+                         <img
+                         className="background-img"
+                         src={background_url}
+                         />
+                         </Tooltip>
+                         </div>
+                         */}
                         <div className="background">
                             <div>
                                 <span className="name">preview:</span>
@@ -197,9 +187,9 @@ export default class Compounds extends React.Component {
                             </Tooltip>
                         </div>
                     </div>
-                    <div className="hotspots">
+                    <div className="layers">
                         <Table
-                            dataSource={hotspots}
+                            dataSource={layers}
                             columns={columns}
                         />
                     </div>

@@ -1,9 +1,21 @@
 import React from 'react';
-// import pell from 'pell';
-// import MediumEditor from 'medium-editor';
 import './fontEditor.less';
+import {Menu, Icon, Card, message, Select, InputNumber, Button, Input, Modal} from 'antd';
 
 export default class FontEditor extends React.Component {
+
+    static propTypes = {
+        initText: React.PropTypes.string,
+        fontColor: React.PropTypes.string,
+        textAlign: React.PropTypes.number,
+        onChange: React.PropTypes.func,
+    };
+
+    static defaultProps = {
+        fontColor: '#000',
+        initText: '输入文字',
+    };
+
     constructor(props) {
         super(props);
         this.id = this.props.id;
@@ -12,14 +24,11 @@ export default class FontEditor extends React.Component {
         }
     }
 
-    componentDidMount() {
-    }
-
     handleChange = (e) => {
         this.setState({
             value: e.target.value,
         }, () => {
-            this.props.onChange(this.state.value, '');
+            this.props.onChange && this.props.onChange(this.state.value, '');
         })
 
     };
@@ -29,9 +38,14 @@ export default class FontEditor extends React.Component {
         value = value == 1 ? 'left' : value == 2 ? 'center' : 'right';
         return (<div className="font-editor">
                 <div className="dragText"/>
-                <textarea width='100%' value={this.state.value} id={"pell" + this.id}
+                <textarea width='100%'
+                          value={this.state.value}
+                          id={"pell" + this.id}
                           className="no-cursor editable-text"
-                          style={{textAlign: value, color: '#' + this.props.fontColor.replace(/#/g, '')}}
+                          style={{
+                              textAlign: value,
+                              color: '#' + this.props.fontColor.replace(/#/g, ''),
+                          }}
                           onChange={this.handleChange}>
                     {this.props.initText}
                 </textarea>
