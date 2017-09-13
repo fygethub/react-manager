@@ -25,10 +25,12 @@ export default class DraggableNew extends React.Component {
             preview: {},
             priority: 1,
             visible: false,
+            collRightMenu: false,
         }
     }
 
     componentDidMount() {
+        this.RightMenu = document.getElementById('right-operator');
 
         let state = localStorage.getItem('state') && JSON.parse(localStorage.getItem('state'));
         if (state) {
@@ -284,14 +286,21 @@ export default class DraggableNew extends React.Component {
         this.setState({
             visible: true,
         });
-    }
+    };
 
     handleCancel = (e) => {
         console.log(e);
         this.setState({
             visible: false,
         });
-    }
+    };
+
+    toggleRightMenu = () => {
+        console.log('click');
+        this.setState({
+            collRightMenu: !this.state.collRightMenu,
+        })
+    };
 
     render() {
         let _item = this.state.item || {};
@@ -379,8 +388,10 @@ export default class DraggableNew extends React.Component {
                                                    key={item.id}/>)
                             })}
                         </div>
-                        <div className="right-operator">
-                            {/*<div className="toggle-right-operator"/>*/}
+                        <div className="right-operator" id="right-operator"
+                             style={{width: this.state.collRightMenu ? 200 : 0}}>
+                            <div className="toggle-right-operator"
+                                 onClick={this.toggleRightMenu}/>
                             <Menu
                                 onClick={this.handleClick}
                                 defaultSelectedKeys={['1']}

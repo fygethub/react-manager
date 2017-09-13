@@ -39,6 +39,7 @@ export default class Compounds extends React.Component {
                 title: '合成图',
                 dataIndex: 'img',
                 key: 'img',
+                width: 150,
                 render: text => {
                     if (!this.state.imgLoaded) {
                         //从新计算table高度
@@ -56,6 +57,7 @@ export default class Compounds extends React.Component {
                 }
             },
             {title: '是否上架', dataIndex: 'state', width: 150, key: 'state'},
+            {title: '', dataIndex: 'null', key: 'null'},
             {
                 title: '操作',
                 width: 290,
@@ -156,12 +158,6 @@ export default class Compounds extends React.Component {
     };
 
     expandedRowRender = (record) => {
-        const preview = record.preview || {};
-        let preview_title = `height:${preview.height} width:${preview.width}`;
-        let defaultUrl =
-            "https://cdn.pixabay.com/photo/2017/08/03/18/49/wolf-in-sheeps-clothing-2577813__340.jpg";
-
-        let preview_url = preview && preview.url || defaultUrl;
         let layers = record.layers.map((item, key) => {
             item.key = key;
             item.movable = item.movable == 0 ? '不可移动' : '可以移动';
@@ -188,23 +184,7 @@ export default class Compounds extends React.Component {
         return <Row gutter={16}>
             <Col className="gutter-row" span={24}>
                 <div className="gutter-box">
-                    <div className="layer">
-                        <div className="background">
-                            <div>
-                                <span className="name">preview:</span>
-                                <span><a
-                                    target="_blank"
-                                    href={`${ preview_url ? preview_url : ''}`}>{`${ preview_url ? 'url:[' + preview_url + ']' : ''}`}</a></span>
-                            </div>
-                            <Tooltip placement="top"
-                                     title={preview_title}>
-                                <img
-                                    className="background-img"
-                                    src={preview_url}
-                                />
-                            </Tooltip>
-                        </div>
-                    </div>
+
                     <div className="layers">
                         <Table
                             dataSource={layers}
