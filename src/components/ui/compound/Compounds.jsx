@@ -2,6 +2,7 @@ import React from 'react';
 import antd from 'antd';
 import {Row, Col, Button, message, Popconfirm, Card, Tooltip, Select} from 'antd';
 import {hashHistory} from 'react-router';
+import U from '../../../common/U';
 import './compound.less';
 import App from '../../../common/App.jsx';
 import enmu from '../../../common/Ctype'
@@ -21,13 +22,40 @@ export default class Compounds extends React.Component {
                 pageSize: 10,
                 current: 1,
             },
+            imgLoaded: false,
         };
 
         this.columns = [
-            {title: 'id', dataIndex: 'id', key: 'id'},
-            {title: '名称', dataIndex: 'title', key: 'title'},
-            {title: 'cratedAt', dataIndex: 'createdAt', key: 'createdAt'},
-            {title: '是否上架', dataIndex: 'state', key: 'state'},
+            {title: 'id', dataIndex: 'id', width: 150, key: 'id'},
+            {title: '名称', dataIndex: 'title', width: 150, key: 'title'},
+            {
+                title: '创建时间',
+                dataIndex: 'createdAt',
+                width: 150,
+                key: 'createdAt',
+                render: (text) => <span>{U.date.format(new Date(text), 'yyyy-MM-dd hh:mm:ss')}</span>
+            },
+            {
+                title: '合成图',
+                dataIndex: 'img',
+                key: 'img',
+                render: text => {
+                    if (!this.state.imgLoaded) {
+                        //从新计算table高度
+                        let img = new Image();
+                        img.src = text;
+                        img.onload = () => {
+                            console.log('img loaded');
+                            this.setState({
+                                imgLoaded: true,
+                            })
+                        };
+                    }
+
+                    return <a href={text} target="_blank"><img src={text} style={{width: 60}} className="img-compound"/></a>;
+                }
+            },
+            {title: '是否上架', dataIndex: 'state', width: 150, key: 'state'},
             {
                 title: '操作',
                 width: 290,
@@ -46,6 +74,8 @@ export default class Compounds extends React.Component {
     }
 
     componentDidMount() {
+        document.getElementsByClassName('img-compound');
+
         this.loadData();
     }
 
@@ -69,6 +99,7 @@ export default class Compounds extends React.Component {
                         });
                     item.state = item.state === enmu.state.on ? '上架中' : '已下架';
                     item.createdAt = item.createdAt && new Date(item.createdAt).toISOString();
+                    item.img = item.preview.url;
                     return item;
                 });
 
@@ -141,7 +172,10 @@ export default class Compounds extends React.Component {
             {title: '高', dataIndex: 'h', key: 'h'},
             {title: 'x', dataIndex: 'x', key: 'x'},
             {title: 'y', dataIndex: 'y', key: 'y'},
-            {title: 'url', dataIndex: 'url', key: 'url'},
+            {
+                title: '图片', dataIndex: 'url', key: 'url',
+                render: text => <a href={text} target="_blank"><img style={{width: 40}} src={text}/></a>
+            },
             {title: 'text', dataIndex: 'text', key: 'text'},
             {title: 'align', dataIndex: 'align', key: 'align'},
             {title: 'italic', dataIndex: 'italic', key: 'italic'},
@@ -155,22 +189,6 @@ export default class Compounds extends React.Component {
             <Col className="gutter-row" span={24}>
                 <div className="gutter-box">
                     <div className="layer">
-                        {/*<div className="background">
-                         <div>
-                         <span className="name">background:</span>
-                         <span><a
-                         target="_blank"
-                         href={`${background_url ? background_url : ''}`}>{`${background.url ? 'url:[' + background.url + ']' : ''}`}</a></span>
-                         </div>
-                         <Tooltip placement="top"
-                         title={title}>
-                         <img
-                         className="background-img"
-                         src={background_url}
-                         />
-                         </Tooltip>
-                         </div>
-                         */}
                         <div className="background">
                             <div>
                                 <span className="name">preview:</span>
