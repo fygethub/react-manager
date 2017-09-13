@@ -389,7 +389,7 @@ export default class DraggableNew extends React.Component {
                             })}
                         </div>
                         <div className="right-operator" id="right-operator"
-                             style={{width: this.state.collRightMenu ? 200 : 0}}>
+                             style={{width: !this.state.collRightMenu ? 200 : 0}}>
                             <div className="toggle-right-operator"
                                  onClick={this.toggleRightMenu}/>
                             <Menu
