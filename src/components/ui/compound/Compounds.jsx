@@ -46,10 +46,12 @@ export default class Compounds extends React.Component {
                         let img = new Image();
                         img.src = text;
                         img.onload = () => {
-                            console.log('img loaded');
-                            this.setState({
-                                imgLoaded: true,
-                            })
+                            setTimeout(() => {
+                                this.setState({
+                                    imgLoaded: true,
+                                })
+                            }, 500);
+
                         };
                     }
 
@@ -203,9 +205,9 @@ export default class Compounds extends React.Component {
                 ...this.state.table,
                 pageSize: pagination.pageSize,
                 current: pagination.current,
-            }
+            },
+            imgLoaded: false,
         }, this.loadData);
-
     };
 
     render() {
@@ -222,6 +224,7 @@ export default class Compounds extends React.Component {
                             <label htmlFor="category">查询类型</label>
                             <Select defaultValue="1" style={{width: '100%'}} onChange={(v) => this.setState({
                                 category: v,
+                                imgLoaded: false,
                             }, this.loadData)}>
                                 <Option value="1">课程</Option>
                                 <Option value="2">专栏</Option>
