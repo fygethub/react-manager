@@ -15,7 +15,7 @@ import {logger} from './middleware';
 import {createStore, applyMiddleware} from 'redux';
 import reducer from './reducer';
 
-import CompoundsManage from './components/ui/compound-manage/CompoundManage';
+import CompoundsManage from './components/ui/compound-manage/CompoundFontManage';
 import Compounds from './components/ui/compound/Compounds.jsx';
 import Apps from './components/app/Apps'
 import Admins from './components/admin/Admins'
@@ -41,7 +41,6 @@ const routes =
                 <Route path={'config'} component={SystemConfig}/>
             </Route>
             <Route path={'ui'}>
-                <Route path={'drags/:id'} component={Drags}/>
                 <Route path={'drags-new/:id'} component={DragsNew}/>
                 <Route path={'compounds'} component={Compounds}/>
                 <Route path={'compound-manage'} component={CompoundsManage}/>

@@ -3,6 +3,7 @@ import antd from 'antd';
 import {Row, Col, Button, message, Popconfirm, Card, Tooltip, Select} from 'antd';
 import {hashHistory} from 'react-router';
 import U from '../../../common/U';
+import BreadcrumbCustom from '../../BreadcrumbCustom';
 import '../../../style/ui/compound.less';
 import App from '../../../common/App.jsx';
 import enmu from '../../../common/Ctype'
@@ -210,31 +211,32 @@ export default class Compounds extends React.Component {
             return item;
         });
         let columns = [
-            {title: '宽', dataIndex: 'w', key: 'w'},
-            {title: '高', dataIndex: 'h', key: 'h'},
-            {title: 'x', dataIndex: 'x', key: 'x'},
-            {title: 'y', dataIndex: 'y', key: 'y'},
+            {title: '宽', width: 90, dataIndex: 'w', key: 'w'},
+            {title: '高', width: 90, dataIndex: 'h', key: 'h'},
+            {title: 'x', width: 90, dataIndex: 'x', key: 'x'},
+            {title: 'y', width: 90, dataIndex: 'y', key: 'y'},
             {
-                title: '图片', dataIndex: 'url', key: 'url',
+                title: '图片', width: 90, dataIndex: 'url', key: 'url',
                 render: text => <a href={text} target="_blank"><img style={{width: 40, height: 40, lineHeight: '40px'}}
                                                                     src={text}
                                                                     alt="没有图片"/></a>
             },
-            {title: 'text', dataIndex: 'text', key: 'text'},
-            {title: 'align', dataIndex: 'align', key: 'align'},
-            {title: 'italic', dataIndex: 'italic', key: 'italic'},
-            {title: '加粗', dataIndex: 'bold', key: 'bold'},
-            {title: '是否可移动', dataIndex: 'movable', key: 'movable'},
-            {title: '字体颜色', dataIndex: 'fontColor', key: 'fontColor'},
-            {title: '字体', dataIndex: 'fontFamily', key: 'fontFamily'},
-            {title: '字号', dataIndex: 'fontSize', key: 'fontSize'},
+            {title: '内容',  width: 190,dataIndex: 'text', key: 'text'},
+            {title: '对齐方式', width: 90, dataIndex: 'align', key: 'align'},
+            {title: '倾斜', width: 90, dataIndex: 'italic', key: 'italic'},
+            {title: '加粗', width: 90, dataIndex: 'bold', key: 'bold'},
+            {title: '是否可移动', width: 90, dataIndex: 'movable', key: 'movable'},
+            {title: '字体颜色', width: 90, dataIndex: 'fontColor', key: 'fontColor'},
+            {title: '字体', width: 90, dataIndex: 'fontFamily', key: 'fontFamily'},
+            {title: '字号', width: 90, dataIndex: 'fontSize', key: 'fontSize'},
+            {title: '', width: 90, dataIndex: 'null', key: 'null'},
         ];
         return <Row gutter={16}>
             <Col className="gutter-row" span={24}>
                 <div className="gutter-box">
-
                     <div className="layers">
                         <Table
+                            size="middle"
                             dataSource={layers}
                             columns={columns}
                         />
@@ -263,6 +265,7 @@ export default class Compounds extends React.Component {
             showSizeChanger: true,
         };
         return <div className="compounds">
+            <BreadcrumbCustom first="UI" second="合成图列表"/>
             <div className="search">
                 <Row gutter={24}>
                     <Col className="gutter-row" span={24}>
@@ -292,6 +295,7 @@ export default class Compounds extends React.Component {
                                 </div>}
                                       bordered={false}>
                                     <Table
+                                        size="middle"
                                         scroll={{x: 1800}}
                                         rowKey={record => record.id}
                                         columns={this.columns}

@@ -8,6 +8,7 @@ import OSSWrap from '../../../common/OSSWrap.jsx';
 import App from '../../../common/App.jsx';
 import PictureEditor from './PictureEditor';
 import enmu from '../../../common/Ctype';
+import U from '../../../common/U';
 
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
@@ -26,12 +27,12 @@ export default class DraggableNew extends React.Component {
             priority: 1,
             visible: false,
             collRightMenu: false,
+            fontDataSource: [],
         }
     }
 
     componentDidMount() {
-        this.RightMenu = document.getElementById('right-operator');
-
+        this.loadFontList();
         let state = localStorage.getItem('state') && JSON.parse(localStorage.getItem('state'));
         if (state) {
             this.setState({
@@ -57,6 +58,27 @@ export default class DraggableNew extends React.Component {
             return;
         }
     }
+
+
+    loadFontList = () => {
+        App.api('adm/compound/fonts').then(res => {
+            let fontDataSource = res.map(item => {
+                return {
+                    id: item.id,
+                    name: item.name,
+                    size: item.ttf.size,
+                    url: item.ttf.url,
+                }
+
+            });
+            fontDataSource.forEach(font => {
+                U.CssStyle.dynamicFont(font.name, font.url);
+            });
+            this.setState({
+                fontDataSource,
+            })
+        })
+    };
 
     createItem = (type) => {
         let items = this.state.items;
@@ -132,7 +154,7 @@ export default class DraggableNew extends React.Component {
         let items = this.state.items.filter((item) => item.id != id);
         this.setState({
             items,
-            item: {},
+            item: items[items.length - 1],
             visible: false,
         })
     };
@@ -195,15 +217,17 @@ export default class DraggableNew extends React.Component {
 
     changeItemStyle = (type) => (e) => {
         let val = typeof e == 'object' ? e.target.value : e;
-
+        let _item = {};
         let items = this.state.items.map(item => {
             if (item.id == this.state.item.id) {
                 item[type] = val;
+                _item = item;
             }
             return item;
         });
         this.setState({
             items,
+            item: _item,
         })
     };
 
@@ -230,10 +254,10 @@ export default class DraggableNew extends React.Component {
                 if (key != 'background' && key != 'zIndex' && item.hasOwnProperty(key)) {
                     if (key == 'fontColor' && item['fontColor'].indexOf('#') > -1) {
                         item['fontColor'] = item['fontColor'].replace(/#/, '');
-                    }
-                    if (key == 'fontColor' && item['fontColor'].length !== 6) {
-                        message.error(item + ':颜色码应该为6位数,请检查');
-                        judge = false;
+                        if (item['fontColor'].length !== 6) {
+                            message.error(item + ':颜色码应该为6位数,请检查');
+                            judge = false;
+                        }
                     }
                     layer[key] = item[key];
                 }
@@ -260,26 +284,6 @@ export default class DraggableNew extends React.Component {
         }, (data) => message.error('字段:' + data && data.data && data.data.key));
 
 
-    };
-
-    translateStyle = (type) => {
-        let item = this.state.item;
-        if (!item || !item.id) return;
-        if (['type', 'align', 'italic', 'bold', 'movable'].includes(type)) {
-            switch (type) {
-                case 'italic':
-                    return type == enmu.italic.normal ? 'normal' : 'italic';
-                case 'bold':
-                    return type == enmu.bold.normal ? 'normal' : 'bold';
-                case 'movable':
-                    return type == enmu.movable.move ? 'move' : 'unMove';
-                case 'type':
-                    return type == enmu.type.text ? 'text' : 'img';
-                case 'align':
-                    return type == enmu.align.left ? 'left' : item.align == enmu.align.center ? 'center' : 'right';
-            }
-        }
-        return item[type];
     };
 
     showModal = () => {
@@ -468,13 +472,20 @@ export default class DraggableNew extends React.Component {
                                                         marginLeft: -40,
                                                         width: 40,
                                                         overflow: 'hidden'
-                                                    }}>{key}</label>
+                                                    }}>字体</label>
                                                     <Select
                                                         onSelect={this.changeItemStyle(key)}
                                                         value={_item[key] + ''}
                                                         style={{width: '100%'}}>
+                                                        {
+                                                            this.state.fontDataSource && this.state.fontDataSource.map(font => (
+                                                                <Option value={`'${font.name}'`}
+                                                                        key={`'${font.name}'`}>
+                                                                    {font.name}
+                                                                </Option>
+                                                            ))
+                                                        }
                                                         <Option value={'"宋体"'}>宋体</Option>
-                                                        <Option value={'"黑体"'}>黑体</Option>
                                                     </Select>
                                                 </Menu.Item>
                                             )
@@ -488,7 +499,7 @@ export default class DraggableNew extends React.Component {
                                                         marginLeft: -40,
                                                         width: 40,
                                                         overflow: 'hidden'
-                                                    }}>{key}</label>
+                                                    }}>对齐</label>
                                                     <Select
                                                         onSelect={this.changeItemStyle(key)}
                                                         value={_item[key] + ''}

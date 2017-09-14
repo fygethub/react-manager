@@ -272,7 +272,7 @@ let U = (function () {
                     .replace(
                         RegExp.$1,
                         ((RegExp.$1.length > 1) ? (RegExp.$1.length > 2 ? "\u661f\u671f"
-                            : "\u5468")
+                                : "\u5468")
                             : "")
                         + week[date.getDay() + ""]);
             }
@@ -280,7 +280,7 @@ let U = (function () {
                 if (new RegExp("(" + k + ")").test(fmt)) {
                     fmt = fmt.replace(RegExp.$1,
                         (RegExp.$1.length === 1) ? (o[k]) : (("00" + o[k])
-                            .substr(("" + o[k]).length)));
+                                .substr(("" + o[k]).length)));
                 }
             }
             return fmt;
@@ -671,8 +671,25 @@ let U = (function () {
         return str.replace(pattern, rep);
     }
 
+    let CssStyle = (function () {
+        let dynamicFont = (name, url) => {
+            let style = document.createElement('style');
+            style.type = 'text/css';
+            document.getElementsByTagName('head')[0].appendChild(style);
+
+            let cssText = `@font-face{font-family:'${name}';font-style:normal;src:url(${url}) format('woff');`;
+            let textNode = document.createTextNode(cssText);
+            style.appendChild(textNode);
+        };
+
+        return {
+            dynamicFont,
+        }
+    })();
+
 
     return {
+        CssStyle,
         numToChinese,
         log: log,
         isLogEnabled: isLogEnabled,

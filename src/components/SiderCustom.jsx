@@ -74,8 +74,11 @@ class SiderCustom extends Component {
                         key="/app/ui"
                         title={<span><Icon type="scan"/><span className="nav-text">合成图</span></span>}
                     >
-                        <Menu.Item key="/app/ui/drags-new"><Link to={'/app/ui/drags-new/no'}>合成图编辑</Link></Menu.Item>
-                        <Menu.Item key="/app/ui/imageUpload"><Link to={'/app/ui/compounds'}>合成图管理</Link></Menu.Item>
+                        <Menu.Item key="/app/ui/drags-new"><Link to={'/app/ui/drags-new/no'}>添加编辑</Link></Menu.Item>
+                        <Menu.Item key="/app/ui/compounds"><Link to={'/app/ui/compounds'}>合成图列表</Link></Menu.Item>
+                        <Menu.Item key="/app/ui/compound-manage">
+                            <Link to={'/app/ui/compound-manage'}>字体管理</Link>
+                        </Menu.Item>
                     </SubMenu>
                     <SubMenu
                         key="/app/system"
