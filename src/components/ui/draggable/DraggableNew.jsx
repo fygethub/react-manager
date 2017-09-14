@@ -453,7 +453,7 @@ export default class DraggableNew extends React.Component {
                                                         marginLeft: -40,
                                                         width: 40,
                                                         overflow: 'hidden'
-                                                    }}>{key}</label>
+                                                    }}>{enmu.nick[key]}</label>
                                                     <Select
                                                         onSelect={this.changeItemStyle(key)}
                                                         value={_item[key] + ''}
@@ -472,7 +472,7 @@ export default class DraggableNew extends React.Component {
                                                         marginLeft: -40,
                                                         width: 40,
                                                         overflow: 'hidden'
-                                                    }}>字体</label>
+                                                    }}>{enmu.nick[key]}</label>
                                                     <Select
                                                         onSelect={this.changeItemStyle(key)}
                                                         value={_item[key] + ''}
@@ -499,7 +499,7 @@ export default class DraggableNew extends React.Component {
                                                         marginLeft: -40,
                                                         width: 40,
                                                         overflow: 'hidden'
-                                                    }}>对齐</label>
+                                                    }}>{enmu.nick[key]}</label>
                                                     <Select
                                                         onSelect={this.changeItemStyle(key)}
                                                         value={_item[key] + ''}
@@ -520,7 +520,7 @@ export default class DraggableNew extends React.Component {
                                                         marginLeft: -40,
                                                         width: 40,
                                                         overflow: 'hidden'
-                                                    }}>{key}</label>
+                                                    }}>{enmu.nick[key]}</label>
                                                     <Input disabled={key !== 'fontColor'}
                                                            onChange={this.changeItemStyle(key)}
                                                            id="type"
@@ -535,7 +535,7 @@ export default class DraggableNew extends React.Component {
                                                     marginLeft: -40,
                                                     width: 40,
                                                     overflow: 'hidden'
-                                                }}>{key}</label>
+                                                }}>{enmu.nick[key]}</label>
                                                 <InputNumber
                                                     onChange={this.changeItemStyle(key)}
                                                     id="type"

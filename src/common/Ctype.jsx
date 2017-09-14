@@ -49,5 +49,21 @@ export default {
         bold: 1,
         normal: 0,
     },
-
+    nick: {
+        type: '类型',
+        movable: '可移动',
+        w: '宽',
+        h: '高',
+        align: '对齐',
+        background: '背景',
+        text: '内容',
+        fontColor: '颜色',
+        fontSize: '字大小',
+        fontFamily: '字体',
+        x: 'x',
+        y: 'y',
+        bold: '加粗',
+        italic: '倾斜',
+        zIndex: '层级',
+    }
 };
