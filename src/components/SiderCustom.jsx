@@ -90,14 +90,6 @@ class SiderCustom extends Component {
                         <Menu.Item key="/app/user/users"><Link to={'/app/user/users'}>用户列表</Link></Menu.Item>
                     </SubMenu>
                 </Menu>
-                <style>
-                    {`
-                    #nprogress .spinner{
-                        left: ${this.state.collapsed ? '70px' : '206px'};
-                        right: 0 !important;
-                    }
-                    `}
-                </style>
             </Sider>
         )
     }

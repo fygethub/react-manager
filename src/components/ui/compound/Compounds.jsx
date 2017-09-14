@@ -3,7 +3,7 @@ import antd from 'antd';
 import {Row, Col, Button, message, Popconfirm, Card, Tooltip, Select} from 'antd';
 import {hashHistory} from 'react-router';
 import U from '../../../common/U';
-import './compound.less';
+import '../../../style/ui/compound.less';
 import App from '../../../common/App.jsx';
 import enmu from '../../../common/Ctype'
 
@@ -21,7 +21,9 @@ export default class Compounds extends React.Component {
                 total: 0,
                 pageSize: 10,
                 current: 1,
+                expandedRowKeys: [],
             },
+
             imgLoaded: false,
         };
 
@@ -50,12 +52,13 @@ export default class Compounds extends React.Component {
                                 this.setState({
                                     imgLoaded: true,
                                 })
-                            }, 500);
+                            }, 1000);
 
                         };
                     }
 
-                    return <a href={text} target="_blank"><img src={text} style={{width: 60}} className="img-compound"/></a>;
+                    return <a href={text} target="_blank"><img src={text} style={{width: 40, height: 40}}
+                                                               className="img-compound"/></a>;
                 }
             },
             {title: '是否上架', dataIndex: 'state', width: 150, key: 'state'},
@@ -149,7 +152,7 @@ export default class Compounds extends React.Component {
         let summary = '';
         let url = text === 'remove' ? ['adm/compound/remove', summary = '删除成功,恢复不了了哦'][0] :
             text === 'enable' ? ['adm/compound/enable', summary = '上架成功,马上就有用户了'][0] :
-                ['adm/compound/disable', summary = '下架成功.... 无f**k说'][0];
+                ['adm/compound/disable', summary = '下架成功'][0];
 
         App.api(url, {
             compoundId: record.id,
@@ -157,6 +160,47 @@ export default class Compounds extends React.Component {
             message.success(summary);
             this.loadData();
         })
+    };
+
+    setExpandedRowKeys = (record) => {
+        let expandedRows = this.state.table.expandedRowKeys;
+        let index = expandedRows && expandedRows.findIndex(id => id == record.id);
+        if (index > -1) {
+            expandedRows.splice(index, 1);
+            this.setState({
+                table: {
+                    ...this.state.table,
+                    expandedRowKeys: expandedRows,
+                }
+            });
+            return;
+        }
+
+        expandedRows.push(record.id);
+        this.setState({
+            table: {...this.state.table, expandedRowKeys: expandedRows,}
+        })
+    };
+
+    expandedToggleAllRow = () => {
+        if (this.state.table.expandedRowKeys.length > 0) {
+            this.setState({
+                table: {
+                    ...this.state.table,
+                    expandedRowKeys: [],
+                }
+            });
+            return;
+        }
+
+        let dataSource = this.state.table.dataSource;
+        let expandedRowKeys = dataSource.map(record => record.id);
+        this.setState({
+            table: {
+                ...this.state.table,
+                expandedRowKeys,
+            }
+        });
     };
 
     expandedRowRender = (record) => {
@@ -172,7 +216,9 @@ export default class Compounds extends React.Component {
             {title: 'y', dataIndex: 'y', key: 'y'},
             {
                 title: '图片', dataIndex: 'url', key: 'url',
-                render: text => <a href={text} target="_blank"><img style={{width: 40}} src={text}/></a>
+                render: text => <a href={text} target="_blank"><img style={{width: 40, height: 40, lineHeight: '40px'}}
+                                                                    src={text}
+                                                                    alt="没有图片"/></a>
             },
             {title: 'text', dataIndex: 'text', key: 'text'},
             {title: 'align', dataIndex: 'align', key: 'align'},
@@ -240,12 +286,18 @@ export default class Compounds extends React.Component {
                     <Row gutter={16}>
                         <Col className="gutter-row" span={24}>
                             <div className="gutter-box">
-                                <Card title="合成图管理" bordered={false}>
+                                <Card title={<div>合成图管理 <Button
+                                    onClick={this.expandedToggleAllRow}>
+                                    {this.state.table.expandedRowKeys.length == 0 ? '展开全部' : '收起全部'}</Button>
+                                </div>}
+                                      bordered={false}>
                                     <Table
                                         scroll={{x: 1800}}
                                         rowKey={record => record.id}
                                         columns={this.columns}
                                         expandedRowRender={this.expandedRowRender}
+                                        expandedRowKeys={this.state.table.expandedRowKeys}
+                                        onRowClick={this.setExpandedRowKeys}
                                         dataSource={this.state.table.dataSource}
                                         onChange={this.tableOnchange}
                                         pagination={pagination}

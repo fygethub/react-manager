@@ -14,40 +14,14 @@ import thunk from 'redux-thunk';
 import {logger} from './middleware';
 import {createStore, applyMiddleware} from 'redux';
 import reducer from './reducer';
-/*import AuthBasic from './components/auth/Basic';
- import RouterEnter from './components/auth/RouterEnter';*/
 
+import CompoundsManage from './components/ui/compound-manage/CompoundManage';
+import Compounds from './components/ui/compound/Compounds.jsx';
+import Apps from './components/app/Apps'
+import Admins from './components/admin/Admins'
+import Users from './components/user/Users'
+import SystemConfig from './components/system/SystemConfig.jsx'
 
-const Compounds = (location, cb) => {
-    require.ensure([], require => {
-        cb(null, require('./components/ui/compound/Compounds.jsx').default);
-    }, 'Compounds');
-};
-
-const SystemConfig = (location, cb) => {
-    require.ensure([], require => {
-        cb(null, require('./components/system/SystemConfig.jsx').default);
-    }, 'SystemConfig');
-
-};
-
-const Apps = (location, cb) => {
-    require.ensure([], require => {
-        cb(null, require('./components/app/Apps').default);
-    }, 'Apps');
-};
-
-const Admins = (location, cb) => {
-    require.ensure([], require => {
-        cb(null, require('./components/admin/Admins').default);
-    }, 'Admins');
-};
-
-const Users = (location, cb) => {
-    require.ensure([], require => {
-        cb(null, require('./components/user/Users').default);
-    }, 'Users');
-};
 
 
 const routes =
@@ -55,21 +29,22 @@ const routes =
         <IndexRedirect to="/app/ui/compounds"/>
         <Route path={'app'} component={App}>
             <Route path={'app'}>
-                <Route path={'apps'} getComponent={Apps}/>
+                <Route path={'apps'} component={Apps}/>
             </Route>
             <Route path={'admin'}>
-                <Route path={'admins'} getComponent={Admins}/>
+                <Route path={'admins'} component={Admins}/>
             </Route>
             <Route path={'user'}>
-                <Route path={'users'} getComponent={Users}/>
+                <Route path={'users'} component={Users}/>
             </Route>
             <Route path={'system'}>
-                <Route path={'config'} getComponent={SystemConfig}/>
+                <Route path={'config'} component={SystemConfig}/>
             </Route>
             <Route path={'ui'}>
                 <Route path={'drags/:id'} component={Drags}/>
                 <Route path={'drags-new/:id'} component={DragsNew}/>
-                <Route path={'compounds'} getComponent={Compounds}/>
+                <Route path={'compounds'} component={Compounds}/>
+                <Route path={'compound-manage'} component={CompoundsManage}/>
             </Route>
             <Route path={'dashboard/index'} component={Dashboard}/>
         </Route>
