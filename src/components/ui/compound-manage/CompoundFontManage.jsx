@@ -23,23 +23,21 @@ export default class CompoundFontManage extends React.Component {
         };
 
         this.columns = [
-            {title: 'id', dataIndex: 'id', key: 'id'},
-            {title: '名称', dataIndex: 'name', key: 'name'},
+            {title: 'id', dataIndex: 'id', key: 'id', width: 190,},
+            {title: '名称', dataIndex: 'name', key: 'name', width: 190,},
             {
-                title: '大小', dataIndex: 'size', key: 'size',
+                title: '大小', dataIndex: 'size', key: 'size', width: 190,
                 render: (size) => <span>{size > 1024 ? (~~(size / 1024)) + 'kb' : size + 'B'}</span>
 
-            },
-            {title: '', dataIndex: 'null', key: 'null'},
-            {
-                title: '地址', dataIndex: 'url', key: 'url',
             },
             {
                 title: '操作',
                 dataIndex: 'option',
+                width: 190,
                 key: 'option',
                 render: this.renderAction,
-            }
+            },
+            {title: '', dataIndex: 'null', key: 'null'},
         ];
     }
 
