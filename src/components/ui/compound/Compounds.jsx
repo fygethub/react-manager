@@ -15,7 +15,7 @@ export default class Compounds extends React.Component {
         super(props);
 
         this.state = {
-            category: 3,
+            category: 1,
             table: {
                 dataSource: [],
                 offset: 0,

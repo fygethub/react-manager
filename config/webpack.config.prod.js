@@ -28,8 +28,12 @@ const env = getClientEnvironment(publicUrl);
 
 // Assert this just to be safe.
 // Development builds of React are slow and not intended for production.
-if (env.stringified['process.env'].NODE_ENV !== '"production"' && env.stringified['process.env'].NODE_ENV !== '"sandbox"') {
+if (env.stringified['process.env'].NODE_ENV !== '"production"' && env.stringified['process.env'].NODE_ENV !== '"development"') {
     throw new Error('Production builds must have NODE_ENV=production or sandbox.');
+}
+
+if (env.stringified['process.env'].API_ENV !== '"prod"' && env.stringified['process.env'].API_ENV !== '"sandbox"' && env.stringified['process.env'].API_ENV !== '"dev"') {
+    throw new Error('Production builds must have NODE_ENV=prod or sandbox or dev.');
 }
 
 // Note: defined here because it will be used more than once.

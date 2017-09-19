@@ -7,25 +7,17 @@ import {message} from 'antd';
 import cookie from 'js-cookie';
 import U from '../utils';
 
-let ENV = 'sandbox';
-if (process.env.NODE_ENV == 'production') {
-    ENV = 'prod';
+
+let ENV_CONFIG;
+if (process.env.API_ENV == 'sandbox' || process.env.API_ENV == 'dev') {
+    ENV_CONFIG = require('./env/sandbox').default;
 }
 
-const ENV_CONFIG = {
-    prod: {
-        api: '//api.wakkaa.com/1/',
-        log: false,
-        cookieDomain: window.location.hostname,
-    },
-    sandbox: {
-        api: '//sandbox-api.wakkaa.com/1/',
-        log: false,
-        cookieDomain: window.location.hostname,
-    }
-};
+if (process.env.API_ENV == 'prod') {
+    ENV_CONFIG = require('./env/prod').default;
+}
 
-const API_BASE = window.location.protocol + ENV_CONFIG[ENV].api;
+const API_BASE = window.location.protocol + ENV_CONFIG.api;
 
 const instanceFactory = () => {
     let instance = axios.create({
@@ -80,7 +72,7 @@ const saveCookie = (k, v, opt) => {
         }
     }
     cookie.set(k, v, {
-        domain: ENV_CONFIG[ENV].cookieDomain,
+        domain: ENV_CONFIG.cookieDomain,
         path: '/',
         expires: expiresDate,
     })

@@ -479,8 +479,8 @@ export default class DraggableNew extends React.Component {
                                                         style={{width: '100%'}}>
                                                         {
                                                             this.state.fontDataSource && this.state.fontDataSource.map(font => (
-                                                                <Option value={`'${font.name}'`}
-                                                                        key={`'${font.name}'`}>
+                                                                <Option value={`${font.name}`}
+                                                                        key={`${font.name}`}>
                                                                     {font.name}
                                                                 </Option>
                                                             ))

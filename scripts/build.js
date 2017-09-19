@@ -7,7 +7,8 @@ const args = minimist(process.argv.slice(2)) || 'sandbox';
 console.log('this is a ..................' + args.env + '.........environment')
 
 process.env.BABEL_ENV = 'production';
-process.env.NODE_ENV = args.env;
+process.env.NODE_ENV = 'production';
+process.env.API_ENV = args.env;
 
 // Makes the script crash on unhandled rejections instead of silently
 // ignoring them. In the future, promise rejections that are not handled will

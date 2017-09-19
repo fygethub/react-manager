@@ -76,7 +76,7 @@
   "scripts": {
     "analyze": "source-map-explorer build/static/js/main.*",
     "start": "node scripts/start.js",
-    "prod": "node scripts/build.js  --env production",
+    "prod": "node scripts/build.js  --env prod",
     "sandbox": "node scripts/build.js --env sandbox",
     "test": "node scripts/test.js --env=jsdom"
   },
