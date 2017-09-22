@@ -81,7 +81,7 @@ export default class DraggableNew extends React.Component {
                 let items = this.state.items;
                 let item = items[evt.oldIndex];
                 if (evt.oldIndex < evt.newIndex) {
-                    items.splice(evt.newIndex, 0, item);
+                    items.splice(evt.newIndex + 1, 0, item);
                     items.splice(evt.oldIndex, 1);
                 } else {
                     items.splice(evt.newIndex, 0, item);
@@ -561,7 +561,7 @@ export default class DraggableNew extends React.Component {
                     </Select>
 
                     <Select onSelect={this.onSelectItem}
-                            value={_item.id}
+                            value={_item.id || (this.state.items.length > 0 && this.state.items[0].id) }
                             style={{width: '50%'}}>
                         { this.state.items.map((item) => {
                             return <Option value={item.id}
@@ -593,24 +593,26 @@ export default class DraggableNew extends React.Component {
             <ul className={`sortItems ${this.state.isShowSortLabel && 'slideInUp'}`} id="sortItems">
                 {
                     this.state.items.map(item => {
-                        if (item.type == enmu.type.img) {
-                            return <li className="sort-item" key={item.id + 'sort'}>
-                                <Card>
-                                    <img
+                        let prop = {
+                            onClick: () => {
+                                this.onSelectItem(item.id);
+                            },
+                            onDoubleClick: () => {
+                                this.showModal();
+                            },
+                            key: item.id + 'sort',
+                            className: 'sort-item',
+                        };
+
+                        return <li {...prop}>
+                            <Card>
+                                {item.type === enmu.type.img ? <img
                                         className="sortImg"
                                         src={item.url}
-                                        alt=""/>
-                                </Card>
-                            </li>
-                        } else {
-                            return <li className="sort-item" key={item.id + 'sort'}>
-                                <Card>
-                                    <p>
-                                        {item.text}
-                                    </p>
-                                </Card>
-                            </li>
-                        }
+                                        alt=""/> : <p>{item.text}</p>   }
+                            </Card>
+                        </li>
+
                     })
                 }
             </ul>
@@ -628,7 +630,7 @@ export default class DraggableNew extends React.Component {
                     onOk={this.deleteItem(_item.id)}
                     onCancel={this.handleCancel}
                 >
-                    <p>是否删除 {_item.id}</p>
+                    <p>是否删除 {_item.text || <img src={_item.url} alt="" style={{width: 100}}/>}</p>
                 </Modal>
                 <BreadcrumbCustom first="UI" second="合成图编辑"/>
                 <Placeholders getBoundRect={this.state.showPlaceHolder && this.getBoundRect}
@@ -887,3 +889,4 @@ class DraggableItem extends React.Component {
         )
     }
 }
+
