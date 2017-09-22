@@ -687,8 +687,21 @@ let U = (function () {
         }
     })();
 
+    function shalloEqual(prev, next) {
+        if (prev === next) return true;
+        const prevKeys = Object.keys(prev);
+        const nextKeys = Object.keys(next);
+
+        if (prevKeys.length !== nextKeys.length) return false;
+
+        return prevKeys.every((key) => {
+            return prevKeys.hasOwnProperty(key) && prevKeys[key] === nextKeys[key];
+        })
+
+    }
 
     return {
+        shalloEqual,
         CssStyle,
         numToChinese,
         log: log,

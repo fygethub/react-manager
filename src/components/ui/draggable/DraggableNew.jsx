@@ -10,6 +10,7 @@ import App from '../../../common/App.jsx';
 import PictureEditor from './PictureEditor';
 import enmu from '../../../common/Ctype';
 import U from '../../../common/U';
+import Sortable from 'sortablejs';
 
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
@@ -30,16 +31,13 @@ export default class DraggableNew extends React.Component {
             collRightMenu: false,
             fontDataSource: [],
             showPlaceHolder: false,
+            isShowSortLabel: false,
         }
     }
 
     componentDidMount() {
-        document.addEventListener('keydown', (e) => {
-            if (e.shiftKey == true && e.keyCode == 83) {
-                this.uploadConstructor('no')();
-            }
-        });
-
+        this.addShiftSave();
+        this.createSortAble('sortItems');//属性可拖动
         this.loadFontList();
         let state = localStorage.getItem('state') && JSON.parse(localStorage.getItem('state'));
         if (state) {
@@ -66,6 +64,35 @@ export default class DraggableNew extends React.Component {
             return;
         }
     }
+
+    addShiftSave = () => {
+        document.addEventListener('keydown', (e) => {
+            if (e.shiftKey == true && e.keyCode == 83) {
+                this.uploadConstructor('no')();
+            }
+        });
+    };
+
+    createSortAble = (id) => {
+        let el = document.getElementById(id);
+        Sortable.create(el, {
+            onEnd: (evt) => {
+                console.log(evt.oldIndex, evt.newIndex);
+                let items = this.state.items;
+                let item = items[evt.oldIndex];
+                if (evt.oldIndex < evt.newIndex) {
+                    items.splice(evt.newIndex, 0, item);
+                    items.splice(evt.oldIndex, 1);
+                } else {
+                    items.splice(evt.newIndex, 0, item);
+                    items.splice(evt.oldIndex + 1, 1);
+                }
+                this.setState({
+                    items,
+                })
+            },
+        });
+    };
 
 
     loadFontList = () => {
@@ -317,7 +344,7 @@ export default class DraggableNew extends React.Component {
     };
 
     getBoundRect = (rectBound) => {
-        if (this.state.items.length == 0 && this.state.items[0].type != enmu.type.img) {
+        if (this.state.items.length == 0 || this.state.items[0].type != enmu.type.img) {
             message.info('没有图片层 ,or第一次不为图片层');
             return;
         }
@@ -338,7 +365,7 @@ export default class DraggableNew extends React.Component {
     };
 
     handlePlaceholder = () => {
-        if (this.state.items.length == 0 && this.state.items[0].type != enmu.type.img) {
+        if (this.state.items.length == 0 || this.state.items[0].type != enmu.type.img) {
             message.info('没有图片层 ,or第一次不为图片层');
             return;
         }
@@ -347,6 +374,247 @@ export default class DraggableNew extends React.Component {
             showPlaceHolder: !this.state.showPlaceHolder,
         });
 
+    };
+
+    toggleSortLabel = () => {
+        this.setState({
+            isShowSortLabel: !this.state.isShowSortLabel,
+        })
+    };
+
+    rightOperatorMenu = () => {
+        return (
+            <SubMenu
+                key="eidt-btn"
+                title={<span><Icon type="bars"/>基本操作</span>}>
+                <Menu.Item
+                    key="font-btn-add">
+                    <p className="edit-add" onClick={() => this.createItem(enmu.type.text)}>
+                        增加文本框</p>
+                </Menu.Item>
+                <Menu.Item
+                    key="img-btn-add">
+                    <p className="edit-add" onClick={() => this.createItem(enmu.type.img)}>增加图片框</p>
+                </Menu.Item>
+                <Menu.Item
+                    key="eidt-btn-remove">
+                    <p className="edit-remove" onClick={this.showModal}>
+                        删除当前选中</p>
+                </Menu.Item>
+                <Menu.Item
+                    key="sort-btn-add">
+                    <p className="edit-add" onClick={this.toggleSortLabel}>
+                        {!this.state.isShowSortLabel ? '打开排序' : '关闭排序'}
+                    </p>
+                </Menu.Item>
+                <Menu.Item
+                    key="place-btn-add">
+                    <p className="edit-add" onClick={this.handlePlaceholder}>
+                        { !this.state.showPlaceHolder ? ' 添加选项框' : '保存'}
+                    </p>
+                </Menu.Item>
+            </SubMenu>
+        )
+    };
+
+
+    rightStyleOperatorMenu = (_item) => {
+        return (<SubMenu
+            key="sub1"
+            title={<span><Icon type="bars"/>属性面板</span>}>
+            {Object.keys(_item).map(key => {
+                if (key == 'movable' || key == 'bold' || key == 'italic' || key == 'background') {
+                    let nor, un;
+                    switch (key) {
+                        case 'movable':
+                            nor = '可移动';
+                            un = '不可移动';
+                            break;
+                        case 'bold':
+                            nor = '正常';
+                            un = '加粗';
+                            break;
+                        case 'italic':
+                            nor = '正常';
+                            un = '倾斜';
+                            break;
+                        case 'background':
+                            nor = '白色';
+                            un = '透明';
+                            break;
+                        default:
+                            break;
+                    }
+
+                    return (
+                        <Menu.Item key={key}>
+                            <label htmlFor={key} style={{
+                                position: 'absolute',
+                                marginLeft: -40,
+                                width: 40,
+                                overflow: 'hidden'
+                            }}>{enmu.nick[key]}</label>
+                            <Select
+                                onSelect={this.changeItemStyle(key)}
+                                value={_item[key] + ''}
+                                style={{width: '100%'}}>
+                                <Option value='0'>{nor}</Option>
+                                <Option value='1'>{un}</Option>
+                            </Select>
+                        </Menu.Item>
+                    )
+                }
+                if (key == 'fontFamily') {
+                    return (
+                        <Menu.Item key={key}>
+                            <label htmlFor={key} style={{
+                                position: 'absolute',
+                                marginLeft: -40,
+                                width: 40,
+                                overflow: 'hidden'
+                            }}>{enmu.nick[key]}</label>
+                            <Select
+                                onSelect={this.changeItemStyle(key)}
+                                value={_item[key] + ''}
+                                style={{width: '100%'}}>
+                                {
+                                    this.state.fontDataSource && this.state.fontDataSource.map(font => (
+                                        <Option value={`${font.name}`}
+                                                key={`${font.name}`}>
+                                            {font.name}
+                                        </Option>
+                                    ))
+                                }
+                                <Option value={'"宋体"'}>宋体</Option>
+                            </Select>
+                        </Menu.Item>
+                    )
+                }
+                if (key == 'align') {
+                    return (
+                        <Menu.Item key={key}>
+                            <label htmlFor={key} style={{
+                                position: 'absolute',
+                                marginLeft: -40,
+                                width: 40,
+                                overflow: 'hidden'
+                            }}>{enmu.nick[key]}</label>
+                            <Select
+                                onSelect={this.changeItemStyle(key)}
+                                value={_item[key] + ''}
+                                style={{width: '100%'}}>
+                                <Option value={enmu.align.left + ''}>靠左</Option>
+                                <Option value={enmu.align.center + ''}>居中</Option>
+                                <Option value={enmu.align.right + ''}>靠右</Option>
+                            </Select>
+                        </Menu.Item>
+                    )
+                }
+                if (key == 'text' || key == 'url' || key == 'type' || key == 'id' || key == 'fontColor') {
+                    if (key !== 'fontColor') {
+                        return null;
+                    }
+                    return (
+                        <Menu.Item key={key}>
+                            <label htmlFor={key} style={{
+                                position: 'absolute',
+                                marginLeft: -40,
+                                width: 40,
+                                overflow: 'hidden'
+                            }}>{enmu.nick[key]}</label>
+                            <Input disabled={key !== 'fontColor'}
+                                   onChange={this.changeItemStyle(key)}
+                                   id="type"
+                                   value={_item[key]}/>
+                        </Menu.Item>)
+                }
+
+                return (
+                    <Menu.Item key={key}>
+                        <label htmlFor={key} style={{
+                            position: 'absolute',
+                            marginLeft: -40,
+                            width: 40,
+                            overflow: 'hidden'
+                        }}>{enmu.nick[key]}</label>
+                        <InputNumber
+                            onChange={this.changeItemStyle(key)}
+                            id="type"
+                            value={this.state.item[key]}/>
+                    </Menu.Item>)
+            })}
+        </SubMenu>)
+    };
+
+    headerOperatorMenu = (_item) => {
+        return (
+            <div className="header-operator">
+                <div className="selectItem">
+                    <Select value={this.state.category + ''}
+                            style={{width: '50%'}}
+                            onChange={this.editMsg('category')}>
+                        <Option value="1">课程</Option>
+                        <Option value="2">专栏</Option>
+                        <Option value="3">商品</Option>
+                        <Option value="4">轮播图</Option>
+                        <Option value="5">海报</Option>
+                    </Select>
+
+                    <Select onSelect={this.onSelectItem}
+                            value={_item.id}
+                            style={{width: '50%'}}>
+                        { this.state.items.map((item) => {
+                            return <Option value={item.id}
+                                           key={item.id}>{item.text || item.id}</Option>
+                        })}
+                    </Select>
+                </div>
+                <div className="menu_selectItem">
+                    <input className="edit-remove"
+                           placeholder="请输入标题"
+                           value={this.state.title}
+                           onChange={this.editMsg('title')}/>
+
+                    <div>
+                        上传设计图
+                        <input type="file"
+                               style={{position: 'absolute', left: 0, top: 0, opacity: 0}}
+                               className="edit-remove"
+                               onChange={this.uploadDesign}/>
+                    </div>
+                </div>
+            </div>
+        )
+    };
+
+
+    sortItems = () => {
+        return (
+            <ul className={`sortItems ${this.state.isShowSortLabel && 'slideInUp'}`} id="sortItems">
+                {
+                    this.state.items.map(item => {
+                        if (item.type == enmu.type.img) {
+                            return <li className="sort-item" key={item.id + 'sort'}>
+                                <Card>
+                                    <img
+                                        className="sortImg"
+                                        src={item.url}
+                                        alt=""/>
+                                </Card>
+                            </li>
+                        } else {
+                            return <li className="sort-item" key={item.id + 'sort'}>
+                                <Card>
+                                    <p>
+                                        {item.text}
+                                    </p>
+                                </Card>
+                            </li>
+                        }
+                    })
+                }
+            </ul>
+        )
     };
 
     render() {
@@ -363,47 +631,14 @@ export default class DraggableNew extends React.Component {
                     <p>是否删除 {_item.id}</p>
                 </Modal>
                 <BreadcrumbCustom first="UI" second="合成图编辑"/>
-                {this.state.showPlaceHolder && <Placeholders getBoundRect={this.getBoundRect}/>}
+                <Placeholders getBoundRect={this.state.showPlaceHolder && this.getBoundRect}
+                              visible={this.state.showPlaceHolder }/>
                 <div className="uplaodMain">
                     <img src={this.state.preview && this.state.preview.url} alt=""/>
                 </div>
+                {this.sortItems()}
                 <div className="operator">
-                    <div className="header-operator">
-                        <div className="selectItem">
-                            <Select value={this.state.category + ''}
-                                    style={{width: '50%'}}
-                                    onChange={this.editMsg('category')}>
-                                <Option value="1">课程</Option>
-                                <Option value="2">专栏</Option>
-                                <Option value="3">商品</Option>
-                                <Option value="4">轮播图</Option>
-                                <Option value="5">海报</Option>
-                            </Select>
-
-                            <Select onSelect={this.onSelectItem}
-                                    value={_item.id}
-                                    style={{width: '50%'}}>
-                                { this.state.items.map((item) => {
-                                    return <Option value={item.id}
-                                                   key={item.id}>{item.text || item.id}</Option>
-                                })}
-                            </Select>
-                        </div>
-                        <div className="menu_selectItem">
-                            <input className="edit-remove"
-                                   placeholder="请输入标题"
-                                   value={this.state.title}
-                                   onChange={this.editMsg('title')}/>
-
-                            <div>
-                                上传设计图
-                                <input type="file"
-                                       style={{position: 'absolute', left: 0, top: 0, opacity: 0}}
-                                       className="edit-remove"
-                                       onChange={this.uploadDesign}/>
-                            </div>
-                        </div>
-                    </div>
+                    {this.headerOperatorMenu(_item)}
                     <div className="flex">
                         <div className="content-operator">
                             { _items.map((item) => {
@@ -446,154 +681,8 @@ export default class DraggableNew extends React.Component {
                                 defaultSelectedKeys={['1']}
                                 defaultOpenKeys={['sub1']}
                                 mode="inline">
-                                <SubMenu
-                                    key="eidt-btn"
-                                    title={<span><Icon type="bars"/>基本操作</span>}>
-                                    <Menu.Item
-                                        key="font-btn-add">
-                                        <p className="edit-add" onClick={() => this.createItem(enmu.type.text)}>
-                                            增加文本框</p>
-                                    </Menu.Item>
-                                    <Menu.Item
-                                        key="img-btn-add">
-                                        <p className="edit-add" onClick={() => this.createItem(enmu.type.img)}>增加图片框</p>
-                                    </Menu.Item>
-                                    <Menu.Item
-                                        key="eidt-btn-remove">
-                                        <p className="edit-remove" onClick={this.showModal}>
-                                            删除当前选中</p>
-                                    </Menu.Item>
-                                    <Menu.Item
-                                        key="place-btn-add">
-                                        <p className="edit-add" onClick={this.handlePlaceholder}>
-                                            { !this.state.showPlaceHolder ? ' 添加选项框' : '保存'}
-                                        </p>
-                                    </Menu.Item>
-                                </SubMenu>
-                                <SubMenu
-                                    key="sub1"
-                                    title={<span><Icon type="bars"/>属性面板</span>}>
-                                    {Object.keys(_item).map(key => {
-                                        if (key == 'movable' || key == 'bold' || key == 'italic' || key == 'background') {
-                                            let nor, un;
-                                            switch (key) {
-                                                case 'movable':
-                                                    nor = '可移动';
-                                                    un = '不可移动';
-                                                    break;
-                                                case 'bold':
-                                                    nor = '正常';
-                                                    un = '加粗';
-                                                    break;
-                                                case 'italic':
-                                                    nor = '正常';
-                                                    un = '倾斜';
-                                                    break;
-                                                case 'background':
-                                                    nor = '白色';
-                                                    un = '透明';
-                                                    break;
-                                                default:
-                                                    break;
-                                            }
-
-                                            return (
-                                                <Menu.Item key={key}>
-                                                    <label htmlFor={key} style={{
-                                                        position: 'absolute',
-                                                        marginLeft: -40,
-                                                        width: 40,
-                                                        overflow: 'hidden'
-                                                    }}>{enmu.nick[key]}</label>
-                                                    <Select
-                                                        onSelect={this.changeItemStyle(key)}
-                                                        value={_item[key] + ''}
-                                                        style={{width: '100%'}}>
-                                                        <Option value='0'>{nor}</Option>
-                                                        <Option value='1'>{un}</Option>
-                                                    </Select>
-                                                </Menu.Item>
-                                            )
-                                        }
-                                        if (key == 'fontFamily') {
-                                            return (
-                                                <Menu.Item key={key}>
-                                                    <label htmlFor={key} style={{
-                                                        position: 'absolute',
-                                                        marginLeft: -40,
-                                                        width: 40,
-                                                        overflow: 'hidden'
-                                                    }}>{enmu.nick[key]}</label>
-                                                    <Select
-                                                        onSelect={this.changeItemStyle(key)}
-                                                        value={_item[key] + ''}
-                                                        style={{width: '100%'}}>
-                                                        {
-                                                            this.state.fontDataSource && this.state.fontDataSource.map(font => (
-                                                                <Option value={`${font.name}`}
-                                                                        key={`${font.name}`}>
-                                                                    {font.name}
-                                                                </Option>
-                                                            ))
-                                                        }
-                                                        <Option value={'"宋体"'}>宋体</Option>
-                                                    </Select>
-                                                </Menu.Item>
-                                            )
-                                        }
-
-                                        if (key == 'align') {
-                                            return (
-                                                <Menu.Item key={key}>
-                                                    <label htmlFor={key} style={{
-                                                        position: 'absolute',
-                                                        marginLeft: -40,
-                                                        width: 40,
-                                                        overflow: 'hidden'
-                                                    }}>{enmu.nick[key]}</label>
-                                                    <Select
-                                                        onSelect={this.changeItemStyle(key)}
-                                                        value={_item[key] + ''}
-                                                        style={{width: '100%'}}>
-                                                        <Option value={enmu.align.left + ''}>靠左</Option>
-                                                        <Option value={enmu.align.center + ''}>居中</Option>
-                                                        <Option value={enmu.align.right + ''}>靠右</Option>
-                                                    </Select>
-                                                </Menu.Item>
-                                            )
-                                        }
-
-                                        if (key == 'text' || key == 'url' || key == 'type' || key == 'id' || key == 'fontColor') {
-                                            return (
-                                                <Menu.Item key={key}>
-                                                    <label htmlFor={key} style={{
-                                                        position: 'absolute',
-                                                        marginLeft: -40,
-                                                        width: 40,
-                                                        overflow: 'hidden'
-                                                    }}>{enmu.nick[key]}</label>
-                                                    <Input disabled={key !== 'fontColor'}
-                                                           onChange={this.changeItemStyle(key)}
-                                                           id="type"
-                                                           value={_item[key]}/>
-                                                </Menu.Item>)
-                                        }
-
-                                        return (
-                                            <Menu.Item key={key}>
-                                                <label htmlFor={key} style={{
-                                                    position: 'absolute',
-                                                    marginLeft: -40,
-                                                    width: 40,
-                                                    overflow: 'hidden'
-                                                }}>{enmu.nick[key]}</label>
-                                                <InputNumber
-                                                    onChange={this.changeItemStyle(key)}
-                                                    id="type"
-                                                    value={this.state.item[key]}/>
-                                            </Menu.Item>)
-                                    })}
-                                </SubMenu>
+                                {this.rightOperatorMenu()}
+                                {this.rightStyleOperatorMenu(_item)}
                             </Menu>
                             <div className="submit">
                                 <Button className="button"
@@ -612,8 +701,9 @@ export default class DraggableNew extends React.Component {
 class Placeholders extends React.Component {
 
     static propTypes = {
+        visible: PropTypes.bool,
         relateQuery: PropTypes.string.isRequired,
-        getBoundRect: PropTypes.func,
+        getBoundRect: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]),
     };
 
     static defaultProps = {
@@ -649,9 +739,11 @@ class Placeholders extends React.Component {
     }
 
     componentWillReceiveProps() {
-        setTimeout(() => {
-            this.calcStyle();
-        }, 1000);
+        this.calcStyle();
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        return !U.shalloEqual(this.state, nextState);
     }
 
     rectMouseHandle = () => {
@@ -705,6 +797,7 @@ class Placeholders extends React.Component {
             if (this.rectMouseDown) {
                 this.rectMouseDown = false;
             }
+            this.props.getBoundRect && this.props.getBoundRect(this.state.rectStyle);
         });
 
         this.placeHolderPage.addEventListener('mousemove', (e) => {
@@ -739,6 +832,7 @@ class Placeholders extends React.Component {
             backgroundColor: 'rgba(0,0,0,.28)',
             zIndex: 999,
             ...this.state.style,
+            display: this.props.visible ? 'block' : 'none',
         };
         const rectStyle = {
             position: 'absolute',
