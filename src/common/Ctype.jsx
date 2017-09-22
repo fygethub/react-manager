@@ -18,7 +18,7 @@ export default {
     },
     default: {
         text: {
-            text: '😁',
+            text: '请输入文字',
             align: 1,
             fontColor: '#000',
             fontFamily: '宋体',

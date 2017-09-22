@@ -221,7 +221,7 @@ export default class Compounds extends React.Component {
                                                                     src={text}
                                                                     alt="没有图片"/></a>
             },
-            {title: '内容',  width: 190,dataIndex: 'text', key: 'text'},
+            {title: '内容', width: 190, dataIndex: 'text', key: 'text'},
             {title: '对齐方式', width: 90, dataIndex: 'align', key: 'align'},
             {title: '倾斜', width: 90, dataIndex: 'italic', key: 'italic'},
             {title: '加粗', width: 90, dataIndex: 'bold', key: 'bold'},
@@ -279,6 +279,7 @@ export default class Compounds extends React.Component {
                                 <Option value="2">专栏</Option>
                                 <Option value="3">商品</Option>
                                 <Option value="4">轮播图</Option>
+                                <Option value="5">海报</Option>
                             </Select>
                         </div>
                     </Col>

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {Menu, Icon, Card, message, Select, InputNumber, Button, Input, Modal} from 'antd';
 import BreadcrumbCustom from '../../BreadcrumbCustom';
 import Draggable from 'react-draggable';
@@ -28,10 +29,17 @@ export default class DraggableNew extends React.Component {
             visible: false,
             collRightMenu: false,
             fontDataSource: [],
+            showPlaceHolder: false,
         }
     }
 
     componentDidMount() {
+        document.addEventListener('keydown', (e) => {
+            if (e.shiftKey == true && e.keyCode == 83) {
+                this.uploadConstructor('no')();
+            }
+        });
+
         this.loadFontList();
         let state = localStorage.getItem('state') && JSON.parse(localStorage.getItem('state'));
         if (state) {
@@ -88,7 +96,7 @@ export default class DraggableNew extends React.Component {
             movable: enmu.movable.move,
             w: enmu.len.middle,
             h: enmu.len.middle,
-            background: enmu.background.white,//1111
+            background: enmu.background.transparent,//1111
         };
 
         if (type == enmu.type.img) {
@@ -132,7 +140,6 @@ export default class DraggableNew extends React.Component {
         this.timer_save = setTimeout(() => {
             localStorage.setItem('state', JSON.stringify(nextState));
         }, 2000);
-
     }
 
     onStart = (_item) => (e, item1) => {
@@ -150,7 +157,7 @@ export default class DraggableNew extends React.Component {
     };
 
     deleteItem = (id) => (e) => {
-        id = id || this.state.item.id;
+        id = id || (this.state.item && this.state.item.id);
         let items = this.state.items.filter((item) => item.id != id);
         this.setState({
             items,
@@ -161,7 +168,7 @@ export default class DraggableNew extends React.Component {
 
     itemAttrChange = (type) => (text) => {
         let items = this.state.items.map(item => {
-            if (item.id == this.state.item.id) {
+            if (item && this.state.item && item.id == this.state.item.id) {
                 item[type] = text;
             }
             return item;
@@ -264,6 +271,9 @@ export default class DraggableNew extends React.Component {
             }
             return layer;
         });
+
+        layers[0].placeholders = this.state.items[0].placeholders;
+
         compound.title = this.state.title;
         compound.category = this.state.category;
         compound.priority = this.state.priority;
@@ -306,6 +316,39 @@ export default class DraggableNew extends React.Component {
         })
     };
 
+    getBoundRect = (rectBound) => {
+        if (this.state.items.length == 0 && this.state.items[0].type != enmu.type.img) {
+            message.info('没有图片层 ,or第一次不为图片层');
+            return;
+        }
+
+        let items = this.state.items;
+        let placeholders = [];
+        placeholders.push({
+            x: rectBound.left,
+            y: rectBound.top,
+            w: rectBound.width,
+            h: rectBound.height,
+        });
+        items[0].placeholders = placeholders;
+        this.setState({
+            items
+        });
+
+    };
+
+    handlePlaceholder = () => {
+        if (this.state.items.length == 0 && this.state.items[0].type != enmu.type.img) {
+            message.info('没有图片层 ,or第一次不为图片层');
+            return;
+        }
+
+        this.setState({
+            showPlaceHolder: !this.state.showPlaceHolder,
+        });
+
+    };
+
     render() {
         let _item = this.state.item || {};
         let _items = this.state.items;
@@ -320,6 +363,7 @@ export default class DraggableNew extends React.Component {
                     <p>是否删除 {_item.id}</p>
                 </Modal>
                 <BreadcrumbCustom first="UI" second="合成图编辑"/>
+                {this.state.showPlaceHolder && <Placeholders getBoundRect={this.getBoundRect}/>}
                 <div className="uplaodMain">
                     <img src={this.state.preview && this.state.preview.url} alt=""/>
                 </div>
@@ -333,6 +377,7 @@ export default class DraggableNew extends React.Component {
                                 <Option value="2">专栏</Option>
                                 <Option value="3">商品</Option>
                                 <Option value="4">轮播图</Option>
+                                <Option value="5">海报</Option>
                             </Select>
 
                             <Select onSelect={this.onSelectItem}
@@ -417,6 +462,12 @@ export default class DraggableNew extends React.Component {
                                         key="eidt-btn-remove">
                                         <p className="edit-remove" onClick={this.showModal}>
                                             删除当前选中</p>
+                                    </Menu.Item>
+                                    <Menu.Item
+                                        key="place-btn-add">
+                                        <p className="edit-add" onClick={this.handlePlaceholder}>
+                                            { !this.state.showPlaceHolder ? ' 添加选项框' : '保存'}
+                                        </p>
                                     </Menu.Item>
                                 </SubMenu>
                                 <SubMenu
@@ -553,6 +604,154 @@ export default class DraggableNew extends React.Component {
                         </div>
                     </div>
                 </div>
+            </div>
+        )
+    }
+}
+
+class Placeholders extends React.Component {
+
+    static propTypes = {
+        relateQuery: PropTypes.string.isRequired,
+        getBoundRect: PropTypes.func,
+    };
+
+    static defaultProps = {
+        relateQuery: '.content-operator',
+    };
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            style: {
+                top: 80,
+                left: 0,
+            },
+            rectStyle: {
+                top: 0,
+                left: 0,
+                width: 0,
+                height: 0,
+            }
+        };
+        this.rectDone = false;//矩形框是否画完;
+        this.offsetRectX = 0;
+        this.offsetRectY = 0;
+    }
+
+    componentDidMount() {
+        this.relateQuery = document.querySelector(this.props.relateQuery);
+        this.placeHolderPage = document.querySelector('#placeHolder');
+        this.placeRect = document.querySelector('#placeholder-rect');
+        this.calcStyle();
+        this.pageMouseHandle();
+        this.rectMouseHandle();
+    }
+
+    componentWillReceiveProps() {
+        setTimeout(() => {
+            this.calcStyle();
+        }, 1000);
+    }
+
+    rectMouseHandle = () => {
+
+        this.placeRect.addEventListener('mousedown', (e) => {
+            this.rectDone = true;
+            this.rectMouseDown = true;
+            this.offsetRectX = e.offsetX;
+            this.offsetRectY = e.offsetY;
+        });
+
+        this.placeRect.addEventListener('mousemove', (e) => {
+            if (this.rectDone && this.rectMouseDown) {
+                console.log('...page move move rect', e.offsetX, e.offsetY, this.offsetRectX, this.offsetRectY);
+
+                this.setState({
+                    rectStyle: {
+                        ...this.state.rectStyle,
+                        left: this.state.rectStyle.left + (e.offsetX - this.offsetRectX),
+                        top: this.state.rectStyle.top + (e.offsetY - this.offsetRectY),
+                    }
+                }, () => {
+                    this.props.getBoundRect && this.props.getBoundRect(this.state.rectStyle);
+                });
+
+            }
+        });
+    };
+
+    pageMouseHandle = () => {
+        this.pageMouseDown = false;
+        this.placeHolderPage.addEventListener('mousedown', (e) => {
+            console.log('..page down');
+            if (!this.rectMouseDown) {
+                this.pageMouseDown = true;
+                this.rectDone = false;
+                this.setState({
+                    rectStyle: {
+                        ...this.state.rectStyle,
+                        left: e.offsetX,
+                        top: e.offsetY,
+                        width: 0,
+                        height: 0,
+                    }
+                })
+            }
+        });
+
+        document.addEventListener('mouseup', (e) => {
+            this.pageMouseDown = false;
+            if (this.rectMouseDown) {
+                this.rectMouseDown = false;
+            }
+        });
+
+        this.placeHolderPage.addEventListener('mousemove', (e) => {
+            if (this.pageMouseDown && !this.rectDone) {
+                let width = e.offsetX - this.state.rectStyle.left;
+                let height = e.offsetY - this.state.rectStyle.top;
+                this.setState({
+                    rectStyle: {
+                        ...this.state.rectStyle,
+                        width,
+                        height,
+                    }
+                })
+            }
+        })
+    };
+
+    calcStyle = () => {
+        const react = this.relateQuery.getBoundingClientRect();
+        this.setState({
+            style: {
+                width: this.relateQuery.clientWidth,
+                height: this.relateQuery.clientHeight,
+                ...this.state.style,
+            }
+        })
+    };
+
+    render() {
+        const pageStyle = {
+            position: 'absolute',
+            backgroundColor: 'rgba(0,0,0,.28)',
+            zIndex: 999,
+            ...this.state.style,
+        };
+        const rectStyle = {
+            position: 'absolute',
+            backgroundColor: 'rgba(0,255,0,.2)',
+            cursor: 'move',
+            ...this.state.rectStyle,
+        };
+        return (
+            <div className="placeholder-page" style={pageStyle} id="placeHolder">
+                <div
+                    className="rect"
+                    id="placeholder-rect"
+                    style={rectStyle}/>
             </div>
         )
     }

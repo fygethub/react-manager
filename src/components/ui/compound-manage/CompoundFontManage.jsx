@@ -120,6 +120,7 @@ export default class CompoundFontManage extends React.Component {
             App.api('adm/compound/save_font', {
                 font: JSON.stringify({
                     name: values.name,
+                    uname: values.uname,
                     ttf: {
                         url: values.url,
                         size: values.size,
@@ -201,6 +202,13 @@ const CollectionCreateForm = Form.create()(
                         {getFieldDecorator('name', {
                             rules: [{required: true, message: 'Please input the name!'}],
                             initialValue: file && file.name.split('.')[0],
+                        })(
+                            <Input />
+                        )}
+                    </FormItem>
+                    <FormItem label="uname">
+                        {getFieldDecorator('uname', {
+                            rules: [{required: true, message: 'Please input the uname!'}],
                         })(
                             <Input />
                         )}
