@@ -70,7 +70,6 @@ export default class Compounds extends React.Component {
                 dataIndex: 'option',
                 key: 'option',
                 render: this.renderAction,
-                fixed: 'right'
             }
         ];
 
@@ -125,19 +124,19 @@ export default class Compounds extends React.Component {
 
     renderAction = (text, record) => {
         return <div style={{display: 'flex', justifyContent: 'space-around'}}>
-            <Popconfirm placement="left" title="你想好了要删掉吗, 创建一个不容易的."
+            <Popconfirm placement="left" title=" 删掉吗"
                         onConfirm={this.removeCompound('remove', record)}
                         okText="是的" cancelText="我再想想">
                 <Button>删除</Button>
             </Popconfirm>
-            <Popconfirm placement="left" title="做好了吗就上架?.经过老大确认没."
+            <Popconfirm placement="left" title="上架?"
                         onConfirm={this.removeCompound('enable', record)}
-                        okText="老大确认了上架!" cancelText="好像没有确认,我再问问">
+                        okText="确认" cancelText="取消">
                 <Button>上架</Button>
             </Popconfirm>
-            <Popconfirm placement="left" title="为什么下架, 没做好吗? 上架的时候为森马不多想想."
+            <Popconfirm placement="left" title="下架?"
                         onConfirm={this.removeCompound('disable', record)}
-                        okText="老大说的下架" cancelText="我就点着玩">
+                        okText="确认" cancelText="取消">
                 <Button>下架</Button>
             </Popconfirm>
             <Button onClick={this.updateCompound(record)}>编辑</Button>

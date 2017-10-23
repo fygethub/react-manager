@@ -616,25 +616,54 @@ let U = (function () {
     };
 
 
+    const page = (() => {
+        let tabKey = 'key-page-tab-index';
+        let currentPageKey = 'key-page-pageNo';
+        let setTabIndex = (index) => {
+            localStorage.setItem(tabKey, index);
+        };
+
+        let getTabIndex = () => {
+            return localStorage.getItem(tabKey) ? parseInt(localStorage.getItem(tabKey)) : 0
+        };
+
+        let setCurrentPage = (pageno) => {
+            let index = getTabIndex();
+            localStorage.setItem(currentPageKey + '-' + index, pageno);
+        };
+
+        let getCurrentPage = () => {
+            let index = getTabIndex();
+            return localStorage.getItem(currentPageKey + '-' + index) ? parseInt(localStorage.getItem(currentPageKey + '-' + index)) : 1
+        };
+
+        let clearPageStrage = () => {
+            let index = getTabIndex();
+            localStorage.removeItem(currentPageKey + '-' + index);
+        };
+        return {setTabIndex, getTabIndex, setCurrentPage, getCurrentPage, clearPageStrage,}
+    })();
+
     return {
+        page,
         log: log,
-        queryString: queryString,
+        queryString,
         judgeWeixinBridge,
-        isLogEnabled: isLogEnabled,
-        enableLog: enableLog,
-        isNull: isNull,
-        isNotNull: isNotNull,
-        str: str,
-        date: date,
+        isLogEnabled,
+        enableLog,
+        isNull,
+        isNotNull,
+        str,
+        date,
         array,
-        getParameter: getParameter,
-        getHashParameter: getHashParameter,
-        shortNumber: shortNumber,
-        getDomainFromUrl: getDomainFromUrl,
+        getParameter,
+        getHashParameter,
+        shortNumber,
+        getDomainFromUrl,
         getShopIdFromUrl,
-        countryCode: countryCode,
-        convertBigDecimal: convertBigDecimal,
-        isIOS: isIOS,
+        countryCode,
+        convertBigDecimal,
+        isIOS,
         formatCurrency,
         setWXTitle
     };

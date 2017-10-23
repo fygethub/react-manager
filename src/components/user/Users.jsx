@@ -9,31 +9,77 @@ class Users extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: [{nick: 1, key: '1'}],
             inputText: '',
-            inputMobile: false,
-            inputId: false,
-            inputNick: false,
+            type: 'nick',
             table: {
                 dataSource: [],
                 offset: 0,
                 total: 0,
                 pageSize: 10,
-                current: 1,
+                current: U.page.getCurrentPage(),
             },
             visible: false,
             model: '',
             record: {},
         };
-        this.InputNick = null;
-        this.InputMobile = null;
-        this.InputId = null;
+
+        this.columns = [
+            {
+                title: 'ID',
+                dataIndex: 'id',
+                key: 'id',
+            },
+            {
+                title: '昵称',
+                dataIndex: 'nick',
+                key: 'nick',
+            },
+            {
+                title: '头像',
+                dataIndex: 'avatar',
+                key: 'avatar',
+                render: (text, record, index) => {
+                    return <div className="table-avatar">
+                        <img src={record.avatar} alt="picture"/>
+                    </div>
+                },
+            },
+            {
+                title: '姓名',
+                dataIndex: 'name',
+                key: 'name'
+            },
+            {
+                title: '手机',
+                dataIndex: 'mobile',
+                key: 'mobile',
+            },
+            {
+                title: '注册时间',
+                dataIndex: 'createdAt',
+                key: 'createdAt',
+                render: (text, record, index) => {
+                    return <span>{U.date.format(new Date(record.createdAt), 'yyyy-MM-dd hh:mm:ss')}</span>
+                }
+
+            }, {
+                title: '操作',
+                dataIndex: 'option',
+                key: 'option',
+                render: this.renderAction,
+                width: 200,
+                fixed: 'right',
+            }
+        ];
     }
 
     componentDidMount() {
         this.loadData();
     }
 
+    componentWillUnmount() {
+        U.page.clearPageStrage();
+    }
 
     loadData = () => {
         App.api('adm/user/users', {
@@ -52,7 +98,7 @@ class Users extends React.Component {
         })
     };
 
-    onSearch = (type) => () => {
+    onSearch = () => {
         let searchText = this.state.inputText;
         let search = {};
         if (searchText && searchText.length > 0) {
@@ -80,11 +126,9 @@ class Users extends React.Component {
         })
     };
 
-    onInputChange = (type) => (e) => {
-        this.setState({inputText: e.target.value, type: type});
-    };
 
     tableOnchange = (pagination) => {
+        U.page.setCurrentPage(pagination.current);
         this.setState({
             table: {
                 ...this.state.table,
@@ -96,8 +140,7 @@ class Users extends React.Component {
     };
 
     renderAction = (text, record) => {
-        return <div style={{display: 'flex', justifyContent: 'space-around'}}>
-            <Button onClick={this.showModal('id', record)}>查看id</Button>
+        return <div>
             <Button onClick={this.showModal('donate', record)}>赠送店铺</Button>
         </div>
     };
@@ -112,129 +155,31 @@ class Users extends React.Component {
     };
 
     /*关闭面板*/
-    hideModel = () => () => {
+    hideModel = () => {
         this.setState({
             visible: false,
         })
     };
 
 
-    handleSubmit = (values, e) => {
-        e.preventDefault();
+    handleSubmit = () => {
         let _this = this;
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 App.api('adm/user/present_media', {
                     ...values
-                }).then((data) => {
-                    if (data === 'success') {
-                        message.success(data);
-                        _this.hideModel();
-                    }
+                }).then(() => {
+                    message.success('success');
+                    _this.hideModel();
                 })
             }
         })
     };
 
-    renderModel = (type, record) => {
-        if (type === 'id') {
-            return (
-                <p>
-                    {record.id}
-                </p>
-            )
-        } else {
-            const {getFieldDecorator, setFieldsValue} = this.props.form;
-            const FormItem = Form.Item;
-            const Option = Select.Option;
-            return (
-                <Form onSubmit={this.handleSubmit}>
-                    <FormItem
-                        wrapperCol={{span: 8, offset: 4}}
-                        label="头像"
-                        labelCol={{span: 4}}
-                    >
-                        <div className="avatar">
-                            <img src={record.avatar} alt="avatar"/>
-                        </div>
-                    </FormItem>
-                    <FormItem
-                        wrapperCol={{span: 8, offset: 4}}
-                        label='Id'
-                        labelCol={{span: 4}}
-                    >
-                        {getFieldDecorator('userId', {
-                            initialValue: record.id,
-                        })(
-                            <Input disabled/>
-                        )}
-                    </FormItem>
-                    <FormItem
-                        wrapperCol={{span: 8, offset: 4}}
-                        label="昵称"
-                        labelCol={{span: 4}}
-                    >
-                        <Input value={record.nick} disabled/>
-                    </FormItem>
-                    <FormItem
-                        label="赠送套餐"
-                        wrapperCol={{span: 8, offset: 4}}
-                        labelCol={{span: 4}}
-                    >
-                        {getFieldDecorator('grade', {
-                            rules: [{required: true}],
-                            initialValue: '2',
-                        })(
-                            <Select>
-                                <Option value='2'>基础版</Option>
-                                <Option value='3'>专业版</Option>
-                                <Option value='4'>企业版</Option>
-                            </Select>
-                        )}
-
-                    </FormItem>
-                    <FormItem
-                        wrapperCol={{span: 8, offset: 4}}
-                        label='赠送时长'
-                        labelCol={{span: 4}}
-                    >
-                        {getFieldDecorator('duration', {
-                            initialValue: 365,
-                            rules: [{required: true, message: 'Please input your time above 0'}]
-                        })(
-                            <InputNumber style={{width: '100%'}} min={0}/>
-                        )}
-                    </FormItem>
-                    <FormItem
-                        wrapperCol={{span: 8, offset: 16}}
-                        labelCol={{span: 4}}
-                    >
-                        <Button onClick={this.hideModel()}>取消</Button>
-                        <Button type="primary" htmlType="submit">确认</Button>
-                    </FormItem>
-                </Form>
-            )
-        }
-
-    };
-
-    filterDropdown = (type) => {
-        let input = type == 'id' ? 'InputId' : type === 'nick' ? 'InputNick' : 'InputMobile';
-        return (
-            <div className="custom-filter-dropdown">
-                <Input
-                    ref={ele => this[input] = ele}
-                    placeholder="search name"
-                    value={this.state.inputText}
-                    onChange={this.onInputChange(type)}
-                    onPressEnter={this.onSearch(type)}
-                />
-                <Button type='primary' onClick={this.onSearch(type)}>搜索</Button>
-            </div>
-        )
-    };
-
     render() {
+        const {getFieldDecorator, setFieldsValue} = this.props.form;
+        const FormItem = Form.Item;
+        const Option = Select.Option;
         const pagination = {
             total: this.state.table.total,
             current: ~~this.state.table.offset / 10 + 1,
@@ -244,91 +189,101 @@ class Users extends React.Component {
         const record = this.state.record;
 
         let _this = this;
-        this.columns = [
-            {
-                title: 'ID',
-                dataIndex: 'id',
-                key: 'id',
-                filterDropdown: this.filterDropdown('id'),
-                render: () => <span>******</span>,
-                filterIcon: <Icon type="search"/>,
-                filterDropdownVisible: this.state.inputId,
-                onFilterDropdownVisibleChange: (visible) => {
-                    _this.setState({
-                        inputId: visible,
-                    }, () => _this.InputId.focus());
-                },
-            },
-            {
-                title: '昵称',
-                dataIndex: 'nick',
-                key: 'nick',
-                filterDropdown: this.filterDropdown('nick'),
-                filterIcon: <Icon type="search"/>,
-                filterDropdownVisible: this.state.inputNick,
-                onFilterDropdownVisibleChange: (visible) => {
-                    _this.setState({
-                        inputNick: visible,
-                    }, () => _this.InputNick.focus());
-                },
-            },
-            {
-                title: '头像',
-                dataIndex: 'avatar',
-                key: 'avatar',
-                render: (text, record, index) => {
-                    return <div className="table-avatar">
-                        <img src={record.avatar} alt="picture"/>
-                    </div>
-                },
-            },
-            {
-                title: '姓名',
-                dataIndex: 'name',
-                key: 'name'
-            },
-            {
-                title: '手机',
-                dataIndex: 'mobile',
-                key: 'mobile',
-                filterDropdown: this.filterDropdown('mobile'),
-                filterIcon: <Icon type="search"/>,
-                filterDropdownVisible: this.state.inputMobile,
-                onFilterDropdownVisibleChange: (visible) => {
-                    _this.setState({
-                        inputMobile: visible,
-                    }, () => _this.InputMobile.focus());
-                },
-            },
-            {
-                title: '注册时间',
-                dataIndex: 'createdAt',
-                key: 'createdAt',
-                render: (text, record, index) => {
-                    return <span>{U.date.format(new Date(record.createdAt), 'yyyy-MM-dd hh:mm:ss')}</span>
-                }
 
-            }, {
-                title: '操作',
-                dataIndex: 'option',
-                key: 'option',
-                render: this.renderAction,
-                width: 200,
-                fixed: 'right',
-            }
-        ];
         return (
             <div className="userDataList">
                 <BreadcrumbCustom first="用户" second="用户列表"/>
                 <Modal
-                    title={type === 'id' ? '提示(点击任意地方关闭窗口)' : '赠送店铺(点击任意地方关闭窗口)'}
+                    title={'赠送店铺'}
                     visible={this.state.visible}
-                    onOk={this.hideModel()}
-                    onCancel={this.hideModel()}
-                    className={type !== 'donate' ? '' : "users-form-model"}
+                    onOk={this.handleSubmit}
+                    onCancel={this.hideModel}
+                    className={'donate'}
                 >
-                    {this.renderModel(type, record)}
+                    <Form >
+                        <FormItem
+                            wrapperCol={{span: 8, offset: 4}}
+                            label="头像"
+                            labelCol={{span: 4}}
+                        >
+                            <div className="avatar">
+                                <img src={record.avatar} alt="avatar"/>
+                            </div>
+                        </FormItem>
+                        <FormItem
+                            wrapperCol={{span: 8, offset: 4}}
+                            label='Id'
+                            labelCol={{span: 4}}
+                        >
+                            {getFieldDecorator('userId', {
+                                initialValue: record.id,
+                            })(
+                                <Input disabled/>
+                            )}
+                        </FormItem>
+                        <FormItem
+                            wrapperCol={{span: 8, offset: 4}}
+                            label="昵称"
+                            labelCol={{span: 4}}
+                        >
+                            <Input value={record.nick} disabled/>
+                        </FormItem>
+                        <FormItem
+                            label="赠送套餐"
+                            wrapperCol={{span: 8, offset: 4}}
+                            labelCol={{span: 4}}
+                        >
+                            {getFieldDecorator('grade', {
+                                rules: [{required: true}],
+                                initialValue: '2',
+                            })(
+                                <Select>
+                                    <Option value='2'>基础版</Option>
+                                    <Option value='3'>专业版</Option>
+                                    <Option value='4'>企业版</Option>
+                                </Select>
+                            )}
+
+                        </FormItem>
+                        <FormItem
+                            wrapperCol={{span: 8, offset: 4}}
+                            label='赠送时长'
+                            labelCol={{span: 4}}
+                        >
+                            {getFieldDecorator('duration', {
+                                initialValue: 365,
+                                rules: [{required: true, message: 'Please input your time above 0'}]
+                            })(
+                                <InputNumber style={{width: '100%'}} min={0}/>
+                            )}
+                        </FormItem>
+                        <FormItem
+                            wrapperCol={{span: 8, offset: 16}}
+                            labelCol={{span: 4}}
+                        >
+                        </FormItem>
+                    </Form>
                 </Modal>
+                <div style={{display: 'flex'}}>
+                    <Select value={this.state.type} onSelect={(type) => {
+                        this.setState({
+                            type,
+                        })
+                    }}>
+                        <Option value='nick'>昵称</Option>
+                        <Option value='mobile'>手机号</Option>
+                        <Option value='id'>ID</Option>
+                    </Select>
+                    <Input value={this.state.inputText}
+                           style={{width: 250}}
+                           onChange={(e) => {
+                               this.setState({
+                                   inputText: e.target.value,
+                               })
+                           }}/>
+                    <Button onClick={this.onSearch}>搜索</Button>
+                </div>
+
                 <div className="table">
                     <Row gutter={24}>
                         <Col>
