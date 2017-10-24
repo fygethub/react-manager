@@ -9,6 +9,7 @@ import Compounds from './components/ui/compound/Compounds.jsx';
 import Admins from './components/admin/Admins'
 import Users from './components/user/Users'
 import SystemConfig from './components/system/SystemConfig.jsx'
+import Medias from './components/media/Medias';
 import Home from './Home';
 
 const routes = (
@@ -29,6 +30,9 @@ const routes = (
                     <Route path={'drags-new/:id'} component={DragsNew}/>
                     <Route path={'compounds'} component={Compounds}/>
                     <Route path={'compound-manage'} component={CompoundsManage}/>
+                </Route>
+                <Route path={'media'}>
+                    <Route path={'medias'} component={Medias}/>
                 </Route>
                 <Route path={'dashboard/index'} component={Dashboard}/>
             </Route>

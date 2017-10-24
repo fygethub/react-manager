@@ -55,6 +55,12 @@ class Users extends React.Component {
                 key: 'mobile',
             },
             {
+                title: '店铺',
+                dataIndex: 'media',
+                key: 'media',
+                render: (media) => <span>{media && media.name}</span>
+            },
+            {
                 title: '注册时间',
                 dataIndex: 'createdAt',
                 key: 'createdAt',
@@ -75,10 +81,12 @@ class Users extends React.Component {
 
     componentDidMount() {
         this.loadData();
-    }
-
-    componentWillUnmount() {
         U.page.clearPageStrage();
+        document.onkeydown = (e) => {
+            if (e.keyCode == 13) {
+                this.onSearch();
+            }
+        }
     }
 
     loadData = () => {
