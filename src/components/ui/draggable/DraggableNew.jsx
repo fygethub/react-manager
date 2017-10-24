@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {Menu, Icon, Card, message, Select, InputNumber, Button, Input, Modal} from 'antd';
 import BreadcrumbCustom from '../../BreadcrumbCustom';
 import Draggable from 'react-draggable';
-import '../../../style/ui/draggable-new.less';
+import '../../../asssets/css/ui/draggable-new.less';
 import FontEditor from './FontEditor';
 import OSSWrap from '../../../common/OSSWrap.jsx';
 import App from '../../../common/App.jsx';

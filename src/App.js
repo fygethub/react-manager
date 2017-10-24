@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Layout} from 'antd';
-import './style/index.less';
+import './asssets/css/common/index.less';
 import SiderCustom from './components/SiderCustom';
 import HeaderCustom from './components/HeaderCustom';
 import {receiveData} from './action';

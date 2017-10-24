@@ -1,12 +1,8 @@
-/**
- * Created by hao.cheng on 2017/4/13.
- */
 import React, {Component} from 'react';
 import {Menu, Icon, Layout, Badge} from 'antd';
 import screenfull from 'screenfull';
-// import { gitOauthToken, gitOauthInfo } from '../axios';
 import U from '../utils';
-import avater from '../style/imgs/b1.jpg';
+import avatar from '../asssets/images/imgs/b1.jpg';
 
 import App from '../common/App.jsx';
 const {Header} = Layout;
@@ -83,7 +79,7 @@ class HeaderCustom extends Component {
                     style={{lineHeight: '64px', float: 'right'}}
                     onClick={this.menuClick}
                 >
-                    <SubMenu title={<span className="avatar"><img src={avater} alt="头像"/><i
+                    <SubMenu title={<span className="avatar"><img src={avatar} alt="头像"/><i
                         className="on bottom b-white"/></span>}>
                         <MenuItemGroup title="用户中心">
                             <Menu.Item key="logout"><span onClick={this.logout}>退出登录</span></Menu.Item>

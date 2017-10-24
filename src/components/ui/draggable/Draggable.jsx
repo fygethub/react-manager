@@ -2,7 +2,7 @@ import React from 'react';
 import {Menu, Icon, Card, message, Select, InputNumber, Button} from 'antd';
 import BreadcrumbCustom from '../../BreadcrumbCustom';
 import Draggable from 'react-draggable';
-import '../../../style/ui/draggable.less';
+import '../../../asssets/css/ui/draggable.less';
 import FontEditor from './FontEditor';
 import OSSWrap from '../../../common/OSSWrap.jsx';
 import App from '../../../common/App.jsx';

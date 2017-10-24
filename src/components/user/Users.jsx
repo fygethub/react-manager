@@ -3,7 +3,7 @@ import {message, Card, Row, Col, Table, Input, Button, Icon, Popconfirm, Modal, 
 import BreadcrumbCustom from '../BreadcrumbCustom';
 import App from '../../common/App.jsx';
 import U from '../../utils';
-import './users.less';
+import '../../asssets/css/users/users.less';
 
 class Users extends React.Component {
     constructor(props) {

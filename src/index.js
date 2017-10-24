@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import './index.css';
-import './style/lib/animate.css';
+import './asssets/css/lib/animate.css';
 import {Router, Route, hashHistory, IndexRedirect} from 'react-router';
 import Page from './components/Page';
 import Login from './components/pages/Login';

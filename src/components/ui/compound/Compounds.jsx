@@ -4,7 +4,7 @@ import {Row, Col, Button, message, Popconfirm, Card, Tooltip, Select} from 'antd
 import {hashHistory} from 'react-router';
 import U from '../../../common/U';
 import BreadcrumbCustom from '../../BreadcrumbCustom';
-import '../../../style/ui/compound.less';
+import '../../../asssets/css/ui/compound.less';
 import App from '../../../common/App.jsx';
 import enmu from '../../../common/Ctype'
 

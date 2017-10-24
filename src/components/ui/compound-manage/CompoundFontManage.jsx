@@ -4,7 +4,7 @@ import {Row, Col, Button, message, Card, Popconfirm, Select, Input, Icon, Form, 
 import {hashHistory} from 'react-router';
 import U from '../../../common/U';
 import BreadcrumbCustom from '../../BreadcrumbCustom';
-import '../../../style/ui/compound-manage.less';
+import '../../../asssets/css/ui/compound-manage.less';
 import App from '../../../common/App.jsx';
 import OSSWrap from '../../../common/OSSWrap.jsx';
 const FormItem = Form.Item;
