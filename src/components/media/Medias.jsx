@@ -237,7 +237,12 @@ class Medias extends React.Component {
     handleAmount = (mediaId) => {
         App.api('adm/finance/media_withdraw', {
             mediaId,
-            amount: this.state.amount,
+            amount: this.state.amount * 100,
+        }).then(res => {
+            message.success('提现成功');
+            this.setState({
+                amountVisible: false,
+            })
         })
     };
 
@@ -284,7 +289,7 @@ class Medias extends React.Component {
                 <Modal
                     title={'提现'}
                     visible={this.state.amountVisible}
-                    onOk={() => this.handleAmount}
+                    onOk={() => this.handleAmount(this.state.media.id)}
                     onCancel={() => this.setState({amountVisible: false,})}
                 >
                     <Card>

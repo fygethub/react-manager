@@ -12,9 +12,6 @@ import enmu from '../../../common/Ctype';
 import U from '../../../common/U';
 import Sortable from 'sortablejs';
 
-const SubMenu = Menu.SubMenu;
-const MenuItemGroup = Menu.ItemGroup;
-const Option = Select.Option;
 export default class DraggableNew extends React.Component {
 
     constructor(props) {
@@ -384,7 +381,7 @@ export default class DraggableNew extends React.Component {
 
     rightOperatorMenu = () => {
         return (
-            <SubMenu
+            <Menu.SubMenu
                 key="eidt-btn"
                 title={<span><Icon type="bars"/>基本操作</span>}>
                 <Menu.Item
@@ -413,13 +410,13 @@ export default class DraggableNew extends React.Component {
                         { !this.state.showPlaceHolder ? ' 添加选项框' : '保存'}
                     </p>
                 </Menu.Item>
-            </SubMenu>
+            </Menu.SubMenu>
         )
     };
 
 
     rightStyleOperatorMenu = (_item) => {
-        return (<SubMenu
+        return (<Menu.SubMenu
             key="sub1"
             title={<span><Icon type="bars"/>属性面板</span>}>
             {Object.keys(_item).map(key => {
@@ -458,8 +455,8 @@ export default class DraggableNew extends React.Component {
                                 onSelect={this.changeItemStyle(key)}
                                 value={_item[key] + ''}
                                 style={{width: '100%'}}>
-                                <Option value='0'>{nor}</Option>
-                                <Option value='1'>{un}</Option>
+                                <Select.Option value='0'>{nor}</Select.Option>
+                                <Select.Option value='1'>{un}</Select.Option>
                             </Select>
                         </Menu.Item>
                     )
@@ -479,13 +476,13 @@ export default class DraggableNew extends React.Component {
                                 style={{width: '100%'}}>
                                 {
                                     this.state.fontDataSource && this.state.fontDataSource.map(font => (
-                                        <Option value={`${font.name}`}
-                                                key={`${font.name}`}>
+                                        <Select.Option value={`${font.name}`}
+                                                       key={`${font.name}`}>
                                             {font.name}
-                                        </Option>
+                                        </Select.Option>
                                     ))
                                 }
-                                <Option value={'"宋体"'}>宋体</Option>
+                                <Select.Option value={'"宋体"'}>宋体</Select.Option>
                             </Select>
                         </Menu.Item>
                     )
@@ -503,9 +500,9 @@ export default class DraggableNew extends React.Component {
                                 onSelect={this.changeItemStyle(key)}
                                 value={_item[key] + ''}
                                 style={{width: '100%'}}>
-                                <Option value={enmu.align.left + ''}>靠左</Option>
-                                <Option value={enmu.align.center + ''}>居中</Option>
-                                <Option value={enmu.align.right + ''}>靠右</Option>
+                                <Select.Option value={enmu.align.left + ''}>靠左</Select.Option>
+                                <Select.Option value={enmu.align.center + ''}>居中</Select.Option>
+                                <Select.Option value={enmu.align.right + ''}>靠右</Select.Option>
                             </Select>
                         </Menu.Item>
                     )
@@ -543,7 +540,7 @@ export default class DraggableNew extends React.Component {
                             value={this.state.item[key]}/>
                     </Menu.Item>)
             })}
-        </SubMenu>)
+        </Menu.SubMenu>)
     };
 
     headerOperatorMenu = (_item) => {
@@ -553,19 +550,19 @@ export default class DraggableNew extends React.Component {
                     <Select value={this.state.category + ''}
                             style={{width: '50%'}}
                             onChange={this.editMsg('category')}>
-                        <Option value="1">课程</Option>
-                        <Option value="2">专栏</Option>
-                        <Option value="3">商品</Option>
-                        <Option value="4">轮播图</Option>
-                        <Option value="5">海报</Option>
+                        <Select.Option value="1">课程</Select.Option>
+                        <Select.Option value="2">专栏</Select.Option>
+                        <Select.Option value="3">商品</Select.Option>
+                        <Select.Option value="4">轮播图</Select.Option>
+                        <Select.Option value="5">海报</Select.Option>
                     </Select>
 
                     <Select onSelect={this.onSelectItem}
                             value={_item.id + '' || (this.state.items.length > 0 && this.state.items[0].id + '') }
                             style={{width: '50%'}}>
                         { this.state.items.map((item) => {
-                            return <Option value={item.id + ''}
-                                           key={item.id}>{item.text || item.id}</Option>
+                            return <Select.Option value={item.id + ''}
+                                                  key={item.id}>{item.text || item.id}</Select.Option>
                         })}
                     </Select>
                 </div>

@@ -8,8 +8,6 @@ import '../../../asssets/css/ui/compound.less';
 import App from '../../../common/App.jsx';
 import enmu from '../../../common/Ctype'
 
-let Table = antd.Table;
-const Option = Select.Option;
 export default class Compounds extends React.Component {
     constructor(props) {
         super(props);
@@ -234,7 +232,7 @@ export default class Compounds extends React.Component {
             <Col className="gutter-row" span={24}>
                 <div className="gutter-box">
                     <div className="layers">
-                        <Table
+                        <antd.Table
                             size="middle"
                             dataSource={layers}
                             columns={columns}
@@ -274,18 +272,18 @@ export default class Compounds extends React.Component {
                                 category: v,
                                 imgLoaded: false,
                             }, this.loadData)}>
-                                <Option value="1">课程</Option>
-                                <Option value="2">专栏</Option>
-                                <Option value="3">商品</Option>
-                                <Option value="4">轮播图</Option>
-                                <Option value="5">海报</Option>
+                                <Select.Option value="1">课程</Select.Option>
+                                <Select.Option value="2">专栏</Select.Option>
+                                <Select.Option value="3">商品</Select.Option>
+                                <Select.Option value="4">轮播图</Select.Option>
+                                <Select.Option value="5">海报</Select.Option>
                             </Select>
                         </div>
                     </Col>
                 </Row>
             </div>
             <div className="table">
-                <div className="backgroundTable">
+                <div className="backgroundantd.Table">
                     <Row gutter={16}>
                         <Col className="gutter-row" span={24}>
                             <div className="gutter-box">
@@ -294,7 +292,7 @@ export default class Compounds extends React.Component {
                                     {this.state.table.expandedRowKeys.length == 0 ? '展开全部' : '收起全部'}</Button>
                                 </div>}
                                       bordered={false}>
-                                    <Table
+                                    <antd.Table
                                         size="middle"
                                         scroll={{x: 1800}}
                                         rowKey={record => record.id}

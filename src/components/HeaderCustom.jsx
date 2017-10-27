@@ -5,8 +5,6 @@ import avatar from '../asssets/images/imgs/b1.jpg';
 
 import App from '../common/App.jsx';
 const {Header} = Layout;
-const SubMenu = Menu.SubMenu;
-const MenuItemGroup = Menu.ItemGroup;
 
 class HeaderCustom extends Component {
     state = {};
@@ -34,15 +32,15 @@ class HeaderCustom extends Component {
                     style={{lineHeight: '64px', float: 'right'}}
                     onClick={this.menuClick}
                 >
-                    <SubMenu title={<span className="avatar"><img src={avatar} alt="头像"/><i
+                    <Menu.SubMenu title={<span className="avatar"><img src={avatar} alt="头像"/><i
                         className="on bottom b-white"/></span>}>
-                        <MenuItemGroup title="用户中心">
+                        <Menu.ItemGroup title="用户中心">
                             <Menu.Item key="logout"><span onClick={this.logout}>退出登录</span></Menu.Item>
-                        </MenuItemGroup>
-                    </SubMenu>
+                        </Menu.ItemGroup>
+                    </Menu.SubMenu>
                 </Menu>
                 <style>{`
-                    .ant-menu-submenu-horizontal > .ant-menu {
+                    .ant-menu-Menu.SubMenu-horizontal > .ant-menu {
                         width: 120px;
                         left: -40px;
                     }

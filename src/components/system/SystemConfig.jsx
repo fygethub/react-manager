@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import {Form, Icon, Input, Button, Checkbox} from 'antd';
 import App from '../../common/App.jsx';
 
-const FormItem = Form.Item;
 class SystemConfigWrap extends React.Component {
 
     handleTest = (e) => {
@@ -29,16 +28,16 @@ class SystemConfigWrap extends React.Component {
     render() {
         const {getFieldDecorator} = this.props.form;
         return <Form onSubmit={this.handleTest}>
-            <FormItem>
+            <Form.Item>
                 {getFieldDecorator('userName', {rules: [{require: true, message: 'please input your username'}]})(
                     <Input prefix={<Icon type="user" style={{fontSize: 13}}/>} placeholder="Username"/>
                 )}
-            </FormItem>
-            <FormItem>
+            </Form.Item>
+            <Form.Item>
                 <Button type="primary" htmlType="submit" className="login-form-button">
                     Log in
                 </Button>
-            </FormItem>
+            </Form.Item>
         </Form>
     }
 }

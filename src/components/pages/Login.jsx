@@ -8,7 +8,6 @@ import {bindActionCreators} from 'redux';
 import {receiveData} from '@/action';
 import App from '../../common/App.jsx';
 import md5 from 'js-md5';
-const FormItem = Form.Item;
 
 class Login extends React.Component {
 
@@ -48,23 +47,23 @@ class Login extends React.Component {
                         <span>React Admin</span>
                     </div>
                     <Form onSubmit={this.handleSubmit} style={{maxWidth: '300px'}}>
-                        <FormItem>
+                        <Form.Item>
                             {getFieldDecorator('username', {
                                 rules: [{required: true, message: '请输入用户名!'}],
                             })(
                                 <Input prefix={<Icon type="user" style={{fontSize: 13}}/>}
                                        placeholder="账号"/>
                             )}
-                        </FormItem>
-                        <FormItem>
+                        </Form.Item>
+                        <Form.Item>
                             {getFieldDecorator('password', {
                                 rules: [{required: true, message: '请输入密码!'}],
                             })(
                                 <Input prefix={<Icon type="lock" style={{fontSize: 13}}/>} type="password"
                                        placeholder="密码"/>
                             )}
-                        </FormItem>
-                        <FormItem>
+                        </Form.Item>
+                        <Form.Item>
                             {getFieldDecorator('remember', {
                                 valuePropName: 'checked',
                                 initialValue: true,
@@ -76,7 +75,7 @@ class Login extends React.Component {
                                     style={{width: '100%'}}>
                                 登录
                             </Button>
-                        </FormItem>
+                        </Form.Item>
                     </Form>
                 </div>
             </div>
