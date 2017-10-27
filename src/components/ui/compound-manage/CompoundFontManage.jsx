@@ -1,17 +1,13 @@
 import React from 'react';
-import antd from 'antd';
-import {Row, Col, Button, message, Card, Popconfirm, Select, Input, Icon, Form, Modal} from 'antd';
+import {Row, Col, Button, message, Card, Popconfirm, Select, Input, Icon, Form, Modal,Table} from 'antd';
 import {hashHistory} from 'react-router';
 import U from '../../../common/U';
 import BreadcrumbCustom from '../../BreadcrumbCustom';
 import '../../../asssets/css/ui/compound-manage.less';
 import App from '../../../common/App.jsx';
 import OSSWrap from '../../../common/OSSWrap.jsx';
-const FormItem = Form.Item;
-let Table = antd.Table;
-const Option = Select.Option;
 
-export default class CompoundFontManage extends React.Component {
+class CompoundFontManage extends React.Component {
 
     constructor(props) {
         super(props);
@@ -32,9 +28,9 @@ export default class CompoundFontManage extends React.Component {
             },
             {
                 title: '操作',
-                dataIndex: 'option',
+                dataIndex: 'Select.Option',
                 width: 190,
-                key: 'option',
+                key: 'Select.Option',
                 render: this.renderAction,
             },
             {title: '', dataIndex: 'null', key: 'null'},
@@ -112,7 +108,7 @@ export default class CompoundFontManage extends React.Component {
         this.setState({visible: false});
     };
     handleCreate = () => {
-        const form = this.form;
+        const form = this.props.form;
         form.validateFields((err, values) => {
             if (err) {
                 return;
@@ -141,6 +137,8 @@ export default class CompoundFontManage extends React.Component {
 
     render() {
 
+        const {getFieldDecorator} = this.props.form;
+        const {visible, file, font} = this.state;
         return (
             <div className="compound-manage-page">
                 <BreadcrumbCustom first="ui" second="字体管理"/>
@@ -153,14 +151,51 @@ export default class CompoundFontManage extends React.Component {
                                     <Button type="primary" onClick={this.showModal}>
                                         上传字体
                                     </Button>
-                                    <CollectionCreateForm
-                                        ref={this.saveFormRef}
-                                        font={this.state.font}
-                                        file={this.state.file}
+                                    <Modal
                                         visible={this.state.visible}
+                                        title="确认上传信息"
+                                        okText="Create"
                                         onCancel={this.handleCancel}
-                                        onCreate={this.handleCreate}
-                                    />
+                                        onOk={this.handleCreate}
+                                    >
+                                        <Form layout="vertical">
+                                            <Form.Item label="Name">
+                                                {getFieldDecorator('name', {
+                                                    rules: [{required: true, message: 'Please input the name!'}],
+                                                    initialValue: file && file.name.split('.')[0],
+                                                })(
+                                                    <Input />
+                                                )}
+                                            </Form.Item>
+                                            <Form.Item label="uname">
+                                                {getFieldDecorator('uname', {
+                                                    rules: [{required: true, message: 'Please input the uname!'}],
+                                                })(
+                                                    <Input />
+                                                )}
+                                            </Form.Item>
+                                            <Form.Item label="Url">
+                                                {getFieldDecorator('url', {
+                                                    rules: [{required: true, message: 'Plaease input the url'}],
+                                                    initialValue: font && font.url,
+                                                })(<Input disabled/>)}
+                                            </Form.Item>
+                                            <Form.Item label="Size">
+                                                {getFieldDecorator('size', {
+                                                    rules: [{required: true, message: 'Plaease input the size'}],
+                                                    initialValue: file && file.size,
+                                                })(<Input disabled/>)}
+                                            </Form.Item>
+                                        </Form>
+                                    </Modal>
+                                    {/*<CollectionCreateForm
+                                     ref={this.saveFormRef}
+                                     font={this.state.font}
+                                     file={this.state.file}
+                                     visible={this.state.visible}
+                                     onCancel={this.handleCancel}
+                                     onCreate={this.handleCreate}
+                                     />*/}
                                 </Card>
                             </Col>
                         </Row>
@@ -185,6 +220,8 @@ export default class CompoundFontManage extends React.Component {
 }
 
 
+export default Form.create()(CompoundFontManage)
+
 const CollectionCreateForm = Form.create()(
     (props) => {
         const {visible, onCancel, onCreate, form, file, font} = props;
@@ -198,33 +235,33 @@ const CollectionCreateForm = Form.create()(
                 onOk={onCreate}
             >
                 <Form layout="vertical">
-                    <FormItem label="Name">
+                    <Form.Item label="Name">
                         {getFieldDecorator('name', {
                             rules: [{required: true, message: 'Please input the name!'}],
                             initialValue: file && file.name.split('.')[0],
                         })(
                             <Input />
                         )}
-                    </FormItem>
-                    <FormItem label="uname">
+                    </Form.Item>
+                    <Form.Item label="uname">
                         {getFieldDecorator('uname', {
                             rules: [{required: true, message: 'Please input the uname!'}],
                         })(
                             <Input />
                         )}
-                    </FormItem>
-                    <FormItem label="Url">
+                    </Form.Item>
+                    <Form.Item label="Url">
                         {getFieldDecorator('url', {
                             rules: [{required: true, message: 'Plaease input the url'}],
                             initialValue: font && font.url,
                         })(<Input disabled/>)}
-                    </FormItem>
-                    <FormItem label="Size">
+                    </Form.Item>
+                    <Form.Item label="Size">
                         {getFieldDecorator('size', {
                             rules: [{required: true, message: 'Plaease input the size'}],
                             initialValue: file && file.size,
                         })(<Input disabled/>)}
-                    </FormItem>
+                    </Form.Item>
                 </Form>
             </Modal>
         );

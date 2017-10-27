@@ -1,11 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {message} from 'antd';
 import './pictureEditor.less';
 import OSSWrap from '../../../../common/OSSWrap.jsx';
 export default class PictureEditor extends React.Component {
     static propTypes = {
-        uploadFile: React.PropTypes.func,
-        defaultUrl: React.PropTypes.string,
+        uploadFile: PropTypes.func,
+        defaultUrl: PropTypes.string,
     };
 
     constructor(props) {

@@ -1,14 +1,15 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import './fontEditor.less';
 import {Menu, Icon, Card, message, Select, InputNumber, Button, Input, Modal} from 'antd';
 
 export default class FontEditor extends React.Component {
 
     static propTypes = {
-        initText: React.PropTypes.string,
-        fontColor: React.PropTypes.string,
-        textAlign: React.PropTypes.number,
-        onChange: React.PropTypes.func,
+        initText: PropTypes.string,
+        fontColor: PropTypes.string,
+        textAlign: PropTypes.number,
+        onChange: PropTypes.func,
     };
 
     static defaultProps = {

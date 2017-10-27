@@ -5,7 +5,6 @@ import React, {Component} from 'react';
 import {Layout, Menu, Icon} from 'antd';
 import {Link} from 'react-router';
 const {Sider} = Layout;
-const SubMenu = Menu.SubMenu;
 
 class SiderCustom extends Component {
     state = {
@@ -70,7 +69,7 @@ class SiderCustom extends Component {
                         <Link to={'/app/dashboard/index'}><Icon type="mobile"/><span
                             className="nav-text">首页</span></Link>
                     </Menu.Item>
-                    <SubMenu
+                    <Menu.SubMenu
                         key="/app/ui"
                         title={<span><Icon type="scan"/><span className="nav-text">合成图</span></span>}
                     >
@@ -79,25 +78,25 @@ class SiderCustom extends Component {
                         <Menu.Item key="/app/ui/compound-manage">
                             <Link to={'/app/ui/compound-manage'}>字体管理</Link>
                         </Menu.Item>
-                    </SubMenu>
-                    <SubMenu
+                    </Menu.SubMenu>
+                    <Menu.SubMenu
                         key="/app/media"
                         title={<span><Icon type="setting"/><span className="nav-text">店铺</span></span>}
                     >
                         <Menu.Item key="/app/media/medias/"><Link to={'/app/media/medias'}>店铺</Link> </Menu.Item>
-                    </SubMenu>
-                    <SubMenu
+                    </Menu.SubMenu>
+                    {false && < Menu.SubMenu
                         key="/app/system"
                         title={<span><Icon type="setting"/><span className="nav-text">系统设置</span></span>}
                     >
                         <Menu.Item key="/app/system/config/"><Link to={'/app/system/config'}>系统设置</Link> </Menu.Item>
-                    </SubMenu>
-                    <SubMenu
+                    </Menu.SubMenu>}
+                    <Menu.SubMenu
                         key="/app/user"
                         title={<span><Icon type="user"/><span className="nav-text">用户管理</span></span>}
                     >
                         <Menu.Item key="/app/user/users"><Link to={'/app/user/users'}>用户列表</Link></Menu.Item>
-                    </SubMenu>
+                    </Menu.SubMenu>
                 </Menu>
             </Sider>
         )

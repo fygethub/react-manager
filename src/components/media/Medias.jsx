@@ -315,8 +315,8 @@ class Medias extends React.Component {
                         <Row gutter={8}>
                             <Col span={8}> 提现金额 </Col>
                             <Col span={12} offset={4}>
-                                <Input value={this.state.amount}
-                                       onChange={e => this.setState({amount: e.target.value})}/>
+                                <InputNumber value={this.state.amount}
+                                             onChange={e => this.setState({amount: e})}/>
                             </Col>
                         </Row>
                     </Card>

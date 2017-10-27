@@ -561,10 +561,10 @@ export default class DraggableNew extends React.Component {
                     </Select>
 
                     <Select onSelect={this.onSelectItem}
-                            value={_item.id || (this.state.items.length > 0 && this.state.items[0].id) }
+                            value={_item.id + '' || (this.state.items.length > 0 && this.state.items[0].id + '') }
                             style={{width: '50%'}}>
                         { this.state.items.map((item) => {
-                            return <Option value={item.id}
+                            return <Option value={item.id + ''}
                                            key={item.id}>{item.text || item.id}</Option>
                         })}
                     </Select>
@@ -855,15 +855,15 @@ class Placeholders extends React.Component {
 
 class DraggableItem extends React.Component {
     static propTypes = {
-        cType: React.PropTypes.number.isRequired,
-        onStop: React.PropTypes.func,
-        onStart: React.PropTypes.func,
-        setPictureUrl: React.PropTypes.func,
-        textChange: React.PropTypes.func,
-        cardStyle: React.PropTypes.object,
-        dragStyle: React.PropTypes.object,
-        item: React.PropTypes.object,
-        defaultUrl: React.PropTypes.string,
+        cType: PropTypes.number.isRequired,
+        onStop: PropTypes.func,
+        onStart: PropTypes.func,
+        setPictureUrl: PropTypes.func,
+        textChange: PropTypes.func,
+        cardStyle: PropTypes.object,
+        dragStyle: PropTypes.object,
+        item: PropTypes.object,
+        defaultUrl: PropTypes.string,
     };
 
     render() {
