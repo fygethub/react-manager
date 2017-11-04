@@ -97,6 +97,13 @@ class SiderCustom extends Component {
                     >
                         <Menu.Item key="/app/user/users"><Link to={'/app/user/users'}>用户列表</Link></Menu.Item>
                     </Menu.SubMenu>
+                    <Menu.SubMenu
+                        key="/app/admin"
+                        title={<span><Icon type="team"/><span className="nav-text">管理员</span></span>}
+                    >
+                        <Menu.Item key="/app/admin/admins"><Link to={`/app/admin/admins`}>管理员列表</Link></Menu.Item>
+                        <Menu.Item key="/app/admin/adminGroup"><Link to={`/app/admin/groups`}>管理员分组</Link></Menu.Item>
+                    </Menu.SubMenu>
                 </Menu>
             </Sider>
         )

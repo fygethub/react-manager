@@ -6,7 +6,7 @@ import App from '../../common/App.jsx';
 import U from '../../utils';
 import '../../asssets/css/users/users.less';
 
-export default class Apps extends React.Component {
+export default class AdminGroups extends React.Component {
     constructor(props){
         super(props);
         this.state={
@@ -26,28 +26,26 @@ export default class Apps extends React.Component {
                 dataIndex: 'name',
                 key: 'name'
             },{
-                title:'Email',
-                dataIndex: 'email',
-                key: 'email'
-            },{
-                title:'所在组',
-                dataIndex: 'groups',
-                key: 'groups',
-                render: (col,row,i) => (col.filter((v) =>v.name).map((v) => v.name).join(','))
+                title:'权限',
+                dataIndex: 'root',
+                key: 'root',
+                render: (col,row,i) => {
+                    switch (col) {
+                        case 0 : return '普通管理员';
+                        case 1 : return '超级管理员';
+                        default: ''
+                    }
+                }
             },{
                 title:'操作',
                 dataIndex: 'password',
                 key: 'password',
                 width: 200,
                 render: (col,row,i) => (<div style={{textAlign:"left"}}>
-                    <Link to={`/app/admin/admins/edit/${row.id}`}>编辑</Link>
+                    <Link to={`/app/admin/groups/edit/${row.id}`}>编辑</Link>
                     <span className = "ant-divider" />
                     <Popconfirm title="确认删除吗?" onConfirm={() => this.confirmDelete(row.id)} onCancel={this.cancel} okText="Yes" cancelText="No">
                         <a href="#">删除</a>
-                    </Popconfirm>
-                    <span className = "ant-divider" />
-                    <Popconfirm title="确认重置密码吗?" onConfirm={() => this.confirmPassword(row.id)} onCancel={this.cancel} okText="Yes" cancelText="No">
-                        <a href="#">重置密码</a>
                     </Popconfirm>
                 </div>)
             }]
@@ -55,17 +53,17 @@ export default class Apps extends React.Component {
 
     }
     getAdmins = () => {
-        App.api('adm/admin/admins', {
+        App.api('adm/admin/groups', {
             offset: this.state.pageSize * (this.state.current - 1),
             limit: this.state.pageSize,
         }).then((data) => {
             console.log(data)
             this.setState({
-                    dataSource: data.items,
-                    pageSize: data.limit,
-                    offset: data.offset,
-                    total: data.total,
-                    loading: false
+                dataSource: data.items,
+                pageSize: data.limit,
+                offset: data.offset,
+                total: data.total,
+                loading: false
             })
         })
     }
@@ -74,26 +72,19 @@ export default class Apps extends React.Component {
         U.page.clearPageStrage();
     }
     confirmDelete = (id) => {
-        App.api('adm/admin/remove', {
+        App.api('adm/admin/remove_group', {
             id: id
         }).then((data) => {
             this.getAdmins();
         })
 
     }
-    confirmPassword = (id) => {
-        App.api('adm/admin/reset_password', {
-            id: id
-        }).then((data) => {
-            console.info(data);
-            this.getAdmins();
-        })
-    }
+
     tableOnChange = (pagination,filters,sortor) => {
         U.page.setCurrentPage(pagination.current);
         this.setState({
-                pageSize: pagination.pageSize,
-                current: pagination.current,
+            pageSize: pagination.pageSize,
+            current: pagination.current,
         }, this.getAdmins());
     }
 
@@ -112,7 +103,7 @@ export default class Apps extends React.Component {
                 <Row>
                     <Col span = {2} offset = {22}>
                         <div className="addicon">
-                            <Link to={`/app/admin/admins/add`}><Icon type="plus-circle" style={{fontSize:'25px'}} /></Link>
+                            <Link to={`/app/admin/groups/add`}><Icon type="plus-circle" style={{fontSize:'25px'}} /></Link>
                         </div>
                     </Col>
                 </Row>

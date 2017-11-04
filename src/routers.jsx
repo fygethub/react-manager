@@ -6,9 +6,14 @@ import DragsNew from './components/ui/draggable/DraggableNew';
 import Dashboard from './components/dashboard/Dashboard';
 import CompoundsManage from './components/ui/compound-manage/CompoundFontManage';
 import Compounds from './components/ui/compound/Compounds.jsx';
-import Admins from './components/admin/Admins'
-import Users from './components/user/Users'
-import SystemConfig from './components/system/SystemConfig.jsx'
+import Admins from './components/admin/Admins';
+import AdminsAdd from './components/admin/AdminsAdd';
+import AdminsEdit from './components/admin/AdminsEdit';
+import Groups from './components/admin/Groups';
+import GroupsAdd from './components/admin/GroupsAdd';
+import GroupsEdit from './components/admin/GroupsEdit';
+import Users from './components/user/Users';
+import SystemConfig from './components/system/SystemConfig.jsx';
 import Medias from './components/media/Medias';
 import Home from './Home';
 
@@ -19,6 +24,11 @@ const routes = (
             <Route path={'app'} component={Home}>
                 <Route path={'admin'}>
                     <Route path={'admins'} component={Admins}/>
+                    <Route path={'admins/add'} component={AdminsAdd}/>
+                    <Route path={'admins/edit/:id'} component={AdminsEdit}/>
+                    <Route path={'groups'} component={Groups}/>
+                    <Route path={'groups/add'} component={GroupsAdd}/>
+                    <Route path={'groups/edit/:id'} component={GroupsEdit}/>
                 </Route>
                 <Route path={'user'}>
                     <Route path={'users'} component={Users}/>
