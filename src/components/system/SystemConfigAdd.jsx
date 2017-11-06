@@ -8,15 +8,22 @@ import '../../asssets/css/users/users.less';
 
 const Option = Select.Option;
 const FormItem = Form.Item;
+const TextArea = Input.TextArea;
 
 class AdminsAdd extends Component {
 
     constructor(props) {
         super(props);
         this.state={
-            groups: [],
-            selectInitValue: []
+            tableName: 'api_config',
+            typeArr: []
         }
+    }
+
+    componentDidMount() {
+        App.api('adm/system/configtypes').then((data) => {
+            this.setState({typeArr: data});
+        })
     }
 
     handleChange = (value) =>  {
@@ -32,35 +39,18 @@ class AdminsAdd extends Component {
         this.props.form.validateFields((err,val) => {
             console.info(val);
             if(!err){
-                val.groups = val.groups.map((v,i) => ({'id': v}));
+                val.tableName = this.state.tableName;
                 console.info(val);
-                App.api('/adm/admin/save',{'admin': JSON.stringify(val)}).then((res) => {
-                    this.props.router.push('app/admin/admins');
+                App.api('/adm/system/saveconfig',val).then((res) => {
+                    this.props.router.push('app/system/config');
                 });
             }
         });
     }
 
-    componentDidMount() {
-        const {params:{id},form:{setFieldsValue}} = this.props;
-        App.api('adm/admin/admin',{id}).then(({name,email,groups}) => {
-            this.setState({selectInitValue: groups});
-            const groupsAfter = groups.map((v) => v.id);
-            setFieldsValue({name,email});
-        })
-    }
-
     render() {
-        const {selectInitValue} = this.state;
-        const groups = [{
-            'id': '1',
-            'name': 'Root'
-        },{
-            'id': '2',
-            'name': 'test'
-        }];
+        const {typeArr} = this.state;
         const { getFieldDecorator } = this.props.form;
-
         const formItemLayout = {
             labelCol: {
                 xs: { span: 24 },
@@ -85,13 +75,13 @@ class AdminsAdd extends Component {
         };
 
         return(
-            <Form onSubmit={this.handleSubmit} style={{marginTop: "50px"}}>
+            <Form onSubmit={this.handleSubmit} style={{marginTop: "30px"}}>
                 <FormItem
                     {...formItemLayout}
-                    label="名称"
+                    label="键"
                     hasFeedback
                 >
-                    {getFieldDecorator('name', {
+                    {getFieldDecorator('key', {
                         rules: [{
                             type: 'string', message: 'The input is not valid name!',
                         }, {
@@ -103,42 +93,51 @@ class AdminsAdd extends Component {
                 </FormItem>
                 <FormItem
                     {...formItemLayout}
-                    label="E-mail"
+                    label="类型"
                     hasFeedback
                 >
-                    {getFieldDecorator('email', {
+                    {getFieldDecorator('type', {
                         rules: [{
-                            type: 'email', message: 'The input is not valid E-mail!',
-                        }, {
                             required: true, message: 'Please input your E-mail!',
                         }],
-                    })(
-                        <Input />
-                    )}
-                </FormItem>
-                <FormItem
-                    {...formItemLayout}
-                    label="管理组"
-                    hasFeedback
-                >
-                    {getFieldDecorator('groups', {
-                        rules: [{
-                            required: true, message: '请选择权限分组!',
-                        }],
-                        initialValue: ['1','2']
+                        initialValue: 'string'
                     })(
                         <Select
-                            mode="multiple"
                             style={{ width: '100%' }}
                             placeholder="Please select"
                             onChange={this.handleChange}
                         >
-                            {
-                                groups.map((v, i) => {
-                                    return (<Option key={i} value={`${v.id}`}>{`${v.name}`}</Option>);
-                                })
+                            {typeArr.map((v, i) => {
+                                return (<Option key={i.toString(36) + i} value={v}>{v}</Option>);
+                            })
                             }
                         </Select>
+                    )}
+                </FormItem>
+                <FormItem
+                    {...formItemLayout}
+                    label="值"
+                    hasFeedback
+                >
+                    {getFieldDecorator('value', {
+                        rules: [{
+                            required: true, message: '请输入!',
+                        }],
+                    })(
+                        <TextArea />
+                    )}
+                </FormItem>
+                <FormItem
+                    {...formItemLayout}
+                    label="备注"
+                    hasFeedback
+                >
+                    {getFieldDecorator('name', {
+                        rules: [{
+                            required: true, message: 'Please input your E-mail!',
+                        }],
+                    })(
+                        <Input />
                     )}
                 </FormItem>
                 <FormItem {...tailFormItemLayout}>

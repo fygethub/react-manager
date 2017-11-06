@@ -13,7 +13,7 @@ export default class Apps extends React.Component {
             loading: true,
             offset: 0,
             current: U.page.getCurrentPage(),
-            pageSize: 10,
+            pageSize: 2,
             total: 0,
             dataSource: [],
             columns: [{
@@ -36,8 +36,8 @@ export default class Apps extends React.Component {
                 render: (col,row,i) => (col.filter((v) =>v.name).map((v) => v.name).join(','))
             },{
                 title:'操作',
-                dataIndex: 'password',
-                key: 'password',
+                dataIndex: 'option',
+                key: 'option',
                 width: 200,
                 render: (col,row,i) => (<div style={{textAlign:"left"}}>
                     <Link to={`/app/admin/admins/edit/${row.id}`}>编辑</Link>
@@ -55,9 +55,10 @@ export default class Apps extends React.Component {
 
     }
     getAdmins = () => {
+        const {pageSize,current} = this.state;
         App.api('adm/admin/admins', {
-            offset: this.state.pageSize * (this.state.current - 1),
-            limit: this.state.pageSize,
+            offset: pageSize * (current - 1),
+            limit: pageSize,
         }).then((data) => {
             console.log(data)
             this.setState({
@@ -94,7 +95,7 @@ export default class Apps extends React.Component {
         this.setState({
                 pageSize: pagination.pageSize,
                 current: pagination.current,
-        }, this.getAdmins());
+        }, () => this.getAdmins());
     }
 
     render() {
@@ -112,10 +113,11 @@ export default class Apps extends React.Component {
                 <Row>
                     <Col span = {2} offset = {22}>
                         <div className="addicon">
-                            <Link to={`/app/admin/admins/add`}><Icon type="plus-circle" style={{fontSize:'25px'}} /></Link>
+                            <Link to={`/app/admin/admins/add`}><Icon type="plus-circle" style={{fontSize:'30px',color: '#108ee9'}} /></Link>
                         </div>
                     </Col>
                 </Row>
+                <Card>
                 <Table
                     rowKey={(row) => row.id}
                     columns={columns}
@@ -125,6 +127,7 @@ export default class Apps extends React.Component {
                     loading={this.state.loading}
                     scroll={{ x: columns.map(({ width }) => width || 100).reduce((l, f) => (l + f)) }}
                 />
+                </Card>
             </div>
         )
     }

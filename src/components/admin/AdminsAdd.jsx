@@ -29,7 +29,7 @@ class AdminsAdd extends Component {
     }
 
     handleCancle = (e) => {
-
+        this.props.router.go(-1);
     }
 
     handleSubmit = (e) => {
@@ -136,7 +136,7 @@ class AdminsAdd extends Component {
                     )}
                 </FormItem>
                 <FormItem {...tailFormItemLayout}>
-                    <Button type="primary" htmlType="submit">保存</Button>
+                    <Button type="primary" htmlType="submit" style={{marginRight: '8px'}}>保存</Button>
                     <Button type="primary" htmlType="reset" onClick={this.handleCancle}>取消</Button>
                 </FormItem>
             </Form>

@@ -14,6 +14,8 @@ import GroupsAdd from './components/admin/GroupsAdd';
 import GroupsEdit from './components/admin/GroupsEdit';
 import Users from './components/user/Users';
 import SystemConfig from './components/system/SystemConfig.jsx';
+import SystemConfigAdd from './components/system/SystemConfigAdd.jsx';
+import SystemConfigEdit from './components/system/SystemConfigEdit.jsx';
 import Medias from './components/media/Medias';
 import Home from './Home';
 
@@ -35,6 +37,8 @@ const routes = (
                 </Route>
                 <Route path={'system'}>
                     <Route path={'config'} component={SystemConfig}/>
+                    <Route path={'config/add'} component={SystemConfigAdd}/>
+                    <Route path={'config/edit/:key'} component={SystemConfigEdit}/>
                 </Route>
                 <Route path={'ui'}>
                     <Route path={'drags-new/:id'} component={DragsNew}/>

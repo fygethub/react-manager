@@ -85,12 +85,12 @@ class SiderCustom extends Component {
                     >
                         <Menu.Item key="/app/media/medias/"><Link to={'/app/media/medias'}>店铺</Link> </Menu.Item>
                     </Menu.SubMenu>
-                    {false && < Menu.SubMenu
+                    < Menu.SubMenu
                         key="/app/system"
                         title={<span><Icon type="setting"/><span className="nav-text">系统设置</span></span>}
                     >
                         <Menu.Item key="/app/system/config/"><Link to={'/app/system/config'}>系统设置</Link> </Menu.Item>
-                    </Menu.SubMenu>}
+                    </Menu.SubMenu>
                     <Menu.SubMenu
                         key="/app/user"
                         title={<span><Icon type="user"/><span className="nav-text">用户管理</span></span>}

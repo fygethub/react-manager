@@ -36,7 +36,7 @@ class AdminsAdd extends Component {
     }
 
     handleCancle = (e) => {
-
+        this.props.router.go(-1);
     }
 
     handleSubmit = (e) => {
@@ -44,7 +44,7 @@ class AdminsAdd extends Component {
         this.props.form.validateFields((err,val) => {
             console.info(val);
             if(!err){
-                if(!this.state.checkedKeys.length) message('error','请选择权限');
+                if(!this.state.checkedKeys.length) message.error('请选择权限');
                 val.permissions = this.state.checkedKeys.filter((v,i) => (/\//.test(v))).join('|');
                 console.info(val);
                 App.api('/adm/admin/save_group',val).then((res) => {
@@ -60,7 +60,9 @@ class AdminsAdd extends Component {
                 App.api('adm/admin/group',{id}).then(({root,name,permissions}) => {
                     setFieldsValue({name,root});
                     console.log(permissions);
-                    // this.setState({permissionBack:permissions.split('|')});
+                    if(permissions) {
+                        this.setState({permissionBack: permissions.split('|'), checkedKeys: permissions.split('|')});
+                    }
                 });
             });
 
@@ -99,10 +101,10 @@ class AdminsAdd extends Component {
     render() {
         const defaultCheckedKeys = this.state.permissionBack;
         const roots = [{
-            'id': '0',
+            'id': 0,
             'name': '管理员'
         },{
-            'id': '1',
+            'id': 1,
             'name': '超级管理员'
         }];
         const treeData = this.state.permissions.map((v,i) => {
@@ -170,16 +172,15 @@ class AdminsAdd extends Component {
                         rules: [{
                             required: true, message: '请选择!',
                         }],
-                        initialValue: '1'
+                        initialValue: 0
                     })(
                         <Select
                             style={{ width: '100%' }}
                             placeholder="Please select"
                             onChange={this.handleChange}
                         >
-                            {roots.map((v, i) => {
-                                return (<Option key={i.toString(36) + i} value={`${v.id}`}>{`${v.name}`}</Option>);
-                            })
+                            {
+                                roots.map((v, i) => (<Option key={i.toString(36) + i} value={v.id}>{v.name}</Option>))
                             }
                         </Select>
                     )}
@@ -206,7 +207,7 @@ class AdminsAdd extends Component {
                     )}
                 </FormItem>
                 <FormItem {...tailFormItemLayout}>
-                    <Button type="primary" htmlType="submit">保存</Button>
+                    <Button type="primary" htmlType="submit" style={{marginRight: '8px'}}>保存</Button>
                     <Button type="primary" htmlType="reset" onClick={this.handleCancle}>取消</Button>
                 </FormItem>
             </Form>
