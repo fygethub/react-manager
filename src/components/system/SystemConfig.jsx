@@ -143,7 +143,7 @@ export default class SystemConfig extends Component {
                     </Col>
                     <Col span = {2} offset = {2}>
                         <div className="addicon">
-                            <Link to={`/app/system/config/add`}><Icon type="plus-circle" style={{fontSize:'25px'}} /></Link>
+                            <Link to={`/app/system/config/add`}><Icon type="plus-circle" style={{fontSize:'30px',color: '#108ee9'}} /></Link>
                         </div>
                     </Col>
                 </Row>
