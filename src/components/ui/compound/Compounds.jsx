@@ -1,6 +1,6 @@
 import React from 'react';
 import antd from 'antd';
-import {Row, Col, Button, message, Popconfirm, Card, Tooltip, Select} from 'antd';
+import {Row, Col, Button, message, Popconfirm, Card, Tooltip, Select,Dropdown,Menu,Icon,Form} from 'antd';
 import {hashHistory} from 'react-router';
 import U from '../../../common/U';
 import BreadcrumbCustom from '../../BreadcrumbCustom';
@@ -62,6 +62,9 @@ export default class Compounds extends React.Component {
             },
             {title: '是否上架', dataIndex: 'state', width: 150, key: 'state'},
             {title: '', dataIndex: 'null', key: 'null'},
+            {title: '图层数量',dataIndex: 'layers',
+            render: (col,row,index) => (col.filter((v) => v.url).length)
+            },
             {
                 title: '操作',
                 width: 290,
@@ -121,24 +124,27 @@ export default class Compounds extends React.Component {
     };
 
     renderAction = (text, record) => {
-        return <div style={{display: 'flex', justifyContent: 'space-around'}}>
+        return (<div style={{}}>
             <Popconfirm placement="left" title=" 删掉吗"
                         onConfirm={this.removeCompound('remove', record)}
                         okText="是的" cancelText="我再想想">
-                <Button>删除</Button>
+                <a>删除</a>
             </Popconfirm>
+            <span className = "ant-divider" />
             <Popconfirm placement="left" title="上架?"
                         onConfirm={this.removeCompound('enable', record)}
                         okText="确认" cancelText="取消">
-                <Button>上架</Button>
+                <a>上架</a>
             </Popconfirm>
+            <span className = "ant-divider" />
             <Popconfirm placement="left" title="下架?"
                         onConfirm={this.removeCompound('disable', record)}
                         okText="确认" cancelText="取消">
-                <Button>下架</Button>
+                <a>下架</a>
             </Popconfirm>
-            <Button onClick={this.updateCompound(record)}>编辑</Button>
-        </div>
+            <span className = "ant-divider" />
+            <a onClick={this.updateCompound(record)}>编辑</a>
+        </div>);
     };
 
     updateCompound = (record) => (e) => {
@@ -264,10 +270,10 @@ export default class Compounds extends React.Component {
         return <div className="compounds">
             <BreadcrumbCustom first="UI" second="合成图列表"/>
             <div className="search">
-                <Row gutter={24}>
-                    <Col className="gutter-row" span={24}>
-                        <div className="gutter-box">
-                            <label htmlFor="category">查询类型</label>
+                <Form.Item labelCol={{span: 4}}
+                    wrapperCol={{ span: 8 }}
+                label={'查询类型'}>
+
                             <Select defaultValue="1" style={{width: '100%'}} onChange={(v) => this.setState({
                                 category: v,
                                 imgLoaded: false,
@@ -278,28 +284,28 @@ export default class Compounds extends React.Component {
                                 <Select.Option value="4">轮播图</Select.Option>
                                 <Select.Option value="5">海报</Select.Option>
                             </Select>
-                        </div>
-                    </Col>
-                </Row>
+                </Form.Item>
             </div>
             <div className="table">
                 <div className="backgroundantd.Table">
                     <Row gutter={16}>
                         <Col className="gutter-row" span={24}>
                             <div className="gutter-box">
-                                <Card title={<div>合成图管理 <Button
-                                    onClick={this.expandedToggleAllRow}>
-                                    {this.state.table.expandedRowKeys.length == 0 ? '展开全部' : '收起全部'}</Button>
+                                <Card title={<div>合成图管理
+                                    {/*<Button*/}
+                                    {/*onClick={this.expandedToggleAllRow}>*/}
+                                    {/*{this.state.table.expandedRowKeys.length == 0 ? '展开全部' : '收起全部'}*/}
+                                    {/*</Button>*/}
                                 </div>}
                                       bordered={false}>
                                     <antd.Table
                                         size="middle"
-                                        scroll={{x: 1800}}
+                                        scroll={{x: this.columns.map(({width}) => (width || 100)).reduce((last,current) => last + current)}}
                                         rowKey={record => record.id}
                                         columns={this.columns}
                                         expandedRowRender={this.expandedRowRender}
-                                        expandedRowKeys={this.state.table.expandedRowKeys}
-                                        onRowClick={this.setExpandedRowKeys}
+                                        // expandedRowKeys={this.state.table.expandedRowKeys}
+                                        // onRowClick={this.setExpandedRowKeys}
                                         dataSource={this.state.table.dataSource}
                                         onChange={this.tableOnchange}
                                         pagination={pagination}
