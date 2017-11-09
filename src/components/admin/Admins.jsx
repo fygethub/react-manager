@@ -1,4 +1,6 @@
 import React from 'react';
+import Axios from 'axios';
+import cookie from 'js-cookie';
 import {Link} from 'react-router';
 import {message, Card, Row, Col, Table, Input, Button, Icon, Popconfirm, Modal, Form, Select, InputNumber} from 'antd';
 import BreadcrumbCustom from '../BreadcrumbCustom';
@@ -73,6 +75,16 @@ export default class Apps extends React.Component {
     componentDidMount() {
         this.getAdmins();
         U.page.clearPageStrage();
+
+        // const {pageSize,current} = this.state;
+        // (async () => {
+        //     const json = await Axios.post('http://sandbox-api.wakkaa.com/1/adm/admin/admins',{
+        //         offset: pageSize * (current - 1),
+        //         limit: pageSize,
+        //         'x-adm-sess': cookie.get('x-adm-sess'),
+        //     }).then((res) => res);
+        //     console.table(json);
+        // })()
     }
     confirmDelete = (id) => {
         App.api('adm/admin/remove', {
