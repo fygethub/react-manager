@@ -44,7 +44,7 @@ const routes = (
                     <Route path={'config/edit/:key'} component={SystemConfigEdit}/>
                 </Route>
                 <Route path={'ui'}>
-                    <Route path={'drags-new'} component={DragsNew}/>
+                    <Route path={'drags-new/:id'} component={DragsNew}/>
                     <Route path={'compounds'} component={Compounds}/>
                     <Route path={'compound-manage'} component={CompoundsManage}/>
                 </Route>
