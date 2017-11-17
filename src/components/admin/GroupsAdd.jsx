@@ -147,9 +147,9 @@ class AdminsAdd extends Component {
                 >
                     {getFieldDecorator('name', {
                         rules: [{
-                            type: 'string', message: 'The input is not valid name!',
+                            type: 'string', message: '请输入有效的值!',
                         }, {
-                            required: true, message: 'Please input your name',
+                            required: 'true', message: '请输入有效值',
                         }],
                     })(
                         <Input />
@@ -162,7 +162,7 @@ class AdminsAdd extends Component {
                 >
                     {getFieldDecorator('root', {
                         rules: [{
-                            required: true, message: '请选择!',
+                            required: 'true', message: '请选择!',
                         }],
                         initialValue: '1'
                     })(

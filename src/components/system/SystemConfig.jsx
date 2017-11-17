@@ -26,11 +26,11 @@ class searchForm extends React.Component {
         return <Form layout="inline" onSubmit={this.handleSubmit}>
             <Form.Item>
                 {getFieldDecorator('key', {rules: [{require: true, message: 'please input your key'}]})(
-                    <Input prefix={<Icon type="key" style={{fontSize: 13}}/>} placeholder="key"/>
+                    <Input placeholder="key"/>
                 )}
             </Form.Item>
             <Form.Item>
-                <Button type="primary" htmlType="submit" className="login-form-button">
+                <Button type="primary" htmlType="submit" >
                     搜索
                 </Button>
             </Form.Item>
@@ -47,7 +47,7 @@ export default class SystemConfig extends Component {
             tableName: 'api_config',
             loading: true,
             offset: 0,
-            current: U.page.getCurrentPage(),
+            current: 0,
             pageSize: 20,
             total: 0,
             dataSource: [],
@@ -110,11 +110,9 @@ export default class SystemConfig extends Component {
     }
     componentDidMount() {
         this.getData();
-        U.page.clearPageStrage();
 
     }
     onChange = (pagination,filters,sortor) => {
-        U.page.setCurrentPage(pagination.current);
         this.setState({
             pageSize: pagination.pageSize,
             current: pagination.current,
@@ -137,14 +135,12 @@ export default class SystemConfig extends Component {
             <div className="table">
                 <BreadcrumbCustom first="系统" second="系统设置"/>
 
-                <Row>
+                <Row style={{margin: '10px 0'}}>
                     <Col span = {20}>
                         <SearchFormWrap handleSearch = {this.handleSearch} />
                     </Col>
                     <Col span = {2} offset = {2}>
-                        <div className="addicon">
-                            <Link to={`/app/system/config/add`}><Icon type="plus-circle" style={{fontSize:'30px',color: '#108ee9'}} /></Link>
-                        </div>
+                        <Button size={'large'} type = {'primary'} onClick={() => {this.props.router.push('/app/system/config/add')}}>添加</Button>
                     </Col>
                 </Row>
                 <Card>

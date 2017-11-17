@@ -7,8 +7,13 @@ import App from '../common/App.jsx';
 const {Header} = Layout;
 
 class HeaderCustom extends Component {
-    state = {};
-
+    state = {
+        user: '',
+    };
+    componentDidMount(){
+        let userName = window.localStorage.getItem('userName');
+        this.setState({user: userName});
+    }
     menuClick = e => {
         console.log(e);
         e.key === 'logout' && this.logout();
@@ -21,7 +26,7 @@ class HeaderCustom extends Component {
 
     render() {
         return (
-            <Header style={{background: '#fff', padding: 0, height: 65}} className="custom-theme">
+            <Header style={{background: '#fff', padding: 0, height: 50}} className="custom-theme">
                 <Icon
                     className="trigger custom-trigger"
                     type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
@@ -29,22 +34,17 @@ class HeaderCustom extends Component {
                 />
                 <Menu
                     mode="horizontal"
-                    style={{lineHeight: '64px', float: 'right'}}
+                    style={{lineHeight: '50px', float: 'right',borderLeft: '1px solid #ccc'}}
                     onClick={this.menuClick}
                 >
-                    <Menu.SubMenu title={<span className="avatar"><img src={avatar} alt="头像"/><i
+                    <Menu.SubMenu title={<span>{this.state.user}<i
                         className="on bottom b-white"/></span>}>
                         <Menu.ItemGroup title="用户中心">
                             <Menu.Item key="logout"><span onClick={this.logout}>退出登录</span></Menu.Item>
                         </Menu.ItemGroup>
                     </Menu.SubMenu>
                 </Menu>
-                <style>{`
-                    .ant-menu-Menu.SubMenu-horizontal > .ant-menu {
-                        width: 120px;
-                        left: -40px;
-                    }
-                `}</style>
+
             </Header>
         )
     }

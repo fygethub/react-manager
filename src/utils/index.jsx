@@ -165,10 +165,13 @@ let U = (function () {
             if (!date || !fmt) {
                 return null;
             }
+            if (typeof date == 'string') {
+                date = parse(date);
+            }
             let o = {
                 "M+": date.getMonth() + 1, // 月份
                 "d+": date.getDate(), // 日
-                "h+": date.getHours() % 12 == 0 ? 12 : date.getHours() % 12, // 小时
+                "h+": date.getHours() % 12 === 0 ? 12 : date.getHours() % 12, // 小时
                 "H+": date.getHours(), // 小时
                 "m+": date.getMinutes(), // 分
                 "s+": date.getSeconds(), // 秒
@@ -193,15 +196,15 @@ let U = (function () {
                     .replace(
                         RegExp.$1,
                         ((RegExp.$1.length > 1) ? (RegExp.$1.length > 2 ? "\u661f\u671f"
-                                : "\u5468")
+                            : "\u5468")
                             : "")
                         + week[date.getDay() + ""]);
             }
             for (let k in o) {
                 if (new RegExp("(" + k + ")").test(fmt)) {
                     fmt = fmt.replace(RegExp.$1,
-                        (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k])
-                                .substr(("" + o[k]).length)));
+                        (RegExp.$1.length === 1) ? (o[k]) : (("00" + o[k])
+                            .substr(("" + o[k]).length)));
                 }
             }
             return fmt;

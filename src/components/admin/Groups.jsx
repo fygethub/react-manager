@@ -12,7 +12,7 @@ export default class AdminGroups extends React.Component {
         this.state={
             loading: true,
             offset: 0,
-            current: U.page.getCurrentPage(),
+            current: 0,
             pageSize: 10,
             total: 0,
             dataSource: [],
@@ -69,7 +69,6 @@ export default class AdminGroups extends React.Component {
     }
     componentDidMount() {
         this.getAdmins();
-        U.page.clearPageStrage();
     }
     confirmDelete = (id) => {
         App.api('adm/admin/remove_group', {
@@ -81,7 +80,6 @@ export default class AdminGroups extends React.Component {
     }
 
     tableOnChange = (pagination,filters,sortor) => {
-        U.page.setCurrentPage(pagination.current);
         this.setState({
             pageSize: pagination.pageSize,
             current: pagination.current,
@@ -100,11 +98,9 @@ export default class AdminGroups extends React.Component {
         return (
             <div>
                 <BreadcrumbCustom first="管理员" second="管理员列表"/>
-                <Row>
+                <Row style={{margin: '10px 0'}}>
                     <Col span = {2} offset = {22}>
-                        <div className="addicon">
-                            <Link to={`/app/admin/groups/add`}><Icon type="plus-circle" style={{fontSize:'30px',color: '#108ee9'}} /></Link>
-                        </div>
+                        <Button size={'large'} type = {'primary'} onClick={() => {this.props.router.push('/app/admin/groups/add')}}>添加</Button>
                     </Col>
                 </Row>
                 <Card>

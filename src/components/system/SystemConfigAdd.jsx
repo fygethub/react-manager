@@ -83,9 +83,9 @@ class AdminsAdd extends Component {
                 >
                     {getFieldDecorator('key', {
                         rules: [{
-                            type: 'string', message: 'The input is not valid name!',
+                            type: 'string', message: '请输入有效的值!',
                         }, {
-                            required: true, message: 'Please input your name',
+                            required: true, message: '请输入有效值',
                         }],
                     })(
                         <Input />
@@ -124,7 +124,7 @@ class AdminsAdd extends Component {
                             required: true, message: '请输入!',
                         }],
                     })(
-                        <TextArea />
+                        <Input type ="textarea" autosize={{minRows: 4,maxRows: 8}} />
                     )}
                 </FormItem>
                 <FormItem

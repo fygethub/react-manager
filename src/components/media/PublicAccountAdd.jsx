@@ -1,21 +1,21 @@
 import React,{Component} from 'react';
 import {Link} from 'react-router';
-import {message, Card, Row, Col, Table, Input, Button, Icon, Popconfirm, Modal, Form, Select, InputNumber} from 'antd';
+import {message, Card, Row, Col, Table, Input, Button, Icon, Popconfirm, Modal, Form, Select, InputNumber,Upload} from 'antd';
 import BreadcrumbCustom from '../BreadcrumbCustom';
 import App from '../../common/App.jsx';
 import U from '../../utils';
 import '../../asssets/css/users/users.less';
 
 const Option = Select.Option;
+const TextArea = Input.TextArea;
 const FormItem = Form.Item;
 
-class AdminsAdd extends Component {
+class PublicAccountAdd extends Component {
 
     constructor(props) {
         super(props);
         this.state={
-            groups: [],
-            selectInitValue: []
+            mediaId: ''
         }
     }
 
@@ -28,39 +28,23 @@ class AdminsAdd extends Component {
     }
 
     handleSubmit = (e) => {
+        console.log(this.props)
         e.preventDefault();
+        const {query:{mediaId}} = this.props.location;
         this.props.form.validateFields((err,val) => {
             console.info(val);
             if(!err){
-                val.groups = val.groups.map((v,i) => ({'id': v}));
                 console.info(val);
-                App.api('/adm/admin/save',{'admin': JSON.stringify(val)}).then((res) => {
+                val.mediaId = mediaId;
+                App.api('/adm/media/link_mp',{'app': JSON.stringify(val),'fileElement': val.certificate}).then((res) => {
                     this.props.router.push('app/admin/admins');
                 });
             }
         });
     }
 
-    componentDidMount() {
-        const {params:{id},form:{setFieldsValue}} = this.props;
-        App.api('adm/admin/admin',{id}).then(({name,email,groups}) => {
-            this.setState({selectInitValue: groups});
-            const groupsAfter = groups.map((v) => v.id);
-            setFieldsValue({name,email});
-        })
-    }
-
     render() {
-        const {selectInitValue} = this.state;
-        const groups = [{
-            'id': '1',
-            'name': 'Root'
-        },{
-            'id': '2',
-            'name': 'test'
-        }];
         const { getFieldDecorator } = this.props.form;
-
         const formItemLayout = {
             labelCol: {
                 xs: { span: 24 },
@@ -84,16 +68,16 @@ class AdminsAdd extends Component {
             },
         };
 
-        return(
-            <Form onSubmit={this.handleSubmit} style={{marginTop: "50px"}}>
+        return (
+            <Form onSubmit={this.handleSubmit} style={{marginTop: "30px"}}>
                 <FormItem
                     {...formItemLayout}
-                    label="名称"
+                    label="公众号ID"
                     hasFeedback
                 >
-                    {getFieldDecorator('name', {
+                    {getFieldDecorator('appId', {
                         rules: [{
-                            type: 'string', message: '请输入有效的值!',
+                            type: 'string', message: 'The input is not valid name!',
                         }, {
                             required: true, message: '请输入有效值',
                         }],
@@ -103,14 +87,14 @@ class AdminsAdd extends Component {
                 </FormItem>
                 <FormItem
                     {...formItemLayout}
-                    label="E-mail"
+                    label="公众号secret"
                     hasFeedback
                 >
-                    {getFieldDecorator('email', {
+                    {getFieldDecorator('secret', {
                         rules: [{
-                            type: 'email', message: 'The input is not valid E-mail!',
+
                         }, {
-                            required: true, message: 'Please input your E-mail!',
+                            required: true, message: '输入密码呦!',
                         }],
                     })(
                         <Input />
@@ -118,27 +102,42 @@ class AdminsAdd extends Component {
                 </FormItem>
                 <FormItem
                     {...formItemLayout}
-                    label="管理组"
+                    label="公众号代理"
                     hasFeedback
                 >
-                    {getFieldDecorator('groups', {
-                        rules: [{
-                            required: true, message: '请选择权限分组!',
+                    {getFieldDecorator('tokenProxy')(
+                        <Input type ="textarea" autosize={{minRows: 4,maxRows: 8}} />
+                    )}
+                </FormItem>
+                <FormItem
+                    {...formItemLayout}
+                    label="商户ID"
+                    hasFeedback
+                >
+                    {getFieldDecorator('mchId')(
+                        <Input />
+                    )}
+                </FormItem>
+                <FormItem
+                    {...formItemLayout}
+                    label="商户key"
+                    hasFeedback
+                >
+                    {getFieldDecorator('mchKey')(
+                        <Input />
+                    )}
+                </FormItem>
+                <FormItem
+                    {...formItemLayout}
+                    label="商户证书"
+                    hasFeedback
+                >
+                    {getFieldDecorator('certificate', {
+                        rules: [ {
+                            required: false, message: '上传证书呦!',
                         }],
-                        initialValue: ['1','2']
                     })(
-                        <Select
-                            mode="multiple"
-                            style={{ width: '100%' }}
-                            placeholder="Please select"
-                            onChange={this.handleChange}
-                        >
-                            {
-                                groups.map((v, i) => {
-                                    return (<Option key={i} value={`${v.id}`}>{`${v.name}`}</Option>);
-                                })
-                            }
-                        </Select>
+                        <Input type = "file" placeholder="请选择文件" />
                     )}
                 </FormItem>
                 <FormItem {...tailFormItemLayout}>
@@ -151,6 +150,6 @@ class AdminsAdd extends Component {
 
 }
 
-const AdminsAddWrap = Form.create()(AdminsAdd);
-
-export default AdminsAddWrap;
+const PublicAccountAddWrap = Form.create()(PublicAccountAdd);
+console.info(PublicAccountAddWrap);
+export default PublicAccountAddWrap;

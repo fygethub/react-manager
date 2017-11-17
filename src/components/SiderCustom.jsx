@@ -65,15 +65,15 @@ class SiderCustom extends Component {
                     openKeys={[this.state.openKey]}
                     onOpenChange={this.openMenu}
                 >
-                    <Menu.Item key="/app/dashboard/index">
-                        <Link to={'/app/dashboard/index'}><Icon type="mobile"/><span
-                            className="nav-text">首页</span></Link>
-                    </Menu.Item>
+                    {/*<Menu.Item key="/app/dashboard/index">*/}
+                        {/*<Link to={'/app/dashboard/index'}><Icon type="mobile"/><span*/}
+                            {/*className="nav-text">首页</span></Link>*/}
+                    {/*</Menu.Item>*/}
                     <Menu.SubMenu
                         key="/app/ui"
                         title={<span><Icon type="scan"/><span className="nav-text">合成图</span></span>}
                     >
-                        <Menu.Item key="/app/ui/drags-new"><Link to={'/app/ui/drags-new/no'}>添加编辑</Link></Menu.Item>
+                        <Menu.Item key="/app/ui/drags-new"><Link to={'/app/ui/drags-new'}>添加编辑</Link></Menu.Item>
                         <Menu.Item key="/app/ui/compounds"><Link to={'/app/ui/compounds'}>合成图列表</Link></Menu.Item>
                         <Menu.Item key="/app/ui/compound-manage">
                             <Link to={'/app/ui/compound-manage'}>字体管理</Link>
@@ -81,15 +81,15 @@ class SiderCustom extends Component {
                     </Menu.SubMenu>
                     <Menu.SubMenu
                         key="/app/media"
-                        title={<span><Icon type="setting"/><span className="nav-text">店铺</span></span>}
+                        title={<span><Icon type="shop"/><span className="nav-text">店铺</span></span>}
                     >
-                        <Menu.Item key="/app/media/medias/"><Link to={'/app/media/medias'}>店铺</Link> </Menu.Item>
+                        <Menu.Item key="/app/media/medias"><Link to={'/app/media/medias'}>店铺</Link> </Menu.Item>
                     </Menu.SubMenu>
                     < Menu.SubMenu
                         key="/app/system"
                         title={<span><Icon type="setting"/><span className="nav-text">系统设置</span></span>}
                     >
-                        <Menu.Item key="/app/system/config/"><Link to={'/app/system/config'}>系统设置</Link> </Menu.Item>
+                        <Menu.Item key="/app/system/config"><Link to={'/app/system/config'}>系统设置</Link> </Menu.Item>
                     </Menu.SubMenu>
                     <Menu.SubMenu
                         key="/app/user"

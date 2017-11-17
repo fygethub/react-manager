@@ -14,88 +14,73 @@ export default class Apps extends React.Component {
         this.state={
             loading: true,
             offset: 0,
-            current: 0,
+            current: 1,
             pageSize: 1,
             total: 0,
             dataSource: [],
             columns: [{
                 title:'序号',
                 dataIndex: 'id',
-                key: 'id',
                 render: (col,row,i) => i + 1
             },{
-                title:'名称',
-                dataIndex: 'name',
-                key: 'name'
+                title:'公众号ID',
+                dataIndex: 'appId',
             },{
-                title:'Email',
-                dataIndex: 'email',
-                key: 'email'
-            },{
-                title:'所在组',
-                dataIndex: 'groups',
-                key: 'groups',
-                render: (col,row,i) => (col.filter((v) =>v.name).map((v) => v.name).join(','))
+                title:'商户号',
+                dataIndex: 'merchant.mchId',
             },{
                 title:'操作',
                 dataIndex: 'option',
                 key: 'option',
                 width: 200,
                 render: (col,row,i) => (<div style={{textAlign:"left"}}>
-                    <Link to={`/app/admin/admins/edit/${row.id}`}>编辑</Link>
+                    <Link to={{pathname: `/app/media/maps/edit/${row.appId}`, query: {mediaId: `${this.props.params.id}`}}}>编辑</Link>
                     <span className = "ant-divider" />
-                    <Popconfirm title="确认删除吗?" onConfirm={() => this.confirmDelete(row.id)} onCancel={this.cancel} okText="Yes" cancelText="No">
-                        <a href="#">删除</a>
-                    </Popconfirm>
-                    <span className = "ant-divider" />
-                    <Popconfirm title="确认重置密码吗?" onConfirm={() => this.confirmPassword(row.id)} onCancel={this.cancel} okText="Yes" cancelText="No">
-                        <a href="#">重置密码</a>
+                    <Popconfirm title="确认解绑吗?" onConfirm={() => this.confirmDelete(row.id)} onCancel={this.cancel} okText="Yes" cancelText="No">
+                        <a href="#">解绑</a>
                     </Popconfirm>
                 </div>)
             }]
         }
 
     }
-    getAdmins = () => {
+    getPublicAccounts = () => {
         const {pageSize,current} = this.state;
-        App.api('adm/admin/admins', {
+        const {params:{id}} = this.props;
+        App.api('adm/media/mps', {
             offset: pageSize * (current - 1),
             limit: pageSize,
+            mediaId: id,
         }).then((data) => {
             console.log(data)
             this.setState({
-                    dataSource: data.items,
-                    pageSize: data.limit,
-                    offset: data.offset,
-                    total: data.total,
-                    loading: false
+                dataSource: data,
+                pageSize: data.limit,
+                offset: data.offset,
+                total: data.total,
+                loading: false
             })
         })
     }
     componentDidMount() {
-        this.getAdmins();
+        //mediaId
+        const {params:{id}} = this.props;
+        this.getPublicAccounts();
     }
     confirmDelete = (id) => {
-        App.api('adm/admin/remove', {
-            id: id
+        App.api('adm/media/unlink_mp', {
+            appId: id
         }).then((data) => {
-            this.getAdmins();
+            this.getPublicAccounts();
         })
 
     }
-    confirmPassword = (id) => {
-        App.api('adm/admin/reset_password', {
-            id: id
-        }).then((data) => {
-            console.info(data);
-            this.getAdmins();
-        })
-    }
+
     tableOnChange = (pagination,filters,sortor) => {
         this.setState({
-                pageSize: pagination.pageSize,
-                current: pagination.current,
-        }, () => this.getAdmins());
+            pageSize: pagination.pageSize,
+            current: pagination.current,
+        }, () => this.getPublicAccounts());
     }
 
     render() {
@@ -107,17 +92,22 @@ export default class Apps extends React.Component {
             pageSize: pageSize,
             showSizeChanger: true,
         };
+        //mediaId
+        const {params:{id}} = this.props;
         return (
             <div>
-                <BreadcrumbCustom first="管理员" second="管理员列表"/>
+                <BreadcrumbCustom first="店铺" second="公众号"/>
                 <Row style={{margin: '10px 0'}}>
-                    <Col span = {2} offset = {22}>
-                        <Button size={'large'} type = {'primary'} onClick={() => {this.props.router.push('/app/admin/admins/add')}}>添加</Button>
+                    <Col span = {20}>
+
+                    </Col>
+                    <Col span = {2} offset = {2}>
+                        <Button size={'large'} type = {'primary'} onClick={() => {this.props.router.push('/app/media/maps/add')}}>添加</Button>
                     </Col>
                 </Row>
                 <Card>
                     <Table
-                        rowKey={(row) => row.id}
+                        rowKey={(row) => row.appId}
                         columns={columns}
                         dataSource={dataSource}
                         pagination={pagination}

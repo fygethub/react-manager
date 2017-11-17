@@ -269,12 +269,13 @@ export default class Compounds extends React.Component {
         };
         return <div className="compounds">
             <BreadcrumbCustom first="UI" second="合成图列表"/>
-            <div className="search">
-                <Form.Item labelCol={{span: 4}}
-                    wrapperCol={{ span: 8 }}
-                label={'查询类型'}>
+            <Row style={{margin: '10px 0'}}>
+                <Col span = {20}>
+                    <Form layout="inline">
+                        <Form.Item
+                                   label={'查询类型'}>
 
-                            <Select defaultValue="1" style={{width: '100%'}} onChange={(v) => this.setState({
+                            <Select defaultValue="1" style={{minwidth: "40px"}} onChange={(v) => this.setState({
                                 category: v,
                                 imgLoaded: false,
                             }, this.loadData)}>
@@ -284,8 +285,11 @@ export default class Compounds extends React.Component {
                                 <Select.Option value="4">轮播图</Select.Option>
                                 <Select.Option value="5">海报</Select.Option>
                             </Select>
-                </Form.Item>
-            </div>
+                        </Form.Item>
+                    </Form>
+                </Col>
+            </Row>
+
             <div className="table">
                 <div className="backgroundantd.Table">
                     <Row gutter={16}>
@@ -303,7 +307,7 @@ export default class Compounds extends React.Component {
                                         scroll={{x: this.columns.map(({width}) => (width || 100)).reduce((last,current) => last + current)}}
                                         rowKey={record => record.id}
                                         columns={this.columns}
-                                        expandedRowRender={this.expandedRowRender}
+                                        // expandedRowRender={this.expandedRowRender}
                                         // expandedRowKeys={this.state.table.expandedRowKeys}
                                         // onRowClick={this.setExpandedRowKeys}
                                         dataSource={this.state.table.dataSource}

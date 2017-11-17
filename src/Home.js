@@ -32,7 +32,7 @@ class App extends Component {
                 <SiderCustom path={this.props.location.pathname} collapsed={this.state.collapsed}/>
                 <Layout>
                     <HeaderCustom toggle={this.toggle} user={auth.data || {}} router={router}/>
-                    <Content style={{margin: '0 16px', overflow: 'initial'}}>
+                    <Content style={{padding: '0 16px', overflow: 'initial'}}>
                         {this.props.children}
                     </Content>
                     <Footer style={{textAlign: 'center'}}>

@@ -32,6 +32,7 @@ class Login extends React.Component {
                     password: md5(values.password),
                 }).then((data) => {
                     App.saveCookie('x-adm-sess', data.session.id, {expires: new Date().setTime(new Date().getTime() + 3600 * 1000)});
+                    window.localStorage.setItem('userName',data.admin.email);
                     App.go('app/ui/compounds', _this);
                 });
             }

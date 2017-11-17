@@ -17,6 +17,9 @@ import SystemConfig from './components/system/SystemConfig.jsx';
 import SystemConfigAdd from './components/system/SystemConfigAdd.jsx';
 import SystemConfigEdit from './components/system/SystemConfigEdit.jsx';
 import Medias from './components/media/Medias';
+import PublicAccounts from './components/media/PublicAccounts';
+import PublicAccountEdit from './components/media/PublicAccountEdit';
+import PublicAccountAdd from './components/media/PublicAccountAdd';
 import Home from './Home';
 
 const routes = (
@@ -41,12 +44,15 @@ const routes = (
                     <Route path={'config/edit/:key'} component={SystemConfigEdit}/>
                 </Route>
                 <Route path={'ui'}>
-                    <Route path={'drags-new/:id'} component={DragsNew}/>
+                    <Route path={'drags-new'} component={DragsNew}/>
                     <Route path={'compounds'} component={Compounds}/>
                     <Route path={'compound-manage'} component={CompoundsManage}/>
                 </Route>
                 <Route path={'media'}>
                     <Route path={'medias'} component={Medias}/>
+                    <Route path={'maps/map/:id'} component={PublicAccounts} />
+                    <Route path={'maps/add'} component={PublicAccountAdd} />
+                    <Route path={'maps/edit/:id'} component={PublicAccountEdit} />
                 </Route>
                 <Route path={'dashboard/index'} component={Dashboard}/>
             </Route>
