@@ -57,14 +57,6 @@ class BreadcrumbCustom extends React.Component {
                     {first}
                     {second}
                 </Breadcrumb>
-                <div className={`switcher dark-white ${this.state.switcherOn ? 'active' : ''}`}>
-                    <a className="sw-btn dark-white" onClick={this.switcherOn}>
-                        <Icon type="setting" className="text-dark"/>
-                    </a>
-                    <div style={{padding: '1rem'}} className="clear">
-                        { themesTag }
-                    </div>
-                </div>
                 <style>{`
                     ${this.state.theme ?
                     `

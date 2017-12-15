@@ -29,7 +29,7 @@ class HeaderCustom extends Component {
                 />
                 <Menu
                     mode="horizontal"
-                    style={{lineHeight: '64px', float: 'right'}}
+                    style={{lineHeight: '56px', float: 'right'}}
                     onClick={this.menuClick}
                 >
                     <Menu.SubMenu title={<span className="avatar"><img src={avatar} alt="头像"/><i

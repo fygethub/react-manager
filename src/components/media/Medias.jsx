@@ -45,7 +45,7 @@ class Medias extends React.Component {
                 key: 'img',
                 render: (img) => {
                     return <div className="table-avatar">
-                        <img src={img} alt="LOGO"/>
+                        {img ? <img src={img} alt="avatar"/> : 'logo'}
                     </div>
                 },
             },
@@ -107,6 +107,9 @@ class Medias extends React.Component {
                         <Menu.Item key="3">
                             <a href="javascript:;" onClick={() => this.detailModal(record.id, 3)}>手动提现</a>
                         </Menu.Item>
+                        <Menu.Item key="4">
+                            <a href="javascript:;" onClick={() => this.wxQrcode(record.id)}>查看店铺二维码</a>
+                        </Menu.Item>
                     </Menu>} trigger={['click']}>
                         <a className="color-info" href="javascript:;">
                             操作 <Icon type="down"/>
@@ -126,6 +129,17 @@ class Medias extends React.Component {
             }
         }
     }
+
+    showQRCode = (id) => {
+        Modal.info({
+            content: <img id='dialog-qrcode-top' style={{width: '300px', height: '300px'}}/>,
+            footer: null,
+            icon: null,
+            width: '300px',
+            title: '店铺二维码',
+        });
+    };
+
 
     loadData = () => {
         App.api(URL_LIST, {
@@ -234,6 +248,21 @@ class Medias extends React.Component {
         })
     };
 
+    wxQrcode = (id) => {
+        console.log(id);
+        this.showQrcode(true);
+
+        /*App.api('adm/file/url_to_qrcode', {
+         url: App.getShopURL(id),
+         width: 300,
+         height: 300
+         }).then((data) => {
+         this.showQrcode(true);
+         document.getElementById('dialog-qrcode-top').setAttribute('src', data);
+         });*/
+    };
+
+
     handleAmount = (mediaId) => {
         App.api('adm/finance/media_withdraw', {
             mediaId,
@@ -245,6 +274,11 @@ class Medias extends React.Component {
             })
         })
     };
+
+    showQrcode = (val) => {
+        this.setState({show_qrcode: val ? val : false})
+    };
+
 
     render() {
         const {getFieldDecorator, setFieldsValue} = this.props.form;
@@ -260,7 +294,14 @@ class Medias extends React.Component {
         return (
             <div className="userDataList">
                 <BreadcrumbCustom first={TABLE_NAME} second={TABLE_NAME}/>
-
+                <Modal
+                    visible={this.state.show_qrcode}
+                    title="微信扫码"
+                    width='330px'
+                    onCancel={() => this.showQrcode()}
+                    footer={null}>
+                    <img id='dialog-qrcode-top' style={{width: '300px', height: '300px'}}/>
+                </Modal>
                 <div style={{display: 'flex'}}>
                     <Input value={this.state.inputText}
                            placeholder="店铺名"

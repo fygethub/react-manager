@@ -1,6 +1,6 @@
 import React from 'react';
 import antd from 'antd';
-import {Row, Col, Button, message, Popconfirm, Card, Tooltip, Select} from 'antd';
+import {Row, Col, Button, message, Popconfirm, Card, Tooltip, Select, Menu, Dropdown, Icon, Table} from 'antd';
 import {hashHistory} from 'react-router';
 import U from '../../../common/U';
 import BreadcrumbCustom from '../../BreadcrumbCustom';
@@ -121,24 +121,37 @@ export default class Compounds extends React.Component {
     };
 
     renderAction = (text, record) => {
-        return <div style={{display: 'flex', justifyContent: 'space-around'}}>
-            <Popconfirm placement="left" title=" 删掉吗"
-                        onConfirm={this.removeCompound('remove', record)}
-                        okText="是的" cancelText="我再想想">
-                <Button>删除</Button>
-            </Popconfirm>
-            <Popconfirm placement="left" title="上架?"
-                        onConfirm={this.removeCompound('enable', record)}
-                        okText="确认" cancelText="取消">
-                <Button>上架</Button>
-            </Popconfirm>
-            <Popconfirm placement="left" title="下架?"
-                        onConfirm={this.removeCompound('disable', record)}
-                        okText="确认" cancelText="取消">
-                <Button>下架</Button>
-            </Popconfirm>
-            <Button onClick={this.updateCompound(record)}>编辑</Button>
-        </div>
+        return <Dropdown overlay={<Menu>
+            <Menu.Item key="1">
+                <Popconfirm placement="left" title=" 删掉吗"
+                            onConfirm={this.removeCompound('remove', record)}
+                            okText="是的" cancelText="我再想想">
+                    <a>删除</a>
+                </Popconfirm>
+            </Menu.Item>
+            <Menu.Divider/>
+            <Menu.Item key="2">
+                <Popconfirm placement="left" title="上架?"
+                            onConfirm={this.removeCompound('enable', record)}
+                            okText="确认" cancelText="取消">
+                    <a>上架</a>
+                </Popconfirm>
+            </Menu.Item>
+            <Menu.Item key="3">
+                <Popconfirm placement="left" title="下架?"
+                            onConfirm={this.removeCompound('disable', record)}
+                            okText="确认" cancelText="取消">
+                    <a>下架</a>
+                </Popconfirm>
+            </Menu.Item>
+            <Menu.Item key="3">
+                <a onClick={this.updateCompound(record)}>编辑</a>
+            </Menu.Item>
+        </Menu>} trigger={['click']}>
+            <a className="color-info" href="javascript:;" onClick={(e) => e.stopPropagation()}>
+                操作 <Icon type="down"/>
+            </a>
+        </Dropdown>
     };
 
     updateCompound = (record) => (e) => {
@@ -232,7 +245,9 @@ export default class Compounds extends React.Component {
             <Col className="gutter-row" span={24}>
                 <div className="gutter-box">
                     <div className="layers">
-                        <antd.Table
+                        <Table
+                            style={{background: 'lightgray'}}
+                            pagination={false}
                             size="middle"
                             dataSource={layers}
                             columns={columns}
@@ -292,9 +307,8 @@ export default class Compounds extends React.Component {
                                     {this.state.table.expandedRowKeys.length == 0 ? '展开全部' : '收起全部'}</Button>
                                 </div>}
                                       bordered={false}>
-                                    <antd.Table
+                                    <Table
                                         size="middle"
-                                        scroll={{x: 1800}}
                                         rowKey={record => record.id}
                                         columns={this.columns}
                                         expandedRowRender={this.expandedRowRender}

@@ -6,6 +6,7 @@ import {hashHistory} from 'react-router';
 import {message} from 'antd';
 import cookie from 'js-cookie';
 import U from '../utils';
+let AwesomeBase64 = require('awesome-urlsafe-base64');
 
 
 let ENV_CONFIG;
@@ -18,6 +19,7 @@ if (process.env.API_ENV == 'prod') {
 }
 
 const API_BASE = window.location.protocol + ENV_CONFIG.api;
+const URL_H5 = ENV_CONFIG.urlH5;
 
 const instanceFactory = () => {
     let instance = axios.create({
@@ -145,8 +147,13 @@ const uuid = function () {
     return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
 };
 
+let getShopURL = (id) => {
+    return URL_H5 + 'app' + AwesomeBase64.encode(new Buffer(id.toString())) + '?_t=1';
+};
+
 
 export default {
+    getShopURL,
     go,
     api,
     uuid,
