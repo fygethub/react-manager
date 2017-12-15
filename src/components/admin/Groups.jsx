@@ -1,6 +1,4 @@
 import React from 'react';
-import Axios from 'axios';
-import cookie from 'js-cookie';
 import {Link} from 'react-router';
 import {message, Card, Row, Col, Table, Input, Button, Icon, Popconfirm, Modal, Form, Select, InputNumber} from 'antd';
 import BreadcrumbCustom from '../BreadcrumbCustom';
@@ -8,14 +6,14 @@ import App from '../../common/App.jsx';
 import U from '../../utils';
 import '../../asssets/css/users/users.less';
 
-export default class Apps extends React.Component {
+export default class AdminGroups extends React.Component {
     constructor(props){
         super(props);
         this.state={
             loading: true,
             offset: 0,
             current: 0,
-            pageSize: 1,
+            pageSize: 10,
             total: 0,
             dataSource: [],
             columns: [{
@@ -28,28 +26,26 @@ export default class Apps extends React.Component {
                 dataIndex: 'name',
                 key: 'name'
             },{
-                title:'Email',
-                dataIndex: 'email',
-                key: 'email'
-            },{
-                title:'所在组',
-                dataIndex: 'groups',
-                key: 'groups',
-                render: (col,row,i) => (col.filter((v) =>v.name).map((v) => v.name).join(','))
+                title:'权限',
+                dataIndex: 'root',
+                key: 'root',
+                render: (col,row,i) => {
+                    switch (col) {
+                        case 0 : return '普通管理员';
+                        case 1 : return '超级管理员';
+                        default: ''
+                    }
+                }
             },{
                 title:'操作',
-                dataIndex: 'option',
-                key: 'option',
+                dataIndex: 'password',
+                key: 'password',
                 width: 200,
                 render: (col,row,i) => (<div style={{textAlign:"left"}}>
-                    <Link to={`/app/admin/admins/edit/${row.id}`}>编辑</Link>
+                    <Link to={`/app/admin/groups/edit/${row.id}`}>编辑</Link>
                     <span className = "ant-divider" />
                     <Popconfirm title="确认删除吗?" onConfirm={() => this.confirmDelete(row.id)} onCancel={this.cancel} okText="Yes" cancelText="No">
                         <a href="#">删除</a>
-                    </Popconfirm>
-                    <span className = "ant-divider" />
-                    <Popconfirm title="确认重置密码吗?" onConfirm={() => this.confirmPassword(row.id)} onCancel={this.cancel} okText="Yes" cancelText="No">
-                        <a href="#">重置密码</a>
                     </Popconfirm>
                 </div>)
             }]
@@ -57,18 +53,17 @@ export default class Apps extends React.Component {
 
     }
     getAdmins = () => {
-        const {pageSize,current} = this.state;
-        App.api('adm/admin/admins', {
-            offset: pageSize * (current - 1),
-            limit: pageSize,
+        App.api('adm/admin/groups', {
+            offset: this.state.pageSize * (this.state.current - 1),
+            limit: this.state.pageSize,
         }).then((data) => {
             console.log(data)
             this.setState({
-                    dataSource: data.items,
-                    pageSize: data.limit,
-                    offset: data.offset,
-                    total: data.total,
-                    loading: false
+                dataSource: data.items,
+                pageSize: data.limit,
+                offset: data.offset,
+                total: data.total,
+                loading: false
             })
         })
     }
@@ -76,25 +71,18 @@ export default class Apps extends React.Component {
         this.getAdmins();
     }
     confirmDelete = (id) => {
-        App.api('adm/admin/remove', {
+        App.api('adm/admin/remove_group', {
             id: id
         }).then((data) => {
             this.getAdmins();
         })
 
     }
-    confirmPassword = (id) => {
-        App.api('adm/admin/reset_password', {
-            id: id
-        }).then((data) => {
-            console.info(data);
-            this.getAdmins();
-        })
-    }
+
     tableOnChange = (pagination,filters,sortor) => {
         this.setState({
-                pageSize: pagination.pageSize,
-                current: pagination.current,
+            pageSize: pagination.pageSize,
+            current: pagination.current,
         }, () => this.getAdmins());
     }
 
@@ -112,19 +100,19 @@ export default class Apps extends React.Component {
                 <BreadcrumbCustom first="管理员" second="管理员列表"/>
                 <Row style={{margin: '10px 0'}}>
                     <Col span = {2} offset = {22}>
-                        <Button size={'large'} type = {'primary'} onClick={() => {this.props.router.push('/app/admin/admins/add')}}>添加</Button>
+                        <Button size={'large'} type = {'primary'} onClick={() => {this.props.router.push('/app/admin/groups/add')}}>添加</Button>
                     </Col>
                 </Row>
                 <Card>
-                    <Table
-                        rowKey={(row) => row.id}
-                        columns={columns}
-                        dataSource={dataSource}
-                        pagination={pagination}
-                        onChange={this.tableOnChange}
-                        loading={this.state.loading}
-                        scroll={{ x: columns.map(({ width }) => width || 100).reduce((l, f) => (l + f)) }}
-                    />
+                <Table
+                    rowKey={(row) => row.id}
+                    columns={columns}
+                    dataSource={dataSource}
+                    pagination={pagination}
+                    onChange={this.tableOnChange}
+                    loading={this.state.loading}
+                    scroll={{ x: columns.map(({ width }) => width || 100).reduce((l, f) => (l + f)) }}
+                />
                 </Card>
             </div>
         )

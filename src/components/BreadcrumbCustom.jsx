@@ -24,11 +24,6 @@ class BreadcrumbCustom extends React.Component {
         })
     }
 
-    switcherOn = () => {
-        this.setState({
-            switcherOn: !this.state.switcherOn
-        })
-    };
     themeChange = (v) => {
         this.setState({
             themes: this.state.themes.map((t, i) => {
@@ -42,39 +37,14 @@ class BreadcrumbCustom extends React.Component {
     };
 
     render() {
-        const themesTag = this.state.themes.map((v, i) => (
-            <div className="pull-left y-center mr-m mb-s" key={i}>
-                <i className={`w-24 mr-s b-a ${v.type}`}/>
-                <Switch checked={v.checked} onChange={() => this.themeChange(v)}/>
-            </div>
-        ));
         const first = <Breadcrumb.Item>{this.props.first}</Breadcrumb.Item> || '';
         const second = <Breadcrumb.Item>{this.props.second}</Breadcrumb.Item> || '';
         return (
-            <span>
                 <Breadcrumb style={{margin: '12px 0'}}>
                     <Breadcrumb.Item><Link to={'/app/dashboard/index'}>首页</Link></Breadcrumb.Item>
                     {first}
                     {second}
                 </Breadcrumb>
-                <style>{`
-                    ${this.state.theme ?
-                    `
-                    .custom-theme {
-                        background: ${this.state.theme.header.background} !important;
-                        color: #fff !important;
-                    }
-                    .custom-theme .ant-menu {
-                        background: ${this.state.theme.header.background} !important;
-                        color: #fff !important;
-                    }
-                    .custom-theme .ant-menu-item-group-title {
-                        color: #fff !important;
-                    }
-                    ` : ''
-                    }
-                `}</style>
-            </span>
         )
     }
 }

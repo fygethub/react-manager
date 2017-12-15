@@ -38,7 +38,7 @@ export default class FontEditor extends React.Component {
         let value = this.props.textAlign || 1;
         value = value == 1 ? 'left' : value == 2 ? 'center' : 'right';
         return (<div className="font-editor">
-                <div className="dragText"/>
+                {/*<div className="dragText"/>*/}
                 <textarea width='100%'
                           value={this.state.value}
                           id={"pell" + this.id}

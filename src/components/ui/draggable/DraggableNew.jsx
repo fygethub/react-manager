@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Menu, Icon, Card, message, Select, InputNumber, Button, Input, Modal} from 'antd';
+import {Menu, Icon, Card, message, Select, InputNumber, Button, Input, Modal,Row,Col} from 'antd';
 import BreadcrumbCustom from '../../BreadcrumbCustom';
 import Draggable from 'react-draggable';
 import '../../../asssets/css/ui/draggable-new.less';
@@ -11,6 +11,8 @@ import PictureEditor from './PictureEditor';
 import enmu from '../../../common/Ctype';
 import U from '../../../common/U';
 import Sortable from 'sortablejs';
+
+const Option = Select.Option;
 
 export default class DraggableNew extends React.Component {
 
@@ -417,6 +419,7 @@ export default class DraggableNew extends React.Component {
 
     rightStyleOperatorMenu = (_item) => {
         return (<Menu.SubMenu
+            style={{paddingLeft: '10px'}}
             key="sub1"
             title={<span><Icon type="bars"/>属性面板</span>}>
             {Object.keys(_item).map(key => {
@@ -455,8 +458,8 @@ export default class DraggableNew extends React.Component {
                                 onSelect={this.changeItemStyle(key)}
                                 value={_item[key] + ''}
                                 style={{width: '100%'}}>
-                                <Select.Option value='0'>{nor}</Select.Option>
-                                <Select.Option value='1'>{un}</Select.Option>
+                                <Option value='0'>{nor}</Option>
+                                <Option value='1'>{un}</Option>
                             </Select>
                         </Menu.Item>
                     )
@@ -476,13 +479,13 @@ export default class DraggableNew extends React.Component {
                                 style={{width: '100%'}}>
                                 {
                                     this.state.fontDataSource && this.state.fontDataSource.map(font => (
-                                        <Select.Option value={`${font.name}`}
+                                        <Option value={`${font.name}`}
                                                        key={`${font.name}`}>
                                             {font.name}
-                                        </Select.Option>
+                                        </Option>
                                     ))
                                 }
-                                <Select.Option value={'"宋体"'}>宋体</Select.Option>
+                                <Option value={'"宋体"'}>宋体</Option>
                             </Select>
                         </Menu.Item>
                     )
@@ -500,9 +503,9 @@ export default class DraggableNew extends React.Component {
                                 onSelect={this.changeItemStyle(key)}
                                 value={_item[key] + ''}
                                 style={{width: '100%'}}>
-                                <Select.Option value={enmu.align.left + ''}>靠左</Select.Option>
-                                <Select.Option value={enmu.align.center + ''}>居中</Select.Option>
-                                <Select.Option value={enmu.align.right + ''}>靠右</Select.Option>
+                                <Option value={enmu.align.left + ''}>靠左</Option>
+                                <Option value={enmu.align.center + ''}>居中</Option>
+                                <Option value={enmu.align.right + ''}>靠右</Option>
                             </Select>
                         </Menu.Item>
                     )
@@ -545,42 +548,43 @@ export default class DraggableNew extends React.Component {
 
     headerOperatorMenu = (_item) => {
         return (
-            <div className="header-operator">
-                <div className="selectItem">
+            <Row>
+                <Col span={4}>
                     <Select value={this.state.category + ''}
-                            style={{width: '50%'}}
+                            style={{width: '80%'}}
                             onChange={this.editMsg('category')}>
-                        <Select.Option value="1">课程</Select.Option>
-                        <Select.Option value="2">专栏</Select.Option>
-                        <Select.Option value="3">商品</Select.Option>
-                        <Select.Option value="4">轮播图</Select.Option>
-                        <Select.Option value="5">海报</Select.Option>
+                        <Option value="1">课程</Option>
+                        <Option value="2">专栏</Option>
+                        <Option value="3">商品</Option>
+                        <Option value="4">轮播图</Option>
+                        <Option value="5">海报</Option>
                     </Select>
-
+                </Col>
+                <Col span={4}>
                     <Select onSelect={this.onSelectItem}
-                            value={_item.id + '' || (this.state.items.length > 0 && this.state.items[0].id + '') }
-                            style={{width: '50%'}}>
-                        { this.state.items.map((item) => {
-                            return <Select.Option value={item.id + ''}
-                                                  key={item.id}>{item.text || item.id}</Select.Option>
+                            defaultValue={'v0'}
+                            style={{width: '80%'}}>
+                        <Option value = 'v0'>加个组件先</Option>
+                        {this.state.items.filter((v) => v.id).map((item) => {
+                            return <Option value={item.id + ''}
+                                                  key={item.id}>{item.text || item.id}</Option>
                         })}
                     </Select>
-                </div>
-                <div className="menu_selectItem">
-                    <input className="edit-remove"
+                </Col>
+                <Col span={4}>
+                    <Input style={{width: '80%'}}
                            placeholder="请输入标题"
                            value={this.state.title}
                            onChange={this.editMsg('title')}/>
 
-                    <div>
-                        上传设计图
-                        <input type="file"
-                               style={{position: 'absolute', left: 0, top: 0, opacity: 0}}
-                               className="edit-remove"
-                               onChange={this.uploadDesign}/>
-                    </div>
-                </div>
-            </div>
+                </Col>
+                <Col span={4}>
+                    <Input type="file"
+                           style={{width: '80%'}}
+                           className="edit-remove"
+                           onChange={this.uploadDesign}/>
+                </Col>
+            </Row>
         )
     };
 
@@ -651,6 +655,7 @@ export default class DraggableNew extends React.Component {
                                 return (
                                     <DraggableItem onStart={this.onStart(item)}
                                                    onStop={this.onStop(item.id)}
+                                                   bounds = 'parent'
                                                    {...fn}
                                                    dragStyle={{x: item.x, y: item.y}}
                                                    cardStyle={{
@@ -866,6 +871,7 @@ class DraggableItem extends React.Component {
     render() {
         return (
             <Draggable
+                bounds = 'parent'
                 cancel='.no-cursor'
                 position={this.props.dragStyle}
                 onStop={this.props.onStop}

@@ -11,6 +11,7 @@ import BreadcrumbCustom from '../BreadcrumbCustom';
 import App from '../../common/App.jsx';
 import U from '../../utils';
 import '../../asssets/css/users/users.less';
+import {Link} from 'react-router';
 
 
 const URL_LIST = 'adm/media/medias';
@@ -25,7 +26,7 @@ class Medias extends React.Component {
                 offset: 0,
                 total: 0,
                 pageSize: 10,
-                current: U.page.getCurrentPage(),
+                current: 0,
             },
             media: {},
             financeVisible: false,
@@ -110,6 +111,9 @@ class Medias extends React.Component {
                         <Menu.Item key="4">
                             <a href="javascript:;" onClick={() => this.wxQrcode(record.id)}>查看店铺二维码</a>
                         </Menu.Item>
+                        <Menu.Item key="5">
+                            <Link to={`/app/media/maps/map/${record.id}`}>公众号设置</Link>
+                        </Menu.Item>
                     </Menu>} trigger={['click']}>
                         <a className="color-info" href="javascript:;">
                             操作 <Icon type="down"/>
@@ -121,7 +125,6 @@ class Medias extends React.Component {
     }
 
     componentDidMount() {
-        U.page.clearPageStrage();
         this.loadData();
         document.onkeydown = (e) => {
             if (e.keyCode == 13) {
@@ -194,33 +197,34 @@ class Medias extends React.Component {
 
     };
 
-    onSearch = () => {
-        let searchText = this.state.inputText;
-        let search = {};
-        if (searchText && searchText.length > 0) {
-            search.q = searchText;
-        }
+    handleSearch = (e) => {
+        e.preventDefault();
+        const {form: {validateFields}} = this.props;
+        validateFields((err, val) => {
+            if (!err) {
+                App.api(URL_LIST, {
+                    offset: this.state.table.pageSize * (this.state.table.current - 1),
+                    limit: this.state.table.pageSize,
+                    ...val,
+                }).then((result) => {
+                    this.setState({
+                        table: {
+                            ...this.state.table,
+                            dataSource: result.items,
+                            pageSize: result.limit,
+                            offset: result.offset,
+                            total: result.total,
+                        },
+                    })
+                })
+            }
+        });
 
-        App.api(URL_LIST, {
-            offset: this.state.table.pageSize * (this.state.table.current - 1),
-            limit: this.state.table.pageSize,
-            ...search,
-        }).then((result) => {
-            this.setState({
-                table: {
-                    ...this.state.table,
-                    dataSource: result.items,
-                    pageSize: result.limit,
-                    offset: result.offset,
-                    total: result.total,
-                },
-            })
-        })
+
     };
 
 
     tableOnchange = (pagination) => {
-        U.page.setCurrentPage(pagination.current);
         this.setState({
             table: {
                 ...this.state.table,
@@ -294,6 +298,7 @@ class Medias extends React.Component {
         return (
             <div className="userDataList">
                 <BreadcrumbCustom first={TABLE_NAME} second={TABLE_NAME}/>
+
                 <Modal
                     visible={this.state.show_qrcode}
                     title="微信扫码"
@@ -310,6 +315,21 @@ class Medias extends React.Component {
                            }/>
                     <Button onClick={this.onSearch}>搜索</Button>
                 </div>
+                <Row style={{margin: '10px 0'}}>
+                    <Col span={20}>
+                        <Form layout="inline">
+                            <Form.Item>
+                                {getFieldDecorator('q')(
+                                    <Input placeholder="店铺名"/>
+                                )}
+                            </Form.Item>
+                            <Form.Item>
+                                <Button type='primary' htmlType='submit' onClick={this.handleSearch}>搜索</Button>
+                            </Form.Item>
+                        </Form>
+                    </Col>
+                </Row>
+
                 <div className="table">
                     <Row gutter={24}>
                         <Col>
@@ -522,8 +542,8 @@ class Medias extends React.Component {
                     </Form>
                 </Modal>
             </div>
-        )
+    )
     }
-}
+    }
 
-export default Form.create()(Medias);
+    export default Form.create()(Medias);

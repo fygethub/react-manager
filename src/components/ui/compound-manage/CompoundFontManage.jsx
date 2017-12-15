@@ -42,13 +42,14 @@ class CompoundFontManage extends React.Component {
     }
 
     renderAction = (text, record) => {
-        return <div style={{display: 'flex', justifyContent: 'space-between'}}>
+        return <div>
             <Popconfirm placement="left" title="你想好了要删掉吗, 创建一个不容易的."
                         onConfirm={this.removeFont(record)}
                         okText="是的" cancelText="我再想想">
-                <Button>删除</Button>
+                <a>删除</a>
             </Popconfirm>
-            <Button><a href={record.url}>下载</a></Button>
+            <span className = "ant-divider"></span>
+            <a href={record.url}>下载</a>
         </div>
     };
 
@@ -147,7 +148,7 @@ class CompoundFontManage extends React.Component {
                         <Row gutter={24}>
                             <Col span={24}>
                                 <Card>
-                                    <input type="file" className="manage-font-upload" onChange={this.fontUpload}/>
+                                    <input type="file" accept = ".ttf,.eot,.woff,.svg" className="manage-font-upload" onChange={this.fontUpload}/>
                                     <Button type="primary" onClick={this.showModal}>
                                         上传字体
                                     </Button>

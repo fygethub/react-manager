@@ -5,18 +5,66 @@ import App from '../../common/App.jsx';
 import U from '../../utils';
 import '../../asssets/css/users/users.less';
 
+
+const Option = Select.Option;
+const FormItem = Form.Item;
+class searchForm extends React.Component {
+
+    handleSubmit = (e) => {
+        e.preventDefault();
+        const {handleSearch,form:{validateFields}} = this.props;
+        validateFields((err, values) => {
+            console.log(values);
+            if (!err) {
+                handleSearch(values);
+            }
+        })
+    };
+
+    render() {
+        const selectType = [{name: '昵称',value: 'nick'},
+            {name: '手机号',value: 'mobile'},
+            {name: 'ID',value: 'id'}];
+        const {getFieldDecorator} = this.props.form;
+        return <Form layout="inline" onSubmit={this.handleSubmit}>
+            <Form.Item>
+                {getFieldDecorator('type', {initialValue: 'id'})(
+                    <Select>
+                        {
+                            selectType.map((val,i) => (
+                                <Option key={i} value={val.value}>{val.name}</Option>
+                                )
+                            )
+                        }
+                    </Select>
+                )}
+            </Form.Item>
+            <Form.Item>
+                {getFieldDecorator('q')(
+                    <Input />
+                )}
+            </Form.Item>
+            <Form.Item>
+                <Button type="primary" htmlType="submit" >
+                    搜索
+                </Button>
+            </Form.Item>
+        </Form>
+    }
+}
+
+const SearchFormWrap = Form.create()(searchForm);
+
 class Users extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            inputText: '',
-            type: 'nick',
             table: {
                 dataSource: [],
                 offset: 0,
                 total: 0,
                 pageSize: 10,
-                current: U.page.getCurrentPage(),
+                current: 0,
             },
             visible: false,
             model: '',
@@ -40,7 +88,7 @@ class Users extends React.Component {
                 key: 'avatar',
                 render: (text, record, index) => {
                     return <div className="table-avatar">
-                        <img src={record.avatar} alt="picture"/>
+                        <img src={record.avatar} alt=""/>
                     </div>
                 },
             },
@@ -81,7 +129,6 @@ class Users extends React.Component {
 
     componentDidMount() {
         this.loadData();
-        U.page.clearPageStrage();
         document.onkeydown = (e) => {
             if (e.keyCode == 13) {
                 this.onSearch();
@@ -106,13 +153,7 @@ class Users extends React.Component {
         })
     };
 
-    onSearch = () => {
-        let searchText = this.state.inputText;
-        let search = {};
-        if (searchText && searchText.length > 0) {
-            search.type = this.state.type;
-            search.q = searchText;
-        }
+    handleSearch = (search) => {
 
         App.api('adm/user/users', {
             offset: this.state.table.pageSize * (this.state.table.current - 1),
@@ -126,17 +167,13 @@ class Users extends React.Component {
                     pageSize: result.limit,
                     offset: result.offset,
                     total: result.total,
-                },
-                inputMobile: false,
-                inputId: false,
-                inputNick: false,
+                }
             })
         })
     };
 
 
     tableOnchange = (pagination) => {
-        U.page.setCurrentPage(pagination.current);
         this.setState({
             table: {
                 ...this.state.table,
@@ -149,7 +186,7 @@ class Users extends React.Component {
 
     renderAction = (text, record) => {
         return <div>
-            <Button onClick={this.showModal('donate', record)}>赠送店铺</Button>
+            <a onClick={this.showModal('donate', record)}>赠送店铺</a>
         </div>
     };
 
@@ -272,26 +309,11 @@ class Users extends React.Component {
                         </FormItem>
                     </Form>
                 </Modal>
-                <div style={{display: 'flex'}}>
-                    <Select value={this.state.type} onSelect={(type) => {
-                        this.setState({
-                            type,
-                        })
-                    }}>
-                        <Option value='nick'>昵称</Option>
-                        <Option value='mobile'>手机号</Option>
-                        <Option value='id'>ID</Option>
-                    </Select>
-                    <Input value={this.state.inputText}
-                           style={{width: 250}}
-                           onChange={(e) => {
-                               this.setState({
-                                   inputText: e.target.value,
-                               })
-                           }}/>
-                    <Button onClick={this.onSearch}>搜索</Button>
-                </div>
-
+                <Row style={{margin: '10px 0'}}>
+                    <Col span = {20}>
+                        <SearchFormWrap handleSearch = {this.handleSearch} />
+                    </Col>
+                </Row>
                 <div className="table">
                     <Row gutter={24}>
                         <Col>
