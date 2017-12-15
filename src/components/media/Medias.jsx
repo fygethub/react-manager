@@ -111,8 +111,13 @@ class Medias extends React.Component {
                         <Menu.Item key="4">
                             <a href="javascript:;" onClick={() => this.wxQrcode(record.id)}>查看店铺二维码</a>
                         </Menu.Item>
+                        <Menu.Divider/>
+
                         <Menu.Item key="5">
                             <Link to={`/app/media/maps/map/${record.id}`}>公众号设置</Link>
+                        </Menu.Item>
+                        <Menu.Item key="6">
+                            <a href="javascript:;" onClick={() => this.unlinkWx(record.id)}>微信解绑</a>
                         </Menu.Item>
                     </Menu>} trigger={['click']}>
                         <a className="color-info" href="javascript:;">
@@ -128,19 +133,23 @@ class Medias extends React.Component {
         this.loadData();
         document.onkeydown = (e) => {
             if (e.keyCode == 13) {
-                this.onSearch();
+                this.loadData();
             }
         }
     }
 
-    showQRCode = (id) => {
-        Modal.info({
-            content: <img id='dialog-qrcode-top' style={{width: '300px', height: '300px'}}/>,
-            footer: null,
-            icon: null,
-            width: '300px',
-            title: '店铺二维码',
+    unlinkWx = (mediaId) => {
+        Modal.confirm({
+            title: '解绑确认',
+            onOk: () => {
+                App.api('adm/media/unlink_wx', {
+                    mediaId,
+                }).then(() => {
+                    message.success('解绑成功');
+                })
+            }
         });
+
     };
 
 
@@ -186,7 +195,7 @@ class Medias extends React.Component {
                     mediaId,
                     cancel,
                 }).then(() => {
-                    this.onSearch();
+                    this.loadData();
                     model.destroy();
                 });
             },
@@ -246,7 +255,7 @@ class Medias extends React.Component {
                     this.setState({
                         visible: false,
                         media: {},
-                    }, this.onSearch)
+                    }, this.loadData)
                 })
             }
         })
@@ -256,14 +265,14 @@ class Medias extends React.Component {
         console.log(id);
         this.showQrcode(true);
 
-        /*App.api('adm/file/url_to_qrcode', {
-         url: App.getShopURL(id),
-         width: 300,
-         height: 300
-         }).then((data) => {
-         this.showQrcode(true);
-         document.getElementById('dialog-qrcode-top').setAttribute('src', data);
-         });*/
+        App.api('adm/file/url_to_qrcode', {
+            url: App.getShopURL(id),
+            width: 300,
+            height: 300
+        }).then((data) => {
+            this.showQrcode(true);
+            document.getElementById('dialog-qrcode-top').setAttribute('src', data);
+        });
     };
 
 
@@ -307,14 +316,6 @@ class Medias extends React.Component {
                     footer={null}>
                     <img id='dialog-qrcode-top' style={{width: '300px', height: '300px'}}/>
                 </Modal>
-                <div style={{display: 'flex'}}>
-                    <Input value={this.state.inputText}
-                           placeholder="店铺名"
-                           style={{width: 250}}
-                           onChange={(e) => this.setState({inputText: e.target.value,})
-                           }/>
-                    <Button onClick={this.onSearch}>搜索</Button>
-                </div>
                 <Row style={{margin: '10px 0'}}>
                     <Col span={20}>
                         <Form layout="inline">
@@ -542,8 +543,8 @@ class Medias extends React.Component {
                     </Form>
                 </Modal>
             </div>
-    )
+        )
     }
-    }
+}
 
-    export default Form.create()(Medias);
+export default Form.create()(Medias);

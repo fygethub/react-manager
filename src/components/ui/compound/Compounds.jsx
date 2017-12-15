@@ -1,6 +1,6 @@
 import React from 'react';
 import antd from 'antd';
-import {Row, Col, Button, message, Popconfirm, Card, Tooltip, Select,Dropdown, Menu, Icon, Table} from 'antd';
+import {Row, Col, Button, message, Popconfirm, Card, Tooltip, Form, Select, Dropdown, Menu, Icon, Table} from 'antd';
 import {hashHistory} from 'react-router';
 import U from '../../../common/U';
 import BreadcrumbCustom from '../../BreadcrumbCustom';
@@ -62,8 +62,9 @@ export default class Compounds extends React.Component {
             },
             {title: '是否上架', dataIndex: 'state', width: 150, key: 'state'},
             {title: '', dataIndex: 'null', key: 'null'},
-            {title: '图层数量',dataIndex: 'layers',
-            render: (col,row,index) => (col.filter((v) => v.url).length)
+            {
+                title: '图层数量', dataIndex: 'layers',
+                render: (col, row, index) => (col.filter((v) => v.url).length)
             },
             {
                 title: '操作',
@@ -282,10 +283,10 @@ export default class Compounds extends React.Component {
         return <div className="compounds">
             <BreadcrumbCustom first="UI" second="合成图列表"/>
             <Row style={{margin: '10px 0'}}>
-                <Col span = {20}>
+                <Col span={20}>
                     <Form layout="inline">
                         <Form.Item
-                                   label={'查询类型'}>
+                            label={'查询类型'}>
 
                             <Select defaultValue="1" style={{minwidth: "40px"}} onChange={(v) => this.setState({
                                 category: v,

@@ -23,19 +23,37 @@ class SiderCustom extends Component {
         this.setMenuOpen(nextProps)
     }
 
+    getPostion = (str, cha, num) => {
+        let x = str.indexOf(cha);
+        for (let i = 0; i < num; i++) {
+            x = str.indexOf(cha, x + 1);
+        }
+        return x;
+    };
+
     setMenuOpen = props => {
-        const {path} = props;
+        let {path} = props;
+        //兼容三层目录,三级页不修改，刷新时定位到一级
+        let key = path.substr(0, path.lastIndexOf('/'));
+        if (key.split('/').length > 3) {
+            if (this.state.openKey)
+                return;
+            key = key.substring(0, this.getPostion(key, '/', 2));
+        }
         this.setState({
-            openKey: path.substr(0, path.lastIndexOf('/')),
+            openKey: key,
             selectedKey: path
         });
     };
+
     onCollapse = (collapsed) => {
         this.setState({
             collapsed,
-            mode: collapsed ? 'vertical' : 'inline',
+            firstHide: collapsed,
+            mode: collapsed ? 'vertical' : 'inline'
         });
     };
+
     menuClick = e => {
         this.setState({
             selectedKey: e.key
@@ -44,7 +62,8 @@ class SiderCustom extends Component {
     };
     openMenu = v => {
         this.setState({
-            openKey: v[v.length - 1]
+            openKey: v[v.length - 1],
+            firstHide: false
         })
     };
 
@@ -62,7 +81,7 @@ class SiderCustom extends Component {
                     theme="dark"
                     mode={this.state.mode}
                     selectedKeys={[this.state.selectedKey]}
-                    openKeys={[this.state.openKey]}
+                    openKeys={this.state.firstHide ? null : [this.state.openKey]}
                     onOpenChange={this.openMenu}
                 >
                     {/*<Menu.Item key="/app/dashboard/index">*/}
