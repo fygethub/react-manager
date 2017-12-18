@@ -17,6 +17,7 @@ import SystemConfig from './components/system/SystemConfig.jsx';
 import SystemConfigAdd from './components/system/SystemConfigAdd.jsx';
 import SystemConfigEdit from './components/system/SystemConfigEdit.jsx';
 import Medias from './components/media/Medias';
+import MediaEdit from './components/media/MediaEdit';
 import PublicAccounts from './components/media/PublicAccounts';
 import PublicAccountEdit from './components/media/PublicAccountEdit';
 import PublicAccountAdd from './components/media/PublicAccountAdd';
@@ -50,9 +51,10 @@ const routes = (
                 </Route>
                 <Route path={'media'}>
                     <Route path={'medias'} component={Medias}/>
-                    <Route path={'maps/map/:id'} component={PublicAccounts} />
-                    <Route path={'maps/add'} component={PublicAccountAdd} />
-                    <Route path={'maps/edit/:id'} component={PublicAccountEdit} />
+                    <Route path={'media-create'} component={MediaEdit}/>
+                    <Route path={'maps/map/:id'} component={PublicAccounts}/>
+                    <Route path={'maps/add'} component={PublicAccountAdd}/>
+                    <Route path={'maps/edit/:id'} component={PublicAccountEdit}/>
                 </Route>
                 <Route path={'dashboard/index'} component={Dashboard}/>
             </Route>

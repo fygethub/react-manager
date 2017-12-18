@@ -1,4 +1,4 @@
-import React,{Component} from 'react';
+import React, {Component} from 'react';
 import {Link} from 'react-router';
 import {message, Card, Row, Col, Table, Input, Button, Icon, Popconfirm, Modal, Form, Select, InputNumber} from 'antd';
 import BreadcrumbCustom from '../BreadcrumbCustom';
@@ -14,7 +14,7 @@ class AdminsAdd extends Component {
 
     constructor(props) {
         super(props);
-        this.state={
+        this.state = {
             tableName: 'api_config',
             typeArr: [],
             defaultType: 'string'
@@ -23,20 +23,20 @@ class AdminsAdd extends Component {
 
     componentDidMount() {
         App.api('adm/system/configtypes').then((data) => {
-            this.setState({typeArr: data},() => this.setFormValue());
+            this.setState({typeArr: data}, () => this.setFormValue());
         })
     }
 
     setFormValue = () => {
-        const {location:{query},form:{setFieldsValue}} = this.props;
-        if(Object.keys(query).length) {
+        const {location:{query}, form:{setFieldsValue}} = this.props;
+        if (Object.keys(query).length) {
             const name = query.name || '';
-            setFieldsValue({key: query.key,value: query.value,name: name});
+            setFieldsValue({key: query.key, value: query.value, name: name});
             this.setState({defaultType: query.type});
         }
     }
 
-    handleChange = (value) =>  {
+    handleChange = (value) => {
         console.log(`selected ${value}`);
     }
 
@@ -46,12 +46,12 @@ class AdminsAdd extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        this.props.form.validateFields((err,val) => {
+        this.props.form.validateFields((err, val) => {
             console.info(val);
-            if(!err){
+            if (!err) {
                 val.tableName = this.state.tableName;
                 console.info(val);
-                App.api('/adm/system/saveconfig',val).then((res) => {
+                App.api('/adm/system/saveconfig', val).then((res) => {
                     this.props.router.go(-1);
                 });
             }
@@ -60,16 +60,16 @@ class AdminsAdd extends Component {
 
     render() {
         console.log(this.props);
-        const {typeArr,defaultType} = this.state;
-        const { getFieldDecorator } = this.props.form;
+        const {typeArr, defaultType} = this.state;
+        const {getFieldDecorator} = this.props.form;
         const formItemLayout = {
             labelCol: {
-                xs: { span: 24 },
-                sm: { span: 6 },
+                xs: {span: 24},
+                sm: {span: 6},
             },
             wrapperCol: {
-                xs: { span: 24 },
-                sm: { span: 14 },
+                xs: {span: 24},
+                sm: {span: 14},
             },
         };
         const tailFormItemLayout = {
@@ -85,77 +85,83 @@ class AdminsAdd extends Component {
             },
         };
 
-        return(
-            <Form onSubmit={this.handleSubmit} style={{marginTop: "30px"}}>
-                <FormItem
-                    {...formItemLayout}
-                    label="键"
-                    hasFeedback
-                >
-                    {getFieldDecorator('key', {
-                        rules: [{
-                            type: 'string', message: '请输入有效的值!',
-                        }, {
-                            required: true, message: '请输入有效值',
-                        }],
-                    })(
-                        <Input />
-                    )}
-                </FormItem>
-                <FormItem
-                    {...formItemLayout}
-                    label="类型"
-                    hasFeedback
-                >
-                    {getFieldDecorator('type', {
-                        rules: [{
-                            required: true, message: '选一个!',
-                        }],
-                        initialValue: defaultType
-                    })(
-                        <Select
-                            style={{ width: '100%' }}
-                            placeholder="选一个吧"
-                            onChange={this.handleChange}
+        return (
+            <div>
+                <BreadcrumbCustom first="系统设置" second="系统编辑"/>
+                <Card>
+                    <Form onSubmit={this.handleSubmit} style={{marginTop: "30px"}}>
+                        <FormItem
+                            {...formItemLayout}
+                            label="键"
+                            hasFeedback
                         >
-                            {typeArr.map((v, i) => {
-                                return (<Option key={i.toString(36) + i} value={v}>{v}</Option>);
-                            })
-                            }
-                        </Select>
-                    )}
-                </FormItem>
-                <FormItem
-                    {...formItemLayout}
-                    label="值"
-                    hasFeedback
-                >
-                    {getFieldDecorator('value', {
-                        rules: [{
-                            required: true, message: '请输入!',
-                        }],
-                    })(
-                        <Input type="textarea" autosize={{minRows: 4,maxRows: 8}}/>
-                    )}
-                </FormItem>
-                <FormItem
-                    {...formItemLayout}
-                    label="备注"
-                    hasFeedback
-                >
-                    {getFieldDecorator('name', {
-                        rules: [{
-                            required: true, message: 'Please input your E-mail!',
-                        }],
-                    })(
-                        <Input />
-                    )}
-                </FormItem>
-                <FormItem {...tailFormItemLayout}>
-                    <Button type="primary" htmlType="submit" style={{marginRight: '8px'}}>保存</Button>
-                    <Button type="primary" htmlType="reset" onClick={this.handleCancle}>取消</Button>
-                </FormItem>
-            </Form>
+                            {getFieldDecorator('key', {
+                                rules: [{
+                                    type: 'string', message: '请输入有效的值!',
+                                }, {
+                                    required: true, message: '请输入有效值',
+                                }],
+                            })(
+                                <Input disabled/>
+                            )}
+                        </FormItem>
+                        <FormItem
+                            {...formItemLayout}
+                            label="类型"
+                            hasFeedback
+                        >
+                            {getFieldDecorator('type', {
+                                rules: [{
+                                    required: true, message: '选一个!',
+                                }],
+                                initialValue: defaultType
+                            })(
+                                <Select
+                                    style={{width: '100%'}}
+                                    placeholder="选一个吧"
+                                    onChange={this.handleChange}
+                                >
+                                    {typeArr.map((v, i) => {
+                                        return (<Option key={i.toString(36) + i} value={v}>{v}</Option>);
+                                    })
+                                    }
+                                </Select>
+                            )}
+                        </FormItem>
+                        <FormItem
+                            {...formItemLayout}
+                            label="值"
+                            hasFeedback
+                        >
+                            {getFieldDecorator('value', {
+                                rules: [{
+                                    required: true, message: '请输入!',
+                                }],
+                            })(
+                                <Input type="textarea" autosize={{minRows: 4, maxRows: 8}}/>
+                            )}
+                        </FormItem>
+                        <FormItem
+                            {...formItemLayout}
+                            label="备注"
+                            hasFeedback
+                        >
+                            {getFieldDecorator('name', {
+                                rules: [{
+                                    required: true, message: 'Please input your E-mail!',
+                                }],
+                            })(
+                                <Input />
+                            )}
+                        </FormItem>
+                        <FormItem {...tailFormItemLayout}>
+                            <Button type="primary" htmlType="submit" style={{marginRight: '8px'}}>保存</Button>
+                            <Button type="primary" htmlType="reset" onClick={this.handleCancle}>取消</Button>
+                        </FormItem>
+                    </Form>
+                </Card>
+            </div>
+
         )
     }
 

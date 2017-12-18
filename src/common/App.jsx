@@ -57,8 +57,7 @@ const instanceFactory = () => {
 };
 
 const go = function (hash, context) {
-    context = context || this;
-    context.props.router.push(hash);
+    hashHistory.push(hash);
 };
 
 const saveCookie = (k, v, opt) => {

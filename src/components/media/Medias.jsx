@@ -30,6 +30,7 @@ class Medias extends React.Component {
             },
             media: {},
             financeVisible: false,
+            showPresentFlow: false,
             visible: false,
             amountVisible: false,
         };
@@ -54,6 +55,12 @@ class Medias extends React.Component {
                 title: '名称',
                 dataIndex: 'name',
                 key: 'name'
+            }, {
+                title: '剩余天数',
+                dataIndex: 'remainingDays',
+                key: 'remainingDays',
+                render: (val) => val > 0 ? <span style={{color: '#0f0'}}>{val}</span> :
+                    <span style={{color: 'red'}}>{val}</span>
             },
             {
                 title: '等级',
@@ -119,6 +126,14 @@ class Medias extends React.Component {
                         <Menu.Item key="6">
                             <a href="javascript:;" onClick={() => this.unlinkWx(record.id)}>微信解绑</a>
                         </Menu.Item>
+                        <Menu.Divider/>
+
+                        <Menu.Item key="7">
+                            <a href="javascript:;" onClick={() => this.handleShowPresentFlow(record.id)}>流量充值</a>
+                        </Menu.Item>
+                        <Menu.Item key="8">
+                            <a href="javascript:;" onClick={() => this.updateAdminPassword()}>修改管理员密码</a>
+                        </Menu.Item>
                     </Menu>} trigger={['click']}>
                         <a className="color-info" href="javascript:;">
                             操作 <Icon type="down"/>
@@ -137,6 +152,31 @@ class Medias extends React.Component {
             }
         }
     }
+
+    submitPresentFlow = () => {
+        App.api('adm/media/present_flow', {
+            mediaId: this.state.mediaId,
+            amount: this.state.amount,
+        }).then(() => {
+            message.success('充值成功');
+            this.setState({
+                mediaId: null,
+                showPresentFlow: false,
+                amount: 0,
+            });
+        })
+    };
+
+    handleShowPresentFlow = (mediaId) => {
+        this.setState({
+            mediaId,
+            showPresentFlow: true,
+        });
+    };
+
+    updateAdminPassword = () => {
+        message.info('OPPS~ 未实现');
+    };
 
     unlinkWx = (mediaId) => {
         Modal.confirm({
@@ -262,10 +302,9 @@ class Medias extends React.Component {
     };
 
     wxQrcode = (id) => {
-        console.log(id);
-        this.showQrcode(true);
+        message.info('OPPS~ 未实现');
 
-        App.api('adm/file/url_to_qrcode', {
+        false && App.api('adm/file/url_to_qrcode', {
             url: App.getShopURL(id),
             width: 300,
             height: 300
@@ -273,6 +312,7 @@ class Medias extends React.Component {
             this.showQrcode(true);
             document.getElementById('dialog-qrcode-top').setAttribute('src', data);
         });
+
     };
 
 
@@ -307,7 +347,15 @@ class Medias extends React.Component {
         return (
             <div className="userDataList">
                 <BreadcrumbCustom first={TABLE_NAME} second={TABLE_NAME}/>
-
+                <Modal
+                    visible={this.state.showPresentFlow}
+                    title="流量充值"
+                    onOk={this.submitPresentFlow}
+                    onCancel={() => this.setState({showPresentFlow: false, mediaId: null, amount: 0})}>
+                    <p>充值账户:{this.state.mediaId}</p>
+                    <Input
+                        onChange={(e) => this.setState({amount: e.target.value * 100})}/>
+                </Modal>
                 <Modal
                     visible={this.state.show_qrcode}
                     title="微信扫码"
@@ -326,6 +374,9 @@ class Medias extends React.Component {
                             </Form.Item>
                             <Form.Item>
                                 <Button type='primary' htmlType='submit' onClick={this.handleSearch}>搜索</Button>
+                                &nbsp;
+                                &nbsp;
+                                <Button type='primary' onClick={() => App.go('app/media/media-create')}>创建</Button>
                             </Form.Item>
                         </Form>
                     </Col>
@@ -444,6 +495,12 @@ class Medias extends React.Component {
                             <Col span={8}> 总收入 </Col>
                             <Col span={12} offset={4}>
                                 <Input readOnly value={media.income / 100 + '元'}/>
+                            </Col>
+                        </Row>
+                        <Row gutter={8}>
+                            <Col span={8}> 流量余额 </Col>
+                            <Col span={12} offset={4}>
+                                <Input readOnly value={media.flowBalance / 100 + '元'}/>
                             </Col>
                         </Row>
                         <Row gutter={8}>
