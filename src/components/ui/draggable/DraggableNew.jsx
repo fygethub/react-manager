@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Menu, Icon, Card, message, Select, InputNumber, Button, Input, Modal,Row,Col} from 'antd';
+import {Menu, Icon, Card, message, Select, InputNumber, Button, Input, Modal, Row, Col} from 'antd';
 import BreadcrumbCustom from '../../BreadcrumbCustom';
 import Draggable from 'react-draggable';
 import '../../../asssets/css/ui/draggable-new.less';
@@ -480,7 +480,7 @@ export default class DraggableNew extends React.Component {
                                 {
                                     this.state.fontDataSource && this.state.fontDataSource.map(font => (
                                         <Option value={`${font.name}`}
-                                                       key={`${font.name}`}>
+                                                key={`${font.name}`}>
                                             {font.name}
                                         </Option>
                                     ))
@@ -564,10 +564,10 @@ export default class DraggableNew extends React.Component {
                     <Select onSelect={this.onSelectItem}
                             defaultValue={'v0'}
                             style={{width: '80%'}}>
-                        <Option value = 'v0'>加个组件先</Option>
+                        <Option value='v0'>加个组件先</Option>
                         {this.state.items.filter((v) => v.id).map((item) => {
                             return <Option value={item.id + ''}
-                                                  key={item.id}>{item.text || item.id}</Option>
+                                           key={item.id}>{item.text || item.id}</Option>
                         })}
                     </Select>
                 </Col>
@@ -655,7 +655,6 @@ export default class DraggableNew extends React.Component {
                                 return (
                                     <DraggableItem onStart={this.onStart(item)}
                                                    onStop={this.onStop(item.id)}
-                                                   bounds = 'parent'
                                                    {...fn}
                                                    dragStyle={{x: item.x, y: item.y}}
                                                    cardStyle={{
@@ -871,7 +870,6 @@ class DraggableItem extends React.Component {
     render() {
         return (
             <Draggable
-                bounds = 'parent'
                 cancel='.no-cursor'
                 position={this.props.dragStyle}
                 onStop={this.props.onStop}
