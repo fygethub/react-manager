@@ -363,8 +363,8 @@ class Medias extends React.Component {
                     onOk={this.submitPresentFlow}
                     onCancel={() => this.setState({showPresentFlow: false, mediaId: null, amount: 0})}>
                     <p>充值账户:{this.state.mediaId}</p>
-                    <Input
-                        onChange={(e) => this.setState({amount: e.target.value * 100})}/>
+                    <Input addonAfter="元"
+                           onChange={(e) => this.setState({amount: e.target.value * 100})}/>
                 </Modal>
                 <Modal
                     visible={this.state.show_qrcode}
