@@ -12,10 +12,15 @@ import App from '../../common/App.jsx';
 import U from '../../utils';
 import '../../asssets/css/users/users.less';
 import {Link} from 'react-router';
-
+import jrQrcode from  'jr-qrcode';
 
 const URL_LIST = 'adm/media/medias';
 const TABLE_NAME = '店铺列表';
+
+const wakkaaLogo = require('../../asssets/images/common/wakkaa-logo.png');
+const MenuItem = Menu.Item;
+
+
 class Medias extends React.Component {
     constructor(props) {
         super(props);
@@ -28,6 +33,7 @@ class Medias extends React.Component {
                 pageSize: 10,
                 current: 0,
             },
+            imgBase64: '',
             media: {},
             financeVisible: false,
             showPresentFlow: false,
@@ -47,7 +53,7 @@ class Medias extends React.Component {
                 key: 'img',
                 render: (img) => {
                     return <div className="table-avatar">
-                        {img ? <img src={img} alt="avatar"/> : 'logo'}
+                        <img src={img || wakkaaLogo} alt="avatar"/>
                     </div>
                 },
             },
@@ -100,40 +106,40 @@ class Medias extends React.Component {
                 render: (obj, record) => {
 
                     return <Dropdown overlay={<Menu>
-                        <Menu.Item key="0">
+                        <MenuItem key="0">
                             <a href="javascript:;"
                                onClick={() => this.cancelModal(record.id, record.state !== 1)
                                }> {record.state === 1 ? '封禁' : '解封'}</a>
-                        </Menu.Item>
-                        <Menu.Item key="1">
+                        </MenuItem>
+                        <MenuItem key="1">
                             <a href="javascript:;" onClick={() => this.detailModal(record.id, 2)}>账号详情</a>
-                        </Menu.Item>
+                        </MenuItem>
                         <Menu.Divider/>
-                        <Menu.Item key="2">
+                        <MenuItem key="2">
                             <a href="javascript:;" onClick={() => this.detailModal(record.id, 1)}>续费升/降级</a>
-                        </Menu.Item>
-                        <Menu.Item key="3">
+                        </MenuItem>
+                        <MenuItem key="3">
                             <a href="javascript:;" onClick={() => this.detailModal(record.id, 3)}>手动提现</a>
-                        </Menu.Item>
-                        <Menu.Item key="4">
+                        </MenuItem>
+                        <MenuItem key="4">
                             <a href="javascript:;" onClick={() => this.wxQrcode(record.id)}>查看店铺二维码</a>
-                        </Menu.Item>
+                        </MenuItem>
                         <Menu.Divider/>
 
-                        <Menu.Item key="5">
+                        <MenuItem key="5">
                             <Link to={`/app/media/maps/map/${record.id}`}>公众号设置</Link>
-                        </Menu.Item>
-                        <Menu.Item key="6">
+                        </MenuItem>
+                        <MenuItem key="6">
                             <a href="javascript:;" onClick={() => this.unlinkWx(record.id)}>微信解绑</a>
-                        </Menu.Item>
+                        </MenuItem>
                         <Menu.Divider/>
 
-                        <Menu.Item key="7">
+                        <MenuItem key="7">
                             <a href="javascript:;" onClick={() => this.handleShowPresentFlow(record.id)}>流量充值</a>
-                        </Menu.Item>
-                        <Menu.Item key="8">
+                        </MenuItem>
+                        <MenuItem key="8">
                             <a href="javascript:;" onClick={() => this.updateAdminPassword()}>修改管理员密码</a>
-                        </Menu.Item>
+                        </MenuItem>
                     </Menu>} trigger={['click']}>
                         <a className="color-info" href="javascript:;">
                             操作 <Icon type="down"/>
@@ -150,7 +156,8 @@ class Medias extends React.Component {
             if (e.keyCode == 13) {
                 this.loadData();
             }
-        }
+        };
+
     }
 
     submitPresentFlow = () => {
@@ -302,17 +309,20 @@ class Medias extends React.Component {
     };
 
     wxQrcode = (id) => {
-        message.info('OPPS~ 未实现');
-
-        false && App.api('adm/file/url_to_qrcode', {
-            url: App.getShopURL(id),
-            width: 300,
-            height: 300
-        }).then((data) => {
-            this.showQrcode(true);
-            document.getElementById('dialog-qrcode-top').setAttribute('src', data);
+        //message.info('OPPS~ 未实现');
+        let imgBase64 = jrQrcode.getQrBase64(App.getShopURL(id), {
+            padding: 10,   // 二维码四边空白（默认为10px）
+            width: 256,  // 二维码图片宽度（默认为256px）
+            height: 256,  // 二维码图片高度（默认为256px）
+            correctLevel: jrQrcode.QRErrorCorrectLevel.H,    // 二维码容错level（默认为高）
+            reverse: false,        // 反色二维码，二维码颜色为上层容器的背景颜色
+            background: "#ffffff",    // 二维码背景颜色（默认白色）
+            foreground: "#000000"     // 二维码颜色（默认黑色）
         });
-
+        this.setState({
+            imgBase64,
+            show_qrcode: true,
+        })
     };
 
 
@@ -362,7 +372,7 @@ class Medias extends React.Component {
                     width='330px'
                     onCancel={() => this.showQrcode()}
                     footer={null}>
-                    <img id='dialog-qrcode-top' style={{width: '300px', height: '300px'}}/>
+                    <img src={this.state.imgBase64} id='qrcode' style={{width: '300px', height: '300px'}}/>
                 </Modal>
                 <Row style={{margin: '10px 0'}}>
                     <Col span={20}>
@@ -376,7 +386,7 @@ class Medias extends React.Component {
                                 <Button type='primary' htmlType='submit' onClick={this.handleSearch}>搜索</Button>
                                 &nbsp;
                                 &nbsp;
-                                <Button type='primary' onClick={() => App.go('app/media/media-create')}>创建</Button>
+                                <Button type='danger' onClick={() => App.go('app/media/media-create')}>创建</Button>
                             </Form.Item>
                         </Form>
                     </Col>
@@ -469,7 +479,7 @@ class Medias extends React.Component {
                         <Row gutter={8}>
                             <Col span={8}> 微信头像 </Col>
                             <Col span={12} offset={4}>
-                                <img src={media.weixin && media.weixin.avatar} alt="Avatar"
+                                <img src={(media.weixin && media.weixin.avatar) || wakkaaLogo} alt="Avatar"
                                      style={{width: 40, height: 40}}/>
                             </Col>
                         </Row>
@@ -524,7 +534,9 @@ class Medias extends React.Component {
                             labelCol={{span: 4}}
                         >
                             <div className="avatar">
-                                <img src={media.weixin && media.weixin.avatar} alt="avatar"/>
+                                <img
+                                    src={(media.weixin && media.weixin.avatar) ? media.weixin.avatar : wakkaaLogo}
+                                    alt="avatar"/>
                             </div>
                         </FormItem>
                         <FormItem

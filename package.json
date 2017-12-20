@@ -19,6 +19,7 @@
     "fs-extra": "3.0.1",
     "html-webpack-plugin": "2.29.0",
     "html2canvas": "^0.5.0-beta4",
+    "jr-qrcode": "^1.1.0",
     "js-cookie": "^2.1.4",
     "js-md5": "^0.6.0",
     "medium-editor": "^5.23.2",
