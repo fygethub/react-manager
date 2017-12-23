@@ -148,7 +148,7 @@ export default class Compounds extends React.Component {
                     <a>下架</a>
                 </Popconfirm>
             </Menu.Item>
-            <Menu.Item key="3">
+            <Menu.Item key="4">
                 <a onClick={this.updateCompound(record)}>编辑</a>
             </Menu.Item>
         </Menu>} trigger={['click']}>

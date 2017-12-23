@@ -47,7 +47,7 @@ export default class PictureEditor extends React.Component {
     };
 
     render() {
-        return <div className="picture-editor">
+        return <div className="picture-editor" onDoubleClick={this.toggleShow}>
             <img
                 src={this.state.value || this.defaultUrl }
                 alt={this.props.layer}

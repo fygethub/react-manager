@@ -562,9 +562,7 @@ export default class DraggableNew extends React.Component {
                 </Col>
                 <Col span={4}>
                     <Select onSelect={this.onSelectItem}
-                            defaultValue={'v0'}
                             style={{width: '80%'}}>
-                        <Option value='v0'>加个组件先</Option>
                         {this.state.items.filter((v) => v.id).map((item) => {
                             return <Option value={item.id + ''}
                                            key={item.id}>{item.text || item.id}</Option>
@@ -859,6 +857,10 @@ class DraggableItem extends React.Component {
         cType: PropTypes.number.isRequired,
         onStop: PropTypes.func,
         onStart: PropTypes.func,
+        movable: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.bool,
+        ]),
         setPictureUrl: PropTypes.func,
         textChange: PropTypes.func,
         cardStyle: PropTypes.object,
@@ -873,6 +875,7 @@ class DraggableItem extends React.Component {
                 cancel='.no-cursor'
                 position={this.props.dragStyle}
                 onStop={this.props.onStop}
+                disabled={this.props.movable == 1}
                 onStart={this.props.onStart}>
                 <Card
                     bordered={false}
