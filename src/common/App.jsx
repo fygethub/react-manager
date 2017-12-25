@@ -20,6 +20,7 @@ if (process.env.API_ENV == 'prod') {
 
 const API_BASE = window.location.protocol + ENV_CONFIG.api;
 const URL_H5 = ENV_CONFIG.urlH5;
+const urlConsole = ENV_CONFIG.urlConsole;
 
 const instanceFactory = () => {
     let instance = axios.create({
@@ -150,8 +151,13 @@ let getShopURL = (id) => {
     return URL_H5 + 'app' + AwesomeBase64.encode(new Buffer(id.toString())) + '?_t=1';
 };
 
+let getCouponsUrl = (code) => {
+    if (!code)return;
+    return urlConsole + '?_t=1' + '#/fillInfo/?faccess=1&coupon=' + code;
+};
 
 export default {
+    getCouponsUrl,
     getShopURL,
     go,
     api,

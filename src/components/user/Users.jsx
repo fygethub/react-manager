@@ -214,7 +214,7 @@ class Users extends React.Component {
                 App.api('adm/user/present_media', {
                     ...values
                 }).then(() => {
-                    message.success('success');
+                    message.success('成功');
                     _this.hideModel();
                 })
             }

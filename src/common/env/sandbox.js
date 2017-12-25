@@ -3,6 +3,7 @@ const env = {
     log: false,
     cookieDomain: window.location.hostname,
     urlH5: 'https://sandbox-h5.wakkaa.com/',
+    urlConsole:'https://sandbox-console.wakkaa.com/'
 };
 
 export default env;

@@ -15,7 +15,7 @@ export default class Apps extends React.Component {
             loading: true,
             offset: 0,
             current: 1,
-            pageSize: 1,
+            pageSize: 10,
             total: 0,
             dataSource: [],
             columns: [{

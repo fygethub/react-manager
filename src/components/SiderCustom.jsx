@@ -85,8 +85,8 @@ class SiderCustom extends Component {
                     onOpenChange={this.openMenu}
                 >
                     {/*<Menu.Item key="/app/dashboard/index">*/}
-                        {/*<Link to={'/app/dashboard/index'}><Icon type="mobile"/><span*/}
-                            {/*className="nav-text">首页</span></Link>*/}
+                    {/*<Link to={'/app/dashboard/index'}><Icon type="mobile"/><span*/}
+                    {/*className="nav-text">首页</span></Link>*/}
                     {/*</Menu.Item>*/}
                     <Menu.SubMenu
                         key="/app/ui"
@@ -103,6 +103,7 @@ class SiderCustom extends Component {
                         title={<span><Icon type="shop"/><span className="nav-text">店铺</span></span>}
                     >
                         <Menu.Item key="/app/media/medias"><Link to={'/app/media/medias'}>店铺</Link> </Menu.Item>
+                        <Menu.Item key="/app/media/coupons"><Link to={'/app/media/coupons'}>优惠券列表</Link> </Menu.Item>
                     </Menu.SubMenu>
                     < Menu.SubMenu
                         key="/app/system"
@@ -110,12 +111,14 @@ class SiderCustom extends Component {
                     >
                         <Menu.Item key="/app/system/config"><Link to={'/app/system/config'}>系统设置</Link> </Menu.Item>
                     </Menu.SubMenu>
-                    <Menu.SubMenu
-                        key="/app/user"
-                        title={<span><Icon type="user"/><span className="nav-text">用户管理</span></span>}
-                    >
-                        <Menu.Item key="/app/user/users"><Link to={'/app/user/users'}>用户列表</Link></Menu.Item>
-                    </Menu.SubMenu>
+                    {/*
+                     //废弃
+                     <Menu.SubMenu
+                     key="/app/user"
+                     title={<span><Icon type="user"/><span className="nav-text">用户管理</span></span>}
+                     >
+                     <Menu.Item key="/app/user/users"><Link to={'/app/user/users'}>用户列表</Link></Menu.Item>
+                     </Menu.SubMenu>*/}
                     <Menu.SubMenu
                         key="/app/admin"
                         title={<span><Icon type="team"/><span className="nav-text">管理员</span></span>}

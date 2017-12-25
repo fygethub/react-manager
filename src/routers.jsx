@@ -17,11 +17,13 @@ import SystemConfig from './components/system/SystemConfig.jsx';
 import SystemConfigAdd from './components/system/SystemConfigAdd.jsx';
 import SystemConfigEdit from './components/system/SystemConfigEdit.jsx';
 import Medias from './components/media/Medias';
+import Coupons from './components/media/Coupons';
 import MediaEdit from './components/media/MediaEdit';
 import PublicAccounts from './components/media/PublicAccounts';
 import PublicAccountEdit from './components/media/PublicAccountEdit';
 import PublicAccountAdd from './components/media/PublicAccountAdd';
 import Home from './Home';
+
 
 const routes = (
     <Router history={hashHistory}>
@@ -37,7 +39,7 @@ const routes = (
                     <Route path={'groups/edit/:id'} component={GroupsEdit}/>
                 </Route>
                 <Route path={'user'}>
-                    <Route path={'users'} component={Users}/>
+                    {/*<Route path={'users'} component={Users}/>*/}
                 </Route>
                 <Route path={'system'}>
                     <Route path={'config'} component={SystemConfig}/>
@@ -51,6 +53,7 @@ const routes = (
                 </Route>
                 <Route path={'media'}>
                     <Route path={'medias'} component={Medias}/>
+                    <Route path={'coupons'} component={Coupons}/>
                     <Route path={'media-create'} component={MediaEdit}/>
                     <Route path={'maps/map/:id'} component={PublicAccounts}/>
                     <Route path={'maps/add'} component={PublicAccountAdd}/>
