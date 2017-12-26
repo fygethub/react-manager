@@ -17,12 +17,15 @@ import SystemConfig from './components/system/SystemConfig.jsx';
 import SystemConfigAdd from './components/system/SystemConfigAdd.jsx';
 import SystemConfigEdit from './components/system/SystemConfigEdit.jsx';
 import Medias from './components/media/Medias';
-import Features from './components/media/features';
+import Features from './components/media/Features';
 import Coupons from './components/media/Coupons';
 import MediaEdit from './components/media/MediaEdit';
 import PublicAccounts from './components/media/PublicAccounts';
 import PublicAccountEdit from './components/media/PublicAccountEdit';
 import PublicAccountAdd from './components/media/PublicAccountAdd';
+import Apps from './components/apps/Apps';
+import Releases from './components/apps/Releases';
+
 import Home from './Home';
 
 
@@ -51,6 +54,10 @@ const routes = (
                     <Route path={'drags-new/:id'} component={DragsNew}/>
                     <Route path={'compounds'} component={Compounds}/>
                     <Route path={'compound-manage'} component={CompoundsManage}/>
+                </Route>
+                <Route path={'apps'}>
+                    <Route path={'apps'} component={Apps}/>
+                    <Route path={'releases/:appId'} component={Releases}/>
                 </Route>
                 <Route path={'media'}>
                     <Route path={'medias'} component={Medias}/>

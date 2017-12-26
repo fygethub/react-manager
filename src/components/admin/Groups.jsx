@@ -7,9 +7,9 @@ import U from '../../utils';
 import '../../asssets/css/users/users.less';
 
 export default class AdminGroups extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state={
+        this.state = {
             loading: true,
             offset: 0,
             current: 0,
@@ -17,34 +17,38 @@ export default class AdminGroups extends React.Component {
             total: 0,
             dataSource: [],
             columns: [{
-                title:'序号',
+                title: '序号',
                 dataIndex: 'id',
                 key: 'id',
-                render: (col,row,i) => i + 1
-            },{
-                title:'名称',
+                render: (col, row, i) => i + 1
+            }, {
+                title: '名称',
                 dataIndex: 'name',
                 key: 'name'
-            },{
-                title:'权限',
+            }, {
+                title: '权限',
                 dataIndex: 'root',
                 key: 'root',
-                render: (col,row,i) => {
+                render: (col, row, i) => {
                     switch (col) {
-                        case 0 : return '普通管理员';
-                        case 1 : return '超级管理员';
-                        default: ''
+                        case 0 :
+                            return '普通管理员';
+                        case 1 :
+                            return '超级管理员';
+                        default:
+                            ''
                     }
                 }
-            },{
-                title:'操作',
+            }, {
+                title: '操作',
                 dataIndex: 'password',
                 key: 'password',
                 width: 200,
-                render: (col,row,i) => (<div style={{textAlign:"left"}}>
+                render: (col, row, i) => (<div style={{textAlign: "left"}}>
                     <Link to={`/app/admin/groups/edit/${row.id}`}>编辑</Link>
-                    <span className = "ant-divider" />
-                    <Popconfirm title="确认删除吗?" onConfirm={() => this.confirmDelete(row.id)} onCancel={this.cancel} okText="Yes" cancelText="No">
+                    <span className="ant-divider"/>
+                    <Popconfirm title="确认删除吗?" onConfirm={() => this.confirmDelete(row.id)} onCancel={this.cancel}
+                                okText="Yes" cancelText="No">
                         <a href="#">删除</a>
                     </Popconfirm>
                 </div>)
@@ -52,6 +56,7 @@ export default class AdminGroups extends React.Component {
         }
 
     }
+
     getAdmins = () => {
         App.api('adm/admin/groups', {
             offset: this.state.pageSize * (this.state.current - 1),
@@ -67,9 +72,11 @@ export default class AdminGroups extends React.Component {
             })
         })
     }
+
     componentDidMount() {
         this.getAdmins();
     }
+
     confirmDelete = (id) => {
         App.api('adm/admin/remove_group', {
             id: id
@@ -79,7 +86,7 @@ export default class AdminGroups extends React.Component {
 
     }
 
-    tableOnChange = (pagination,filters,sortor) => {
+    tableOnChange = (pagination, filters, sortor) => {
         this.setState({
             pageSize: pagination.pageSize,
             current: pagination.current,
@@ -88,7 +95,7 @@ export default class AdminGroups extends React.Component {
 
     render() {
         console.info(this.props);
-        const {columns,dataSource,total,pageSize,offset} = this.state;
+        const {columns, dataSource, total, pageSize, offset} = this.state;
         const pagination = {
             total: total,
             current: ~~offset / 10 + 1,
@@ -97,22 +104,24 @@ export default class AdminGroups extends React.Component {
         };
         return (
             <div>
-                <BreadcrumbCustom first="管理员" second="管理员列表"/>
+                <BreadcrumbCustom first="管理员" second="管理员分组"/>
                 <Row style={{margin: '10px 0'}}>
-                    <Col span = {2} offset = {22}>
-                        <Button size={'large'} type = {'primary'} onClick={() => {this.props.router.push('/app/admin/groups/add')}}>添加</Button>
+                    <Col span={2} offset={22}>
+                        <Button size={'large'} type={'primary'} onClick={() => {
+                            this.props.router.push('/app/admin/groups/add')
+                        }}>添加</Button>
                     </Col>
                 </Row>
                 <Card>
-                <Table
-                    rowKey={(row) => row.id}
-                    columns={columns}
-                    dataSource={dataSource}
-                    pagination={pagination}
-                    onChange={this.tableOnChange}
-                    loading={this.state.loading}
-                    scroll={{ x: columns.map(({ width }) => width || 100).reduce((l, f) => (l + f)) }}
-                />
+                    <Table
+                        rowKey={(row) => row.id}
+                        columns={columns}
+                        dataSource={dataSource}
+                        pagination={pagination}
+                        onChange={this.tableOnChange}
+                        loading={this.state.loading}
+                        scroll={{x: columns.map(({width}) => width || 100).reduce((l, f) => (l + f))}}
+                    />
                 </Card>
             </div>
         )

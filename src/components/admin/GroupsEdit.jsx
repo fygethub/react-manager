@@ -165,7 +165,7 @@ class AdminsAdd extends Component {
 
         return (
             <div>
-                <BreadcrumbCustom first="分组"/>
+                <BreadcrumbCustom first="管理员" second="管理员分组"/>
                 <Card>
 
                     <Form onSubmit={this.handleSubmit} style={{marginTop: "30px"}}>
