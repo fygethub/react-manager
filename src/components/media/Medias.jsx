@@ -19,7 +19,8 @@ const TABLE_NAME = '店铺列表';
 
 const wakkaaLogo = require('../../asssets/images/common/wakkaa-logo.png');
 const MenuItem = Menu.Item;
-
+const FormItem = Form.Item;
+const Option = Select.Option;
 
 class Medias extends React.Component {
     constructor(props) {
@@ -138,7 +139,12 @@ class Medias extends React.Component {
                             <a href="javascript:;" onClick={() => this.handleShowPresentFlow(record.id)}>流量充值</a>
                         </MenuItem>
                         <MenuItem key="8">
-                            <a href="javascript:;" onClick={() => this.updateAdminPassword()}>修改管理员密码</a>
+                            <a href="javascript:;" onClick={() => {
+                                this.setState({
+                                    showMediaKeep: true,
+                                    mediaId: record.id,
+                                })
+                            }}>新增店铺管理员</a>
                         </MenuItem>
                     </Menu>} trigger={['click']}>
                         <a className="color-info" href="javascript:;">
@@ -181,8 +187,40 @@ class Medias extends React.Component {
         });
     };
 
-    updateAdminPassword = () => {
-        message.info('OPPS~ 未实现');
+    updateAdminKeeper = () => {
+        this.props.form.validateFields((err, values) => {
+            if (err) {
+                let errorMsg = true;
+                Object.keys(err).forEach(key => {
+                    if (errorMsg) {
+                        message.warning(err[key].errors[0].message);
+                        errorMsg = false;
+                    }
+                });
+            }
+            if (!err) {
+                let data = {
+                    mediaId: values.mediaId,
+                    admin: JSON.stringify({
+                        username: values.adminName,
+                        password: values.password,
+                        name: values.name,
+                    })
+                };
+
+                App.api('adm/media/create_admin', data).then(() => {
+                    message.success('修改成功');
+                    this.props.form.setFieldsValue({
+                        adminName: '',
+                        password: '',
+                        name: '',
+                    });
+                    this.setState({
+                        showMediaKeep: false,
+                    }, this.loadData)
+                })
+            }
+        })
     };
 
     unlinkWx = (mediaId) => {
@@ -345,8 +383,7 @@ class Medias extends React.Component {
 
     render() {
         const {getFieldDecorator, setFieldsValue} = this.props.form;
-        const FormItem = Form.Item;
-        const Option = Select.Option;
+
         const media = this.state.media;
         const pagination = {
             total: this.state.table.total,
@@ -373,6 +410,61 @@ class Medias extends React.Component {
                     onCancel={() => this.showQrcode()}
                     footer={null}>
                     <img src={this.state.imgBase64} id='qrcode' style={{width: '300px', height: '300px'}}/>
+                </Modal>
+                <Modal
+                    title='增加店铺管理员'
+                    visible={this.state.showMediaKeep}
+                    onOk={this.updateAdminKeeper}
+                    onCancel={() => this.setState({
+                        showMediaKeep: false,
+                        mediaId: '',
+                    })}
+                >
+                    <Form>
+                        <Form.Item
+                            wrapperCol={{span: 8, offset: 4}}
+                            labelCol={{span: 4}}
+                            label="店铺ID">
+                            {getFieldDecorator('mediaId', {
+                                initialValue: this.state.mediaId,
+                            })(
+                                <Input disabled placeholder="店铺ID"/>
+                            )}
+                        </Form.Item>
+                        <Form.Item
+                            hasFeedback
+                            wrapperCol={{span: 8, offset: 4}}
+                            labelCol={{span: 4}}
+                            label="姓名">
+                            {getFieldDecorator('name', {
+                                rules: [{required: true}],
+                            })(
+                                <Input placeholder="姓名"/>
+                            )}
+                        </Form.Item>
+                        <Form.Item
+                            hasFeedback
+                            wrapperCol={{span: 8, offset: 4}}
+                            labelCol={{span: 4}}
+                            label="登录名">
+                            {getFieldDecorator('adminName', {
+                                rules: [{required: true}],
+                            })(
+                                <Input placeholder="用户名"/>
+                            )}
+                        </Form.Item>
+                        <Form.Item
+                            hasFeedback
+                            wrapperCol={{span: 8, offset: 4}}
+                            labelCol={{span: 4}}
+                            label="密码">
+                            {getFieldDecorator('password', {
+                                rules: [{required: true}],
+                            })(
+                                <Input type='password' placeholder="密码"/>
+                            )}
+                        </Form.Item>
+                    </Form>
                 </Modal>
                 <Row style={{margin: '10px 0'}}>
                     <Col span={20}>
@@ -530,8 +622,8 @@ class Medias extends React.Component {
                     <Form >
                         <FormItem
                             wrapperCol={{span: 8, offset: 4}}
-                            label="头像"
                             labelCol={{span: 4}}
+                            label="头像"
                         >
                             <div className="avatar">
                                 <img
