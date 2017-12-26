@@ -166,6 +166,10 @@ class Medias extends React.Component {
 
     }
 
+    componentWillUnmount() {
+        document.onkeydown = null;
+    }
+
     submitPresentFlow = () => {
         App.api('adm/media/present_flow', {
             mediaId: this.state.mediaId,
