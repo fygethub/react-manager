@@ -103,6 +103,7 @@ class SiderCustom extends Component {
                         title={<span><Icon type="shop"/><span className="nav-text">店铺</span></span>}
                     >
                         <Menu.Item key="/app/media/medias"><Link to={'/app/media/medias'}>店铺管理</Link> </Menu.Item>
+                        <Menu.Item key="/app/media/features"><Link to={'/app/media/features'}>功能开通</Link> </Menu.Item>
                         <Menu.Item key="/app/media/coupons"><Link to={'/app/media/coupons'}>优惠券列表</Link> </Menu.Item>
                     </Menu.SubMenu>
                     < Menu.SubMenu

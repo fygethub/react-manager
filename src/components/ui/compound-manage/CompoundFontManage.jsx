@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Button, message, Card, Popconfirm, Select, Input, Icon, Form, Modal,Table} from 'antd';
+import {Row, Col, Button, message, Card, Popconfirm, Select, Input, Icon, Form, Modal, Table} from 'antd';
 import {hashHistory} from 'react-router';
 import U from '../../../common/U';
 import BreadcrumbCustom from '../../BreadcrumbCustom';
@@ -16,6 +16,12 @@ class CompoundFontManage extends React.Component {
             visible: false,
             font: {},
             dataSource: [],
+            table: {
+                offset: 0,
+                total: 0,
+                pageSize: 5,
+                current: 0,
+            },
         };
 
         this.columns = [
@@ -38,17 +44,17 @@ class CompoundFontManage extends React.Component {
     }
 
     componentDidMount() {
-        this.loadFontList();
+        this.loadData();
     }
 
     renderAction = (text, record) => {
         return <div>
-            <Popconfirm placement="left" title="你想好了要删掉吗, 创建一个不容易的."
+            <Popconfirm placement="left" title="确认是否删除"
                         onConfirm={this.removeFont(record)}
-                        okText="是的" cancelText="我再想想">
+                        okText="是的" cancelText="取消">
                 <a>删除</a>
             </Popconfirm>
-            <span className = "ant-divider"></span>
+            <span className="ant-divider"></span>
             <a href={record.url}>下载</a>
         </div>
     };
@@ -66,8 +72,11 @@ class CompoundFontManage extends React.Component {
         })
     };
 
-    loadFontList = () => {
-        App.api('adm/compound/fonts').then(res => {
+    loadData = () => {
+        App.api('adm/compound/fonts', {
+            offset: this.state.table.offset,
+            limit: this.state.table.pageSize,
+        }).then(res => {
             let dataSource = res.map(item => {
                 return {
                     id: item.id,
@@ -97,9 +106,17 @@ class CompoundFontManage extends React.Component {
                 visible: true,
             })
         });
-        App.api('adm/compound/fonts').then(result => {
-            console.log(result);
-        })
+    };
+
+    tableOnchange = (pagination) => {
+        this.setState({
+            table: {
+                ...this.state.table,
+                pageSize: pagination.pageSize,
+                current: pagination.current,
+            }
+        }, this.loadData);
+
     };
 
     showModal = () => {
@@ -125,21 +142,22 @@ class CompoundFontManage extends React.Component {
                 })
             }).then(res => {
                 message.info('上传成功');
-                this.loadFontList();
+                this.loadData();
             });
 
             form.resetFields();
             this.setState({visible: false});
         });
     };
-    saveFormRef = (form) => {
-        this.form = form;
-    };
 
     render() {
-
         const {getFieldDecorator} = this.props.form;
         const {visible, file, font} = this.state;
+        const pagination = {
+            total: this.state.table.total,
+            current: ~~(this.state.table.offset / 10) + 1,
+            showSizeChanger: true,
+        };
         return (
             <div className="compound-manage-page">
                 <BreadcrumbCustom first="ui" second="字体管理"/>
@@ -148,7 +166,8 @@ class CompoundFontManage extends React.Component {
                         <Row gutter={24}>
                             <Col span={24}>
                                 <Card>
-                                    <input type="file" accept = ".ttf,.eot,.woff,.svg" className="manage-font-upload" onChange={this.fontUpload}/>
+                                    <input type="file" accept=".ttf,.eot,.woff,.svg" className="manage-font-upload"
+                                           onChange={this.fontUpload}/>
                                     <Button type="primary" onClick={this.showModal}>
                                         上传字体
                                     </Button>
@@ -189,14 +208,7 @@ class CompoundFontManage extends React.Component {
                                             </Form.Item>
                                         </Form>
                                     </Modal>
-                                    {/*<CollectionCreateForm
-                                     ref={this.saveFormRef}
-                                     font={this.state.font}
-                                     file={this.state.file}
-                                     visible={this.state.visible}
-                                     onCancel={this.handleCancel}
-                                     onCreate={this.handleCreate}
-                                     />*/}
+
                                 </Card>
                             </Col>
                         </Row>
@@ -206,6 +218,8 @@ class CompoundFontManage extends React.Component {
                             <Col span={24}>
                                 <Card>
                                     <Table
+                                        onChange={this.tableOnchange}
+                                        pagination={pagination}
                                         rowKey={record => record.id}
                                         columns={this.columns}
                                         size='middle'

@@ -1,6 +1,21 @@
-import React,{Component} from 'react';
+import React, {Component} from 'react';
 import {Link} from 'react-router';
-import {message, Card, Row, Col, Table, Input, Button, Icon, Popconfirm, Modal, Form, Select, InputNumber,Upload} from 'antd';
+import {
+    message,
+    Card,
+    Row,
+    Col,
+    Table,
+    Input,
+    Button,
+    Icon,
+    Popconfirm,
+    Modal,
+    Form,
+    Select,
+    InputNumber,
+    Upload
+} from 'antd';
 import BreadcrumbCustom from '../BreadcrumbCustom';
 import App from '../../common/App.jsx';
 import U from '../../utils';
@@ -14,54 +29,50 @@ class PublicAccountAdd extends Component {
 
     constructor(props) {
         super(props);
-        this.state={
+        this.state = {
             mediaId: ''
         }
     }
 
     componentDidMount() {
-        const {params: {id},form: {setFieldsValue}} = this.props;
-        console.info(this.props)
-        App.api('/adm/media/mp',{appId: id}).then((res) => {
+        const {params: {id}, form: {setFieldsValue}} = this.props;
+        App.api('/adm/media/mp', {appId: id}).then((res) => {
             let mchId = res.merchant.machId || '';
             let mchKey = res.merchant.mchKey || '';
             let certificate = res.certificate || '';
-            setFieldsValue({appId: res.appId,secret: res.secret,mchId,mchKey,certificate});
+            let tradeIdPrefix = res.tradeIdPrefix || '';
+            setFieldsValue({appId: res.appId, secret: res.secret, mchId, mchKey, certificate, tradeIdPrefix});
         })
-    }
-
-
-    handleChange = (value) =>  {
-        console.log(`selected ${value}`);
     }
 
     handleCancle = (e) => {
         this.props.router.go(-1);
-    }
+    };
 
     handleSubmit = (e) => {
         e.preventDefault();
-        this.props.form.validateFields((err,val) => {
-            console.info(val);
-            if(!err){
-                console.info(val);
-                App.api('/adm/media/link_mp',{'app': JSON.stringify(val),'fileElement': val.certificate}).then((res) => {
+        this.props.form.validateFields((err, val) => {
+            if (!err) {
+                App.api('/adm/media/link_mp', {
+                    'app': JSON.stringify(val),
+                    'fileElement': val.certificate
+                }).then((res) => {
                     this.props.router.push('app/admin/admins');
                 });
             }
         });
-    }
+    };
 
     render() {
-        const { getFieldDecorator } = this.props.form;
+        const {getFieldDecorator} = this.props.form;
         const formItemLayout = {
             labelCol: {
-                xs: { span: 24 },
-                sm: { span: 6 },
+                xs: {span: 24},
+                sm: {span: 6},
             },
             wrapperCol: {
-                xs: { span: 24 },
-                sm: { span: 14 },
+                xs: {span: 24},
+                sm: {span: 14},
             },
         };
         const tailFormItemLayout = {
@@ -100,10 +111,8 @@ class PublicAccountAdd extends Component {
                     hasFeedback
                 >
                     {getFieldDecorator('secret', {
-                        rules: [{
-
-                        }, {
-                            required: true, message: '输入密码呦!',
+                        rules: [{}, {
+                            required: true, message: '输入密码',
                         }],
                     })(
                         <Input />
@@ -115,7 +124,7 @@ class PublicAccountAdd extends Component {
                     hasFeedback
                 >
                     {getFieldDecorator('tokenProxy')(
-                        <Input type ="textarea" autosize={{minRows: 4,maxRows: 8}} />
+                        <Input type="textarea" autosize={{minRows: 4, maxRows: 8}}/>
                     )}
                 </FormItem>
                 <FormItem
@@ -142,11 +151,24 @@ class PublicAccountAdd extends Component {
                     hasFeedback
                 >
                     {getFieldDecorator('certificate', {
-                        rules: [ {
-                            required: false, message: '上传证书呦!',
+                        rules: [{
+                            required: false, message: '请上传证书',
                         }],
                     })(
-                        <Input type = "file" placeholder="请选择文件" />
+                        <Input type="file" placeholder="请选择文件"/>
+                    )}
+                </FormItem>
+                <FormItem
+                    {...formItemLayout}
+                    label="商户订单前缀"
+                    hasFeedback
+                >
+                    {getFieldDecorator('tradeIdPrefix', {
+                        rules: [{
+                            required: false, message: '商户订单前缀!',
+                        }],
+                    })(
+                        <Input />
                     )}
                 </FormItem>
                 <FormItem {...tailFormItemLayout}>

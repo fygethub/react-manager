@@ -35,22 +35,17 @@ class PublicAccountAdd extends Component {
         }
     }
 
-    handleChange = (value) => {
-        console.log(`selected ${value}`);
-    }
 
     handleCancle = (e) => {
         this.props.router.go(-1);
-    }
+    };
 
     handleSubmit = (e) => {
-        console.log(this.props)
+
         e.preventDefault();
         const {query:{mediaId}} = this.props.location;
         this.props.form.validateFields((err, val) => {
-            console.info(val);
             if (!err) {
-                console.info(val);
                 val.mediaId = mediaId;
                 App.api('/adm/media/link_mp', {
                     'app': JSON.stringify(val),
@@ -60,7 +55,7 @@ class PublicAccountAdd extends Component {
                 });
             }
         });
-    }
+    };
 
     render() {
         const {getFieldDecorator} = this.props.form;
@@ -114,7 +109,7 @@ class PublicAccountAdd extends Component {
                         >
                             {getFieldDecorator('secret', {
                                 rules: [{}, {
-                                    required: true, message: '输入密码呦!',
+                                    required: true, message: '输入密码!',
                                 }],
                             })(
                                 <Input />
@@ -154,12 +149,25 @@ class PublicAccountAdd extends Component {
                         >
                             {getFieldDecorator('certificate', {
                                 rules: [{
-                                    required: false, message: '上传证书呦!',
+                                    required: false, message: '上传证书!',
                                 }],
                             })(<div className="file-upload">
                                     <span>上传证书</span>
                                     <input type="file" placeholder="请选择文件"/>
                                 </div>
+                            )}
+                        </FormItem>
+                        <FormItem
+                            {...formItemLayout}
+                            label="商户订单前缀"
+                            hasFeedback
+                        >
+                            {getFieldDecorator('tradeIdPrefix', {
+                                rules: [{
+                                    required: false, message: '商户订单前缀!',
+                                }],
+                            })(
+                                <Input />
                             )}
                         </FormItem>
                         <FormItem {...tailFormItemLayout}>
