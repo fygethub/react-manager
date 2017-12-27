@@ -126,7 +126,7 @@ export default class DraggableNew extends React.Component {
         };
 
         if (type == enmu.type.img) {
-            let a = window.prompt('为当前图层取一个名字吧');
+            let a = window.prompt('为当前图层取一个名字吧') || App.uuid();
             item = {
                 ...item,
                 ...enmu.default.img,
@@ -336,7 +336,6 @@ export default class DraggableNew extends React.Component {
     };
 
     toggleRightMenu = () => {
-        console.log('click');
         this.setState({
             collRightMenu: !this.state.collRightMenu,
         })
@@ -427,8 +426,8 @@ export default class DraggableNew extends React.Component {
                     let nor, un;
                     switch (key) {
                         case 'movable':
-                            nor = '可移动';
-                            un = '不可移动';
+                            un = '可移动';
+                            nor = '不可移动';
                             break;
                         case 'bold':
                             nor = '正常';
@@ -577,9 +576,12 @@ export default class DraggableNew extends React.Component {
 
                 </Col>
                 <Col span={4}>
+                    <span className="ant-input">上传预览图</span>
                     <Input type="file"
-                           style={{width: '80%'}}
-                           className="edit-remove"
+                           style={{
+                               width: '80%', position: 'absolute',
+                               left: 0, right: 0, bottom: 0, top: 0, opacity: 0,
+                           }}
                            onChange={this.uploadDesign}/>
                 </Col>
             </Row>
@@ -618,6 +620,12 @@ export default class DraggableNew extends React.Component {
         )
     };
 
+    resizeCallback = (size) => {
+        console.log(size);
+        this.changeItemStyle('w')(size.width);
+        this.changeItemStyle('h')(size.height);
+    };
+
     render() {
         let _item = this.state.item || {};
         let _items = this.state.items;
@@ -654,8 +662,13 @@ export default class DraggableNew extends React.Component {
                                     <DraggableItem onStart={this.onStart(item)}
                                                    onStop={this.onStop(item.id)}
                                                    {...fn}
+                                                   resizeCallback={(size) => {
+                                                       console.log('cb new');
+                                                       this.resizeCallback(size)
+                                                   }}
                                                    dragStyle={{x: item.x, y: item.y}}
                                                    cardStyle={{
+                                                       position: 'absolute',
                                                        background: item.background == enmu.background.white ? '#fff' : 'transparent',
                                                        width: item.w,
                                                        height: item.h,
@@ -667,7 +680,7 @@ export default class DraggableNew extends React.Component {
                                                        fontWeight: item.bold == enmu.bold.bold ? 'bold' : 'normal',
                                                    }}
                                                    align={item.align - 0}
-                                                   movable={item.movable}
+                                                   movable={item.movable + ''}
                                                    item={item}
                                                    cType={item.type}
                                                    key={item.id}/>)
@@ -875,20 +888,21 @@ class DraggableItem extends React.Component {
                 cancel='.no-cursor'
                 position={this.props.dragStyle}
                 onStop={this.props.onStop}
-                disabled={this.props.movable == 1}
+                disabled={this.props.movable == enmu.movable.umMove}
                 onStart={this.props.onStart}>
-                <Card
-                    bordered={false}
+                <div
                     style={this.props.cardStyle}
                     className='dragItem'>
                     {this.props.cType == enmu.type.text ?
-                        <FontEditor textAlign={this.props.align}
+                        <FontEditor cardStyle={this.props.cardStyle}
+                                    textAlign={this.props.align}
                                     onChange={this.props.textChange}
                                     initText={this.props.item.text}
+                                    resizeCallback={this.props.resizeCallback}
                                     fontColor={this.props.item.fontColor}/> :
                         <PictureEditor defaultUrl={this.props.defaultUrl}
                                        uploadFile={this.props.setPictureUrl}/>}
-                </Card>
+                </div>
             </Draggable>
         )
     }

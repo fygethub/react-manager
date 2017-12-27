@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './fontEditor.less';
 import {Menu, Icon, Card, message, Select, InputNumber, Button, Input, Modal} from 'antd';
+import {Resizable, ResizableBox} from 'react-resizable';
 
 export default class FontEditor extends React.Component {
 
@@ -10,6 +11,8 @@ export default class FontEditor extends React.Component {
         fontColor: PropTypes.string,
         textAlign: PropTypes.number,
         onChange: PropTypes.func,
+        cardStyle: PropTypes.object,
+        resizeCallback: PropTypes.func,
     };
 
     static defaultProps = {
@@ -37,19 +40,27 @@ export default class FontEditor extends React.Component {
     render() {
         let value = this.props.textAlign || 1;
         value = value == 1 ? 'left' : value == 2 ? 'center' : 'right';
-        return (<div className="font-editor">
-                {/*<div className="dragText"/>*/}
+        let maxHeight = this.props.cardStyle.height;
+        let maxWidth = this.props.cardStyle.width;
+        return (<div className="font-editor" onClick={(e) => e.stopPropagation()}>
+                <ResizableBox width={maxWidth} height={maxHeight} onResizeStop={(e, data) => {
+                    if (!data)return;
+                    this.props.resizeCallback && this.props.resizeCallback(data.size)
+                }}>
                 <textarea width='100%'
                           value={this.state.value}
                           id={"pell" + this.id}
                           className="no-cursor editable-text"
                           style={{
+                              border: '1px dashed',
+                              fontSize: 'inherit',
                               textAlign: value,
                               color: '#' + this.props.fontColor.replace(/#/g, ''),
                           }}
                           onChange={this.handleChange}>
                     {this.props.initText}
                 </textarea>
+                </ResizableBox>
             </div>
         )
     }

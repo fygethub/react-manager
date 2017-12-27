@@ -4,8 +4,8 @@ export default {
         img: 1,
     },
     movable: {
-        move: 0,
-        umMove: 1,
+        move: 1,
+        umMove: 0,
     },
     len: {
         small: 100,
