@@ -43,16 +43,18 @@ export default class FontEditor extends React.Component {
         let maxHeight = this.props.cardStyle.height;
         let maxWidth = this.props.cardStyle.width;
         return (<div className="font-editor" onClick={(e) => e.stopPropagation()}>
-                <ResizableBox width={maxWidth} height={maxHeight} onResizeStop={(e, data) => {
-                    if (!data)return;
-                    this.props.resizeCallback && this.props.resizeCallback(data.size)
-                }}>
+                <ResizableBox
+                    width={maxWidth}
+                    height={maxHeight}
+                    onResizeStop={(e, data) => {
+                        if (!data)return;
+                        this.props.resizeCallback && this.props.resizeCallback(data.size)
+                    }}>
                 <textarea width='100%'
                           value={this.state.value}
                           id={"pell" + this.id}
                           className="no-cursor editable-text"
                           style={{
-                              border: '1px dashed',
                               fontSize: 'inherit',
                               textAlign: value,
                               color: '#' + this.props.fontColor.replace(/#/g, ''),

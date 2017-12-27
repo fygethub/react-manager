@@ -35,7 +35,7 @@ export default class DraggableNew extends React.Component {
     }
 
     componentDidMount() {
-        this.addShiftSave();
+        this.addKeyboard();
         this.createSortAble('sortItems');//属性可拖动
         this.loadFontList();
         let state = localStorage.getItem('state') && JSON.parse(localStorage.getItem('state'));
@@ -64,10 +64,26 @@ export default class DraggableNew extends React.Component {
         }
     }
 
-    addShiftSave = () => {
+    addKeyboard = () => {
         document.addEventListener('keydown', (e) => {
             if (e.shiftKey == true && e.keyCode == 83) {
                 this.uploadConstructor('no')();
+            }
+            if (e.code == 'AltLeft') {
+                console.log('alt down');
+                let item = this.state.item;
+                if (!item)return;
+                this.cacheMovable = item.movable;
+                this.changeItemStyle('movable')(enmu.movable.umMove);
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.code == 'AltLeft') {
+                console.log('alt up');
+                let item = this.state.item;
+                if (!item)return;
+                this.changeItemStyle('movable')(this.cacheMovable);
             }
         });
     };
@@ -457,8 +473,8 @@ export default class DraggableNew extends React.Component {
                                 onSelect={this.changeItemStyle(key)}
                                 value={_item[key] + ''}
                                 style={{width: '100%'}}>
-                                <Option value='0'>{nor}</Option>
-                                <Option value='1'>{un}</Option>
+                                <Option value={enmu.movable.umMove}>{nor}</Option>
+                                <Option value={enmu.movable.move}>{un}</Option>
                             </Select>
                         </Menu.Item>
                     )
@@ -559,8 +575,8 @@ export default class DraggableNew extends React.Component {
                         <Option value="5">海报</Option>
                     </Select>
                 </Col>
-                <Col span={4}>
-                    <Select onSelect={this.onSelectItem}
+                <Col span={8}>
+                    <Select value={this.state.item && (this.state.item.id)} onSelect={this.onSelectItem}
                             style={{width: '80%'}}>
                         {this.state.items.filter((v) => v.id).map((item) => {
                             return <Option value={item.id + ''}
@@ -659,7 +675,7 @@ export default class DraggableNew extends React.Component {
                                     fn.defaultUrl = item.url;
                                 }
                                 return (
-                                    <DraggableItem onStart={this.onStart(item)}
+                                    <DraggableItem onStart={() => this.onSelectItem(item.id)}
                                                    onStop={this.onStop(item.id)}
                                                    {...fn}
                                                    resizeCallback={(size) => {
@@ -888,7 +904,7 @@ class DraggableItem extends React.Component {
                 cancel='.no-cursor'
                 position={this.props.dragStyle}
                 onStop={this.props.onStop}
-                disabled={this.props.movable == enmu.movable.umMove}
+                axis={this.props.movable == enmu.movable.umMove ? 'none' : 'both'}
                 onStart={this.props.onStart}>
                 <div
                     style={this.props.cardStyle}
