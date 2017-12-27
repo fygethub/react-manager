@@ -904,11 +904,11 @@ class DraggableItem extends React.Component {
                 cancel='.no-cursor'
                 position={this.props.dragStyle}
                 onStop={this.props.onStop}
-                axis={this.props.movable == enmu.movable.umMove ? 'none' : 'both'}
-                onStart={this.props.onStart}>
-                <div
-                    style={this.props.cardStyle}
-                    className='dragItem'>
+                disabled={this.props.movable == enmu.movable.umMove }
+            >
+                <div onMouseEnter={this.props.onStart}
+                     style={this.props.cardStyle}
+                     className={`dragItem`}>
                     {this.props.cType == enmu.type.text ?
                         <FontEditor cardStyle={this.props.cardStyle}
                                     textAlign={this.props.align}
