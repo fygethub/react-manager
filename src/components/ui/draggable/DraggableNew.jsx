@@ -906,7 +906,7 @@ class DraggableItem extends React.Component {
                 onStop={this.props.onStop}
                 disabled={this.props.movable == enmu.movable.umMove }
             >
-                <div onMouseEnter={this.props.onStart}
+                <div onClick={this.props.onStart}
                      style={this.props.cardStyle}
                      className={`dragItem`}>
                     {this.props.cType == enmu.type.text ?
