@@ -679,7 +679,6 @@ export default class DraggableNew extends React.Component {
                                                    onStop={this.onStop(item.id)}
                                                    {...fn}
                                                    resizeCallback={(size) => {
-                                                       console.log('cb new');
                                                        this.resizeCallback(size)
                                                    }}
                                                    dragStyle={{x: item.x, y: item.y}}

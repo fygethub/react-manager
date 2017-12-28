@@ -299,23 +299,22 @@ class Medias extends React.Component {
         e.preventDefault();
         const {form: {validateFields}} = this.props;
         validateFields((err, val) => {
-            if (!err) {
-                App.api(URL_LIST, {
-                    offset: this.state.table.pageSize * (this.state.table.current - 1),
-                    limit: this.state.table.pageSize,
-                    ...val,
-                }).then((result) => {
-                    this.setState({
-                        table: {
-                            ...this.state.table,
-                            dataSource: result.items,
-                            pageSize: result.limit,
-                            offset: result.offset,
-                            total: result.total,
-                        },
-                    })
+            App.api(URL_LIST, {
+                offset: this.state.table.pageSize * (this.state.table.current - 1),
+                limit: this.state.table.pageSize,
+                q: val.q,
+            }).then((result) => {
+                this.setState({
+                    table: {
+                        ...this.state.table,
+                        dataSource: result.items,
+                        pageSize: result.limit,
+                        offset: result.offset,
+                        total: result.total,
+                    },
                 })
-            }
+            })
+
         });
 
 
