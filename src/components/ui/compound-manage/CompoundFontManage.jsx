@@ -19,7 +19,7 @@ class CompoundFontManage extends React.Component {
             table: {
                 offset: 0,
                 total: 0,
-                pageSize: 5,
+                pageSize: 10,
                 current: 0,
             },
         };
@@ -74,7 +74,7 @@ class CompoundFontManage extends React.Component {
 
     loadData = () => {
         App.api('adm/compound/fonts', {
-            offset: this.state.table.offset,
+            offset: this.state.table.pageSize * (this.state.table.current - 1),
             limit: this.state.table.pageSize,
         }).then(res => {
             let dataSource = res.map(item => {
@@ -88,6 +88,13 @@ class CompoundFontManage extends React.Component {
             });
             this.setState({
                 dataSource,
+                table: {
+                    ...this.state.table,
+                    dataSource: res.items,
+                    pageSize: res.limit,
+                    offset: res.offset,
+                    total: res.total,
+                },
             })
         })
     };
@@ -218,8 +225,6 @@ class CompoundFontManage extends React.Component {
                             <Col span={24}>
                                 <Card>
                                     <Table
-                                        onChange={this.tableOnchange}
-                                        pagination={pagination}
                                         rowKey={record => record.id}
                                         columns={this.columns}
                                         size='middle'

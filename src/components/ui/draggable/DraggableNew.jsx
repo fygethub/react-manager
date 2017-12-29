@@ -47,7 +47,7 @@ export default class DraggableNew extends React.Component {
         }
 
         let id = this.props.params.id;
-        if (id !== 'no') {
+        if (id !== 'no' || id != 'id') {
             App.api('adm/compound/detail', {
                 compoundId: id,
             }).then(data => {
@@ -684,7 +684,7 @@ export default class DraggableNew extends React.Component {
                                                    resizeCallback={(size) => {
                                                        this.resizeCallback(size)
                                                    }}
-                                                   blinblin={this.state.item.id == item.id}
+                                                   blinblin={this.state.item && this.state.item.id == item.id}
                                                    dragStyle={{x: item.x, y: item.y}}
                                                    cardStyle={{
                                                        position: 'absolute',
