@@ -163,7 +163,7 @@ class Coupons extends React.Component {
             loading: true,
         });
         App.api(data_list_url, {
-            offset: this.state.table.offset,
+            offset: this.state.table.pageSize * (this.state.table.current - 1),
             limit: this.state.table.pageSize,
             state: this.state.state,
         }).then((result) => {

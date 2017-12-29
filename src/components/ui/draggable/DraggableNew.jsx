@@ -608,6 +608,9 @@ export default class DraggableNew extends React.Component {
     sortItems = () => {
         return (
             <ul className={`sortItems ${this.state.isShowSortLabel && 'slideInUp'}`} id="sortItems">
+                <Card onClick={this.toggleSortLabel} style={{textAlign: 'right'}}>
+                    关闭
+                </Card>
                 {
                     this.state.items.map(item => {
                         let prop = {
@@ -681,6 +684,7 @@ export default class DraggableNew extends React.Component {
                                                    resizeCallback={(size) => {
                                                        this.resizeCallback(size)
                                                    }}
+                                                   blinblin={this.state.item.id == item.id}
                                                    dragStyle={{x: item.x, y: item.y}}
                                                    cardStyle={{
                                                        position: 'absolute',
@@ -885,6 +889,7 @@ class DraggableItem extends React.Component {
         cType: PropTypes.number.isRequired,
         onStop: PropTypes.func,
         onStart: PropTypes.func,
+        blinblin: PropTypes.bool,
         movable: PropTypes.oneOfType([
             PropTypes.string,
             PropTypes.bool,
@@ -897,6 +902,10 @@ class DraggableItem extends React.Component {
         defaultUrl: PropTypes.string,
     };
 
+    componentDidMount() {
+        console.log('dragItem didMount');
+    }
+
     render() {
         return (
             <Draggable
@@ -907,10 +916,11 @@ class DraggableItem extends React.Component {
             >
                 <div onClick={this.props.onStart}
                      style={this.props.cardStyle}
-                     className={`dragItem`}>
+                     className={`dragItem ${this.props.blinblin ? 'animate-flow' : ''}`}>
                     {this.props.cType == enmu.type.text ?
                         <FontEditor cardStyle={this.props.cardStyle}
                                     textAlign={this.props.align}
+                                    onFocuse={this.props.onStart}
                                     onChange={this.props.textChange}
                                     initText={this.props.item.text}
                                     resizeCallback={this.props.resizeCallback}

@@ -34,10 +34,13 @@ class Medias extends React.Component {
                 pageSize: 10,
                 current: 0,
             },
+            loading: false,
+            mobile: '',
             imgBase64: '',
             media: {},
             financeVisible: false,
             showPresentFlow: false,
+            showUpdateMobile: false,
             visible: false,
             amountVisible: false,
         };
@@ -146,6 +149,15 @@ class Medias extends React.Component {
                                 })
                             }}>新增店铺管理员</a>
                         </MenuItem>
+                        <Menu.Divider/>
+                        <MenuItem key="9">
+                            <a href="javascript:;" onClick={() => {
+                                this.setState({
+                                    showUpdateMobile: true,
+                                    mediaId: record.id,
+                                })
+                            }}>修改手机号</a>
+                        </MenuItem>
                     </Menu>} trigger={['click']}>
                         <a className="color-info" href="javascript:;">
                             操作 <Icon type="down"/>
@@ -157,10 +169,10 @@ class Medias extends React.Component {
     }
 
     componentDidMount() {
-        this.loadData();
+        this.handleSearch();
         document.onkeydown = (e) => {
             if (e.keyCode == 13) {
-                this.loadData();
+                this.handleSearch();
             }
         };
 
@@ -171,6 +183,11 @@ class Medias extends React.Component {
     }
 
     submitPresentFlow = () => {
+        if (!this.state.amount) {
+            message.info('输入充值金额');
+            return;
+        }
+
         App.api('adm/media/present_flow', {
             mediaId: this.state.mediaId,
             amount: this.state.amount,
@@ -180,6 +197,23 @@ class Medias extends React.Component {
                 mediaId: null,
                 showPresentFlow: false,
                 amount: 0,
+            });
+        })
+    };
+    submitUpdateMobiel = () => {
+        if (!this.state.mobile || this.state.mobile.length < 11) {
+            message.info('请输入正确手机号');
+            return;
+        }
+        App.api('adm/media/update_ownermobile ', {
+            mediaId: this.state.mediaId,
+            mobile: this.state.mobile,
+        }).then(() => {
+            message.success('修改成功');
+            this.setState({
+                mediaId: null,
+                mobile: '',
+                showUpdateMobile: false,
             });
         })
     };
@@ -193,7 +227,7 @@ class Medias extends React.Component {
 
     updateAdminKeeper = () => {
         this.props.form.validateFields((err, values) => {
-            if (err) {
+            if (err && (err.adminName || err.password || err.name)) {
                 let errorMsg = true;
                 Object.keys(err).forEach(key => {
                     if (errorMsg) {
@@ -201,29 +235,30 @@ class Medias extends React.Component {
                         errorMsg = false;
                     }
                 });
+                return;
             }
-            if (!err) {
-                let data = {
-                    mediaId: values.mediaId,
-                    admin: JSON.stringify({
-                        username: values.adminName,
-                        password: values.password,
-                        name: values.name,
-                    })
-                };
 
-                App.api('adm/media/create_admin', data).then(() => {
-                    message.success('修改成功');
-                    this.props.form.setFieldsValue({
-                        adminName: '',
-                        password: '',
-                        name: '',
-                    });
-                    this.setState({
-                        showMediaKeep: false,
-                    }, this.loadData)
+            let data = {
+                mediaId: values.mediaId,
+                admin: JSON.stringify({
+                    username: values.adminName,
+                    password: values.password,
+                    name: values.name,
                 })
-            }
+            };
+
+            App.api('adm/media/create_admin', data).then(() => {
+                message.success('修改成功');
+                this.props.form.setFieldsValue({
+                    adminName: '',
+                    password: '',
+                    name: '',
+                });
+                this.setState({
+                    showMediaKeep: false,
+                }, this.handleSearch)
+            })
+
         })
     };
 
@@ -242,22 +277,22 @@ class Medias extends React.Component {
     };
 
 
-    loadData = () => {
-        App.api(URL_LIST, {
-            offset: this.state.table.pageSize * (this.state.table.current - 1),
-            limit: this.state.table.pageSize,
-        }).then((result) => {
-            this.setState({
-                table: {
-                    ...this.state.table,
-                    dataSource: result.items,
-                    pageSize: result.limit,
-                    offset: result.offset,
-                    total: result.total,
-                }
-            })
-        })
-    };
+    /*loadData = () => {
+     App.api(URL_LIST, {
+     offset: this.state.table.pageSize * (this.state.table.current - 1),
+     limit: this.state.table.pageSize,
+     }).then((result) => {
+     this.setState({
+     table: {
+     ...this.state.table,
+     dataSource: result.items,
+     pageSize: result.limit,
+     offset: result.offset,
+     total: result.total,
+     }
+     })
+     })
+     };*/
 
     detailModal = (mediaId, visible = 1) => {
         App.api('adm/media/media', {
@@ -284,7 +319,7 @@ class Medias extends React.Component {
                     mediaId,
                     cancel,
                 }).then(() => {
-                    this.loadData();
+                    this.handleSearch();
                     model.destroy();
                 });
             },
@@ -295,16 +330,19 @@ class Medias extends React.Component {
 
     };
 
-    handleSearch = (e) => {
-        e.preventDefault();
+    handleSearch = () => {
         const {form: {validateFields}} = this.props;
         validateFields((err, val) => {
+            this.setState({
+                loading: true,
+            });
             App.api(URL_LIST, {
                 offset: this.state.table.pageSize * (this.state.table.current - 1),
                 limit: this.state.table.pageSize,
                 q: val.q,
             }).then((result) => {
                 this.setState({
+                    loading: false,
                     table: {
                         ...this.state.table,
                         dataSource: result.items,
@@ -328,24 +366,32 @@ class Medias extends React.Component {
                 pageSize: pagination.pageSize,
                 current: pagination.current,
             }
-        }, this.loadData);
+        }, this.handleSearch);
 
     };
     handleSubmit = () => {
         this.props.form.validateFields((err, values) => {
-            if (!err) {
-                App.api('adm/media/upgrade', {
-                    mediaId: values.id,
-                    grade: values.grade,
-                    days: values.days,
-                }).then(() => {
-                    message.success('修改成功');
-                    this.setState({
-                        visible: false,
-                        media: {},
-                    }, this.loadData)
-                })
+            if (err && (err.id || err.grade || err.days)) {
+                let errorMsg = true;
+                Object.keys(err).forEach(key => {
+                    if (errorMsg) {
+                        message.warning(err[key].errors[0].message);
+                        errorMsg = false;
+                    }
+                });
+                return;
             }
+            App.api('adm/media/upgrade', {
+                mediaId: values.id,
+                grade: values.grade,
+                days: values.days,
+            }).then(() => {
+                message.success('修改成功');
+                this.setState({
+                    visible: false,
+                    media: {},
+                }, this.handleSearch)
+            })
         })
     };
 
@@ -405,6 +451,15 @@ class Medias extends React.Component {
                     <p>充值账户:{this.state.mediaId}</p>
                     <Input addonAfter="元"
                            onChange={(e) => this.setState({amount: e.target.value * 100})}/>
+                </Modal>
+                <Modal
+                    visible={this.state.showUpdateMobile}
+                    title="修改手机号码"
+                    onOk={this.submitUpdateMobiel}
+                    onCancel={() => this.setState({showUpdateMobile: false, mediaId: null, mobile: ''})}>
+                    <p>手机号码:</p>
+                    <Input value={this.state.mobile}
+                           onChange={(e) => this.setState({mobile: e.target.value})}/>
                 </Modal>
                 <Modal
                     visible={this.state.show_qrcode}
@@ -493,6 +548,7 @@ class Medias extends React.Component {
                             <div className="gutter-box">
                                 <Card title={TABLE_NAME}>
                                     <Table
+                                        loading={this.state.loading}
                                         rowKey={record => record.id}
                                         columns={this.columns}
                                         pagination={pagination}

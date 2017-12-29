@@ -13,6 +13,7 @@ export default class FontEditor extends React.Component {
         onChange: PropTypes.func,
         cardStyle: PropTypes.object,
         resizeCallback: PropTypes.func,
+        onFocuse: PropTypes.func,
     };
 
     static defaultProps = {
@@ -59,6 +60,7 @@ export default class FontEditor extends React.Component {
                               textAlign: value,
                               color: '#' + this.props.fontColor.replace(/#/g, ''),
                           }}
+                          onFocus={this.props.onFocuse}
                           onChange={this.handleChange}>
                     {this.props.initText}
                 </textarea>
