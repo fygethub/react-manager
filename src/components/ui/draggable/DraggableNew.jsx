@@ -902,10 +902,6 @@ class DraggableItem extends React.Component {
         defaultUrl: PropTypes.string,
     };
 
-    componentDidMount() {
-        console.log('dragItem didMount');
-    }
-
     render() {
         return (
             <Draggable
@@ -914,7 +910,7 @@ class DraggableItem extends React.Component {
                 onStop={this.props.onStop}
                 disabled={this.props.movable == enmu.movable.umMove }
             >
-                <div onClick={this.props.onStart}
+                <div onClick={!(this.props.movable == enmu.movable.umMove) && this.props.onStart}
                      style={this.props.cardStyle}
                      className={`dragItem ${this.props.blinblin ? 'animate-flow' : ''}`}>
                     {this.props.cType == enmu.type.text ?

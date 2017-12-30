@@ -263,7 +263,7 @@ class Coupons extends React.Component {
                     <Row>
                         <Col span={18}><Input readOnly defaultValue={App.getCouponsUrl(this.state.code)}/></Col>
                         <Col span={4}> <Clipboard data-clipboard-text={App.getCouponsUrl(this.state.code)}
-                                                  style={{background: 'none'}} onSuccess={() => {
+                                                  style={{background: 'none', border: 0}} onSuccess={() => {
                             message.success('复制成功');
                             this.setState({
                                 copyUrlVisible: false,
