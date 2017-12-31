@@ -23,6 +23,7 @@ let getNextState = () => {
 
 
 let pushState = (state) => {
+    console.log(state);
     states = states.slice(0, currentIndex);
     currentIndex += 1;
     let copyState = JSON.stringify(state);

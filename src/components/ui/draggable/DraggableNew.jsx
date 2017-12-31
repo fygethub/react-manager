@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Menu, Icon, Card, message, Select, InputNumber, Button, Input, Modal, Row, Col} from 'antd';
+import {Menu, Icon, Card, message, Select, Tooltip, InputNumber, Button, Input, Modal, Row, Col} from 'antd';
 import BreadcrumbCustom from '../../BreadcrumbCustom';
 import Draggable from 'react-draggable';
 import '../../../asssets/css/ui/draggable-new.less';
@@ -28,7 +28,6 @@ export default class DraggableNew extends React.Component {
             preview: {},
             priority: 1,
             visible: false,
-            collRightMenu: false,
             fontDataSource: [],
             showPlaceHolder: false,
             isShowSortLabel: false,
@@ -70,6 +69,22 @@ export default class DraggableNew extends React.Component {
         CacheState.pushState(this.state);
     };
 
+    rollback = () => {
+        let state = CacheState.getPrevState();
+        state && this.setState({
+            ...this.state,
+            ...state,
+        })
+    };
+
+    rollPrev = () => {
+        let state = CacheState.getNextState();
+        state && this.setState({
+            ...this.state,
+            ...state,
+        })
+    };
+
     addKeyboard = () => {
         document.addEventListener('keydown', (e) => {
 
@@ -78,19 +93,11 @@ export default class DraggableNew extends React.Component {
             }
 
             if (e.metaKey && !e.shiftKey && e.keyCode == 90) {
-                let state = CacheState.getPrevState();
-                state && this.setState({
-                    ...this.state,
-                    ...state,
-                })
+                this.rollback();
             }
 
             if (e.metaKey && e.shiftKey && e.keyCode == 90) {
-                let state = CacheState.getNextState();
-                state && this.setState({
-                    ...this.state,
-                    ...state,
-                })
+                this.rollPrev()
             }
 
 
@@ -288,13 +295,10 @@ export default class DraggableNew extends React.Component {
 
     };
 
-    handleClick = (e) => {
-        console.log('click ', e);
-    };
-
     changeItemStyle = (type) => (e) => {
         let val = typeof e == 'object' ? e.target.value : e;
         let _item = {};
+        val = isNaN(parseInt(val)) ? val : parseInt(val);
         let items = this.state.items.map(item => {
             if (item.id == this.state.item.id) {
                 item[type] = val;
@@ -379,11 +383,6 @@ export default class DraggableNew extends React.Component {
         });
     };
 
-    toggleRightMenu = () => {
-        this.setState({
-            collRightMenu: !this.state.collRightMenu,
-        })
-    };
 
     getBoundRect = (rectBound) => {
         if (this.state.items.length == 0 || this.state.items[0].type != enmu.type.img) {
@@ -424,172 +423,7 @@ export default class DraggableNew extends React.Component {
         })
     };
 
-    rightOperatorMenu = () => {
-        return (
-            <Menu.SubMenu
-                key="eidt-btn"
-                title={<span><Icon type="bars"/>基本操作</span>}>
-                <Menu.Item
-                    key="font-btn-add">
-                    <p className="edit-add" onClick={() => this.createItem(enmu.type.text)}>
-                        增加文本框</p>
-                </Menu.Item>
-                <Menu.Item
-                    key="img-btn-add">
-                    <p className="edit-add" onClick={() => this.createItem(enmu.type.img)}>增加图片框</p>
-                </Menu.Item>
-                <Menu.Item
-                    key="eidt-btn-remove">
-                    <p className="edit-remove" onClick={this.showModal}>
-                        删除当前选中</p>
-                </Menu.Item>
-                <Menu.Item
-                    key="sort-btn-add">
-                    <p className="edit-add" onClick={this.toggleSortLabel}>
-                        {!this.state.isShowSortLabel ? '打开排序' : '关闭排序'}
-                    </p>
-                </Menu.Item>
-                <Menu.Item
-                    key="place-btn-add">
-                    <p className="edit-add" onClick={this.handlePlaceholder}>
-                        { !this.state.showPlaceHolder ? ' 添加选项框' : '保存'}
-                    </p>
-                </Menu.Item>
-            </Menu.SubMenu>
-        )
-    };
-
-
-    rightStyleOperatorMenu = (_item) => {
-        return (<Menu.SubMenu
-            style={{paddingLeft: '10px'}}
-            key="sub1"
-            title={<span><Icon type="bars"/>属性面板</span>}>
-            {Object.keys(_item).map(key => {
-                if (key == 'movable' || key == 'bold' || key == 'italic' || key == 'background') {
-                    let nor, un;
-                    switch (key) {
-                        case 'movable':
-                            un = '可移动';
-                            nor = '不可移动';
-                            break;
-                        case 'bold':
-                            nor = '正常';
-                            un = '加粗';
-                            break;
-                        case 'italic':
-                            nor = '正常';
-                            un = '倾斜';
-                            break;
-                        case 'background':
-                            nor = '白色';
-                            un = '透明';
-                            break;
-                        default:
-                            break;
-                    }
-
-                    return (
-                        <Menu.Item key={key}>
-                            <label htmlFor={key} style={{
-                                position: 'absolute',
-                                marginLeft: -40,
-                                width: 40,
-                                overflow: 'hidden'
-                            }}>{enmu.nick[key]}</label>
-                            <Select
-                                onSelect={this.changeItemStyle(key)}
-                                value={_item[key] + ''}
-                                style={{width: '100%'}}>
-                                <Option value={enmu.movable.umMove}>{nor}</Option>
-                                <Option value={enmu.movable.move}>{un}</Option>
-                            </Select>
-                        </Menu.Item>
-                    )
-                }
-                if (key == 'fontFamily') {
-                    return (
-                        <Menu.Item key={key}>
-                            <label htmlFor={key} style={{
-                                position: 'absolute',
-                                marginLeft: -40,
-                                width: 40,
-                                overflow: 'hidden'
-                            }}>{enmu.nick[key]}</label>
-                            <Select
-                                onSelect={this.changeItemStyle(key)}
-                                value={_item[key] + ''}
-                                style={{width: '100%'}}>
-                                {
-                                    this.state.fontDataSource && this.state.fontDataSource.map(font => (
-                                        <Option value={`${font.name}`}
-                                                key={`${font.name}`}>
-                                            {font.name}
-                                        </Option>
-                                    ))
-                                }
-                                <Option value={'"宋体"'}>宋体</Option>
-                            </Select>
-                        </Menu.Item>
-                    )
-                }
-                if (key == 'align') {
-                    return (
-                        <Menu.Item key={key}>
-                            <label htmlFor={key} style={{
-                                position: 'absolute',
-                                marginLeft: -40,
-                                width: 40,
-                                overflow: 'hidden'
-                            }}>{enmu.nick[key]}</label>
-                            <Select
-                                onSelect={this.changeItemStyle(key)}
-                                value={_item[key] + ''}
-                                style={{width: '100%'}}>
-                                <Option value={enmu.align.left + ''}>靠左</Option>
-                                <Option value={enmu.align.center + ''}>居中</Option>
-                                <Option value={enmu.align.right + ''}>靠右</Option>
-                            </Select>
-                        </Menu.Item>
-                    )
-                }
-                if (key == 'text' || key == 'url' || key == 'type' || key == 'id' || key == 'fontColor') {
-                    if (key !== 'fontColor') {
-                        return null;
-                    }
-                    return (
-                        <Menu.Item key={key}>
-                            <label htmlFor={key} style={{
-                                position: 'absolute',
-                                marginLeft: -40,
-                                width: 40,
-                                overflow: 'hidden'
-                            }}>{enmu.nick[key]}</label>
-                            <Input disabled={key !== 'fontColor'}
-                                   onChange={this.changeItemStyle(key)}
-                                   id="type"
-                                   value={_item[key]}/>
-                        </Menu.Item>)
-                }
-
-                return (
-                    <Menu.Item key={key}>
-                        <label htmlFor={key} style={{
-                            position: 'absolute',
-                            marginLeft: -40,
-                            width: 40,
-                            overflow: 'hidden'
-                        }}>{enmu.nick[key]}</label>
-                        <InputNumber
-                            onChange={this.changeItemStyle(key)}
-                            id="type"
-                            value={this.state.item[key]}/>
-                    </Menu.Item>)
-            })}
-        </Menu.SubMenu>)
-    };
-
-    headerOperatorMenu = (_item) => {
+    headerOperatorMenu = () => {
         return (
             <Row>
                 <Col span={4}>
@@ -633,6 +467,7 @@ export default class DraggableNew extends React.Component {
     };
 
 
+    //拖动排序
     sortItems = () => {
         return (
             <ul className={`sortItems ${this.state.isShowSortLabel && 'slideInUp'}`} id="sortItems">
@@ -667,6 +502,238 @@ export default class DraggableNew extends React.Component {
         )
     };
 
+    //底部固定工具栏
+    bottomToolBar = () => {
+
+        return (
+            <ul className="bottom-tool-bar">
+                <li>
+                    <Tooltip placement="top" trigger="hover"
+                             title={'撤销'}>
+                         <span
+                             className="item"
+                             onClick={ this.rollback}>
+                             <Icon type="verticle-right"/>
+
+                            </span>
+                    </Tooltip>
+                    <Tooltip placement="top" trigger="hover"
+                             title={'前进'}>
+                         <span
+                             className="item"
+                             onClick={this.rollPrev}>
+                               <Icon type="verticle-left"/>
+                            </span>
+                    </Tooltip>
+                </li>
+                <li>
+                    <Tooltip placement="top" trigger="hover"
+                             title={'增加文本层'}>
+                         <span
+                             className="item"
+                             onClick={() => this.createItem(enmu.type.text)}>
+                               <Icon type="plus-square"/>
+                            </span>
+                    </Tooltip>
+                </li>
+                <li>
+                    <Tooltip placement="top" trigger="hover"
+                             title={'增加图片层'}>
+                         <span
+                             className="item"
+                             onClick={() => this.createItem(enmu.type.img)}>
+                              <Icon type="plus-square-o"/>
+                            </span>
+                    </Tooltip>
+                </li>
+                <li>
+                    <Tooltip placement="top" trigger="hover"
+                             title={!this.state.isShowSortLabel ? '打开排序' : '关闭排序'}>
+                        {!this.state.isShowSortLabel && <span
+                            className="item"
+                            onClick={this.toggleSortLabel}>
+                           <Icon type="up-square"/>
+                        </span>}
+                        {this.state.isShowSortLabel && <span
+                            className="item"
+                            onClick={this.toggleSortLabel}>
+                             <Icon type="down-square"/>
+                        </span>}
+                    </Tooltip>
+                </li>
+                <li>
+                    <Tooltip placement="top" trigger="hover"
+                             title={!this.state.showPlaceHolder ? '添加选项框' : '保存'}>
+                        {!this.state.showPlaceHolder && <span
+                            className="item"
+                            onClick={this.handlePlaceholder}>
+                           <Icon type="plus"/>
+                        </span>}
+                        {this.state.showPlaceHolder && <span
+                            className="item"
+                            onClick={this.handlePlaceholder}>
+                             <Icon type="check-circle-o"/>
+                        </span>}
+                    </Tooltip>
+                </li>
+                <div className="submit">
+                    <Button className="button"
+                            onClick={this.uploadConstructor('no')}>{this.props.params.id !== 'no' || this.state.id ? '修改' : '保存'}</Button>
+                    {(this.props.params.id !== 'no' || this.state.id) &&
+                    <Button className="button" onClick={this.uploadConstructor('other')}>另存为</Button>}
+                </div>
+            </ul>
+        )
+    };
+
+    //快捷工具栏
+    miniToolBar = (item) => {
+        if (!item)return;
+        let isText = item.type == enmu.type.text;
+        return (
+            this.state.item && this.state.item.id == item.id ?
+                <ul className="mini-tool-bar no-cursor"
+                    style={{width: item.w, left: item.x, top: item.y - 50, minWidth: isText ? 500 : 300}}>
+                    {!isText && <li>
+                        <Tooltip placement="top"
+                                 title={'width:' + item.w + 'px'}>
+                            <InputNumber value={item.w} style={{width: 50}}
+                                         onChange={this.changeItemStyle('w')}/>
+                        </Tooltip>
+                        <Tooltip placement="top"
+                                 title={'height:' + item.h + 'px'}>
+                            <InputNumber value={item.h} style={{width: 50}}
+                                         onChange={this.changeItemStyle('h')}/>
+                        </Tooltip>
+                        <Tooltip placement="top"
+                                 title={'x:' + item.x + 'px'}>
+                            <InputNumber value={item.x} style={{width: 50}}
+                                         onChange={this.changeItemStyle('x')}/>
+                        </Tooltip>
+                        <Tooltip placement="top"
+                                 title={'y:' + item.y + 'px'}>
+                            <InputNumber value={item.y} style={{width: 50}}
+                                         onChange={this.changeItemStyle('y')}/>
+                        </Tooltip>
+                    </li>}
+
+                    {isText && <li>
+                        <Tooltip placement="top" trigger="hover"
+                                 title={'align' + item.align}>
+                            <Select
+                                onSelect={this.changeItemStyle('align')}
+                                value={item.align + ''}
+                                style={{width: 60}}>
+                                <Option value={enmu.align.left + ''}>靠左</Option>
+                                <Option value={enmu.align.center + ''}>居中</Option>
+                                <Option value={enmu.align.right + ''}>靠右</Option>
+                            </Select>
+                        </Tooltip>
+                        <Tooltip placement="top" trigger="hover"
+                                 title={'background'}>
+                            <Select
+                                onSelect={this.changeItemStyle('background')}
+                                value={typeof item.background == 'number' ? item.background + '' : enmu.background.transparent + ''}
+                                style={{width: 60}}>
+                                <Option value={enmu.background.transparent + ''}>透明</Option>
+                                <Option value={enmu.background.white + ''}>白色</Option>
+                            </Select>
+                        </Tooltip>
+                        <Tooltip placement="top" trigger="hover"
+                                 title={'字体大小:' + item.fontSize}>
+                            <Select style={{width: 50}}
+                                    value={item.fontSize + ''}
+                                    onSelect={this.changeItemStyle('fontSize')}>
+                                {enmu.fontSizeList.map(size => {
+                                    return <Option key={size}>
+                                        {size}
+                                    </Option>
+                                })}
+                            </Select>
+                        </Tooltip>
+                        <Tooltip placement="top" trigger="hover"
+                                 title={'字体颜色'}>
+                            <Input type='color'
+                                   value={item.fontColor || '#ffffff'}
+                                   onChange={this.changeItemStyle('fontColor')}/>
+                        </Tooltip>
+                        <Tooltip placement="top" trigger="hover"
+                                 title={item.italic ? '倾斜' : '正常'}>
+                            { item.italic == 1 && <span
+                                className="item"
+                                style={{fontStyle: 'italic'}}
+                                onClick={() => {
+                                    this.changeItemStyle('italic')(enmu.italic.normal);
+                                }}> I   </span>}
+                            {item.italic == 0 && <span
+                                className="item"
+                                onClick={() => {
+                                    this.changeItemStyle('italic')(enmu.italic.italic);
+                                }}> I  </span>}
+                        </Tooltip>
+                        <Tooltip placement="top" trigger="hover"
+                                 title={item.bold ? '加粗' : '正常'}>
+                            { item.bold == 1 && <span
+                                className="item"
+                                style={{fontWeight: '900'}}
+                                onClick={() => {
+                                    this.changeItemStyle('bold')(enmu.bold.bold);
+                                }}> B   </span>}
+                            {item.bold == 0 && <span
+                                className="item"
+                                onClick={() => {
+                                    this.changeItemStyle('bold')(enmu.bold.normal);
+                                }}> B  </span>}
+                        </Tooltip>
+                        <Select
+                            onSelect={this.changeItemStyle('fontFamily')}
+                            value={item.fontFamily + ''}
+                            style={{width: '100%'}}>
+                            {
+                                this.state.fontDataSource && this.state.fontDataSource.map(font => (
+                                    <Option value={`${font.name}`}
+                                            key={`${font.name}`}>
+                                        {font.name}
+                                    </Option>
+                                ))
+                            }
+                            <Option value={'"宋体"'}>宋体</Option>
+                        </Select>
+                    </li>}
+
+                    <li>
+                        <Tooltip placement="top" trigger="hover"
+                                 title={item.movable ? '点击锁定' : '点击解除锁定'}>
+                            { item.movable == 1 && <span
+                                className="item"
+                                onClick={() => {
+                                    this.changeItemStyle('movable')(enmu.movable.umMove);
+                                    message.info('已锁定');
+                                }}>
+                               <Icon type="unlock"/>
+                            </span>}
+                            {item.movable == 0 && <span
+                                className="item"
+                                onClick={() => {
+                                    this.changeItemStyle('movable')(enmu.movable.move);
+                                    message.info('已解除锁定');
+                                }}>
+                                <Icon type="lock"/>
+                            </span>}
+                        </Tooltip>
+                        <Tooltip placement="top" trigger="hover"
+                                 title={'删除当前'}>
+                         <span
+                             className="item"
+                             onClick={this.showModal}>
+                               <Icon type="delete"/>
+                            </span>
+                        </Tooltip>
+                    </li>
+                </ul> : null
+        )
+    };
+
     resizeCallback = (size) => {
         this.changeItemStyle('w')(size.width);
         this.changeItemStyle('h')(size.height);
@@ -694,8 +761,10 @@ export default class DraggableNew extends React.Component {
                 {this.sortItems()}
                 <div className="operator">
                     {this.headerOperatorMenu(_item)}
+                    {this.bottomToolBar()}
                     <div className="flex">
                         <div className="content-operator">
+                            { this.miniToolBar(this.state.item)}
                             { _items.map((item) => {
                                 let fn = {};
                                 if (item.type == enmu.type.text) {
@@ -729,27 +798,10 @@ export default class DraggableNew extends React.Component {
                                                    movable={item.movable + ''}
                                                    item={item}
                                                    cType={item.type}
-                                                   key={item.id}/>)
+                                                   key={item.id}>
+
+                                    </DraggableItem>)
                             })}
-                        </div>
-                        <div className="right-operator" id="right-operator"
-                             style={{width: !this.state.collRightMenu ? 200 : 0}}>
-                            <div className="toggle-right-operator"
-                                 onClick={this.toggleRightMenu}/>
-                            <Menu
-                                onClick={this.handleClick}
-                                defaultSelectedKeys={['1']}
-                                defaultOpenKeys={['sub1']}
-                                mode="inline">
-                                {this.rightOperatorMenu()}
-                                {this.rightStyleOperatorMenu(_item)}
-                            </Menu>
-                            <div className="submit">
-                                <Button className="button"
-                                        onClick={this.uploadConstructor('no')}>{this.props.params.id !== 'no' || this.state.id ? '修改' : '保存'}</Button>
-                                {(this.props.params.id !== 'no' || this.state.id) &&
-                                <Button className="button" onClick={this.uploadConstructor('other')}>另存为</Button>}
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -784,19 +836,22 @@ class DraggableItem extends React.Component {
                 onStop={this.props.onStop}
                 disabled={this.props.movable == enmu.movable.umMove }
             >
-                <div onClick={!(this.props.movable == enmu.movable.umMove) ? this.props.onStart : null}
-                     style={this.props.cardStyle}
-                     className={`dragItem ${this.props.blinblin ? 'animate-flow' : ''}`}>
-                    {this.props.cType == enmu.type.text ?
-                        <FontEditor cardStyle={this.props.cardStyle}
-                                    textAlign={this.props.align}
-                                    onFocuse={this.props.onStart}
-                                    onChange={this.props.textChange}
-                                    initText={this.props.item.text}
-                                    resizeCallback={this.props.resizeCallback}
-                                    fontColor={this.props.item.fontColor}/> :
-                        <PictureEditor defaultUrl={this.props.defaultUrl}
-                                       uploadFile={this.props.setPictureUrl}/>}
+                <div>
+                    {/*{ this.props.children()}*/}
+                    <div onClick={!(this.props.movable == enmu.movable.umMove) ? this.props.onStart : null}
+                         style={this.props.cardStyle}
+                         className={`dragItem ${this.props.blinblin ? 'animate-flow' : ''}`}>
+                        {this.props.cType == enmu.type.text ?
+                            <FontEditor cardStyle={this.props.cardStyle}
+                                        textAlign={this.props.align}
+                                        onFocuse={this.props.onStart}
+                                        onChange={this.props.textChange}
+                                        initText={this.props.item.text}
+                                        resizeCallback={this.props.resizeCallback}
+                                        fontColor={this.props.item.fontColor}/> :
+                            <PictureEditor defaultUrl={this.props.defaultUrl}
+                                           uploadFile={this.props.setPictureUrl}/>}
+                    </div>
                 </div>
             </Draggable>
         )

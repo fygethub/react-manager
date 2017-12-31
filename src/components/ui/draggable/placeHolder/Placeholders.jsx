@@ -134,7 +134,7 @@ export default class Placeholders extends React.Component {
         const pageStyle = {
             position: 'absolute',
             backgroundColor: 'rgba(0,0,0,.28)',
-            zIndex: 999,
+            zIndex: 99,
             ...this.state.style,
             display: this.props.visible ? 'block' : 'none',
         };
