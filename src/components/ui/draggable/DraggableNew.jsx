@@ -831,7 +831,7 @@ class DraggableItem extends React.Component {
     render() {
         return (
             <Draggable
-                cancel='.no-cursor'
+                cancel='.no-cursor,.react-resizable-handle'
                 position={this.props.dragStyle}
                 onStop={this.props.onStop}
                 disabled={this.props.movable == enmu.movable.umMove }
