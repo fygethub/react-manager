@@ -52,6 +52,7 @@ export default class FontEditor extends React.Component {
                         this.props.resizeCallback && this.props.resizeCallback(data.size)
                     }}>
                 <textarea width='100%'
+                          readOnly={!this.props.movable}
                           value={this.state.value}
                           id={"pell" + this.id}
                           className="no-cursor editable-text"

@@ -230,7 +230,7 @@ export default class DraggableNew extends React.Component {
         this.setState({
             item: _item,
             items,
-        })
+        }, this.storeState)
     };
 
     deleteItem = (id) => (e) => {
@@ -324,7 +324,7 @@ export default class DraggableNew extends React.Component {
         this.setState({
             item,
             items,
-        })
+        }, this.storeState)
     };
 
     uploadConstructor = (type) => () => {
@@ -413,14 +413,14 @@ export default class DraggableNew extends React.Component {
 
         this.setState({
             showPlaceHolder: !this.state.showPlaceHolder,
-        });
+        }, this.storeState);
 
     };
 
     toggleSortLabel = () => {
         this.setState({
             isShowSortLabel: !this.state.isShowSortLabel,
-        })
+        }, this.storeState)
     };
 
     headerOperatorMenu = () => {
@@ -829,6 +829,8 @@ class DraggableItem extends React.Component {
     };
 
     render() {
+
+        let movable = !(this.props.movable == enmu.movable.umMove);
         return (
             <Draggable
                 cancel='.no-cursor,.react-resizable-handle'
@@ -838,11 +840,12 @@ class DraggableItem extends React.Component {
             >
                 <div>
                     {/*{ this.props.children()}*/}
-                    <div onClick={!(this.props.movable == enmu.movable.umMove) ? this.props.onStart : null}
+                    <div onClick={ movable ? this.props.onStart : null}
                          style={this.props.cardStyle}
                          className={`dragItem ${this.props.blinblin ? 'animate-flow' : ''}`}>
                         {this.props.cType == enmu.type.text ?
                             <FontEditor cardStyle={this.props.cardStyle}
+                                        movable={movable}
                                         textAlign={this.props.align}
                                         onFocuse={this.props.onStart}
                                         onChange={this.props.textChange}

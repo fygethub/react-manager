@@ -23,11 +23,11 @@ let getNextState = () => {
 
 
 let pushState = (state) => {
-    console.log(state);
     states = states.slice(0, currentIndex);
     currentIndex += 1;
     let copyState = JSON.stringify(state);
     states.push(JSON.parse(copyState));
+    console.log(states);
 };
 
 export default {pushState, getPrevState, getNextState}
