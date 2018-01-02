@@ -100,7 +100,6 @@ export default class DraggableNew extends React.Component {
                 this.rollPrev()
             }
 
-
             if (e.code == 'AltLeft') {
                 console.log('alt down');
                 let item = this.state.item;
@@ -109,6 +108,7 @@ export default class DraggableNew extends React.Component {
                 this.changeItemStyle('movable')(enmu.movable.umMove);
             }
         });
+
 
         document.addEventListener('keyup', (e) => {
             if (e.code == 'AltLeft') {

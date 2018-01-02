@@ -75,7 +75,7 @@ export default class Features extends React.Component {
         App.api(api, {
             feature: this.state.feature,
             mediaId: this.state.mediaId,
-        }).then(() => {
+        }, {errorMsg: isAdd ? '' : '删除失败'}).then(() => {
             message.success('操作成功');
             this.setState({
                 addModalVisible: false,
@@ -83,6 +83,14 @@ export default class Features extends React.Component {
                 feature: '',
                 mediaId: '',
             }, this.loadData)
+        }, () => {
+            this.setState({
+                addModalVisible: false,
+                removeModalVisible: false,
+                loading: false,
+                feature: '',
+                mediaId: '',
+            })
         })
     };
 
@@ -105,7 +113,7 @@ export default class Features extends React.Component {
                             {this.state.feature}:
                         </Col>
                         <Col span={16}>
-                            <Input placeholder="输入店铺id" onChange={(e) => {
+                            <Input placeholder="输入店铺id" value={this.state.mediaId} onChange={(e) => {
                                 this.setState({
                                     mediaId: e.target.value,
                                 })
@@ -121,13 +129,14 @@ export default class Features extends React.Component {
                     <Row>
                         <Col span={8}>选择删除的店铺</Col>
                         <Col span={16}>
-                            <Select style={{width: '100%'}} onSelect={(value) => {
-                                this.setState({
-                                    mediaId: value,
-                                })
-                            }}>
+                            <Select style={{width: '100%'}} value={this.state.mediaId}
+                                    onSelect={(value) => {
+                                        this.setState({
+                                            mediaId: value,
+                                        })
+                                    }}>
                                 {this.state.options.map((option) => {
-                                    return <Option key={option} value={option}>{option}</Option>
+                                    return <Option key={option}>{option}</Option>
                                 })}
                             </Select>
                         </Col>

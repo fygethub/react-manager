@@ -52,6 +52,14 @@ const removeCookie = (k) => cookie.remove(k);
 
 const api = (url, params, options) => {
     params = params || {};
+    options = options || {};
+    if (options.requireSession === undefined) {
+        options.requireSession = true;
+    }
+    if (options.defaultErrorProcess === undefined) {
+        options.defaultErrorProcess = true;
+    }
+
     let sessionId = getCookie('x-adm-sess');
     if (U.str.isNotEmpty(sessionId)) {
         params['x-adm-sess'] = sessionId;
@@ -59,6 +67,13 @@ const api = (url, params, options) => {
     let defaultError = {'code': 0, 'msg': '网络错误'};
     let apiPromise = function (resolve, reject) {
         let rejectWrap = reject;
+
+        if (options.defaultErrorProcess) {
+            rejectWrap = function (err) {
+                message.error(options.errorMsg ? options.errorMsg : err.msg);
+                reject(err);
+            };
+        }
         let dataStr = '';
         for (let key in params) {
             if (dataStr.length > 0) {
