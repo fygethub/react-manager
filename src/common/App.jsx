@@ -1,13 +1,12 @@
 /**
  * Created by hao.cheng on 2017/4/16.
  */
-import axios from 'axios';
+import fetch from 'isomorphic-fetch'
 import {hashHistory} from 'react-router';
 import {message} from 'antd';
 import cookie from 'js-cookie';
 import U from '../utils';
 let AwesomeBase64 = require('awesome-urlsafe-base64');
-
 
 let ENV_CONFIG;
 if (process.env.API_ENV == 'sandbox' || process.env.API_ENV == 'dev') {
@@ -22,40 +21,6 @@ const API_BASE = window.location.protocol + ENV_CONFIG.api;
 const URL_H5 = ENV_CONFIG.urlH5;
 const urlConsole = ENV_CONFIG.urlConsole;
 
-const instanceFactory = () => {
-    let instance = axios.create({
-        baseURL: API_BASE,
-        timeout: 1000,
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-    });
-
-// 添加请求拦截器
-    instance.interceptors.request.use((config) => {
-        console.log('interceptors request');
-        return config;
-    }, function (error) {
-        // 对请求错误做些什么
-        return Promise.reject(error);
-    });
-
-// 添加响应拦截器
-    instance.interceptors.response.use(function (response) {
-        // 对响应数据做点什么
-        console.log('interceptors response');
-        if (response.data.error) {
-            //message.warn(response.data.error.msg);
-
-            return response;
-        }
-        return response;
-    }, error => {
-        // 对响应错误做点什么
-        if (error.response)
-            return Promise.reject(error);
-    });
-
-    return instance;
-};
 
 const go = function (hash, context) {
     hashHistory.push(hash);
@@ -111,29 +76,34 @@ const api = (url, params, options) => {
             dataStr = null;
         }
 
-        instanceFactory().post(url, dataStr)
-            .then((response) => {
-                if (!response) {
-                    rejectWrap('服务器 未返回数据,检查是否传参数有误,或者与服务器确认!  :' + response);
-                    message.error('噢噢 !-.- 网络错误请重新提交..')
+        fetch(API_BASE + url, {
+            method: 'POST',
+            body: dataStr,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        }).then((response) => response.json().then(function (ret) {
+            var error = ret.error;
+            if (error) {
+                if (error.code == 5) {
+                    //登录会话过期
+                    removeCookie('x-adm-sessid');
+                    hashHistory.push('login');
                     return;
                 }
-                let error = response.data && response.data.error;
-                if (error) {
-                    if (error.code == 5) {
-                        //登录会话过期
-                        removeCookie('x-adm-sessid');
-                        hashHistory.push('login');
-                    }
-                    message.error(error.msg);
-                    rejectWrap(error);
+                if (error.code == 99) {
+                    //登录会话过期
+                    message.info('后台维护中,请稍后...');
                     return;
                 }
-                resolve(response.data.result);
-            }, (error) => {
-                message.error(error);
                 rejectWrap(error);
-            })
+                return;
+            }
+
+            resolve(ret.result);
+        }, function () {
+            rejectWrap(defaultError);
+        }));
 
     };
     return new Promise(apiPromise);

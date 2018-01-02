@@ -34,6 +34,7 @@ class Medias extends React.Component {
                 pageSize: 10,
                 current: 0,
             },
+            q: '',
             loading: false,
             mobile: '',
             imgBase64: '',
@@ -169,13 +170,12 @@ class Medias extends React.Component {
     }
 
     componentDidMount() {
-        this.handleSearch();
+        this.loadData();
         document.onkeydown = (e) => {
             if (e.keyCode == 13) {
-                this.handleSearch();
+                this.loadData();
             }
         };
-
     }
 
     componentWillUnmount() {
@@ -256,7 +256,7 @@ class Medias extends React.Component {
                 });
                 this.setState({
                     showMediaKeep: false,
-                }, this.handleSearch)
+                }, this.loadData)
             })
 
         })
@@ -277,22 +277,23 @@ class Medias extends React.Component {
     };
 
 
-    /*loadData = () => {
-     App.api(URL_LIST, {
-     offset: this.state.table.pageSize * (this.state.table.current - 1),
-     limit: this.state.table.pageSize,
-     }).then((result) => {
-     this.setState({
-     table: {
-     ...this.state.table,
-     dataSource: result.items,
-     pageSize: result.limit,
-     offset: result.offset,
-     total: result.total,
-     }
-     })
-     })
-     };*/
+    loadData = () => {
+        App.api(URL_LIST, {
+            offset: this.state.table.pageSize * (this.state.table.current - 1),
+            limit: this.state.table.pageSize,
+            q: this.state.q,
+        }).then((result) => {
+            this.setState({
+                table: {
+                    ...this.state.table,
+                    dataSource: result.items,
+                    pageSize: result.limit,
+                    offset: result.offset,
+                    total: result.total,
+                }
+            })
+        })
+    };
 
     detailModal = (mediaId, visible = 1) => {
         App.api('adm/media/media', {
@@ -319,7 +320,7 @@ class Medias extends React.Component {
                     mediaId,
                     cancel,
                 }).then(() => {
-                    this.handleSearch();
+                    this.loadData();
                     model.destroy();
                 });
             },
@@ -330,33 +331,33 @@ class Medias extends React.Component {
 
     };
 
-    handleSearch = () => {
-        const {form: {validateFields}} = this.props;
-        validateFields((err, val) => {
-            this.setState({
-                loading: true,
-            });
-            App.api(URL_LIST, {
-                offset: this.state.table.pageSize * (this.state.table.current - 1),
-                limit: this.state.table.pageSize,
-                q: val.q,
-            }).then((result) => {
-                this.setState({
-                    loading: false,
-                    table: {
-                        ...this.state.table,
-                        dataSource: result.items,
-                        pageSize: result.limit,
-                        offset: result.offset,
-                        total: result.total,
-                    },
-                })
-            })
-
-        });
-
-
-    };
+    // loadData = () => {
+    //     const {form: {validateFields}} = this.props;
+    //     validateFields((err, val) => {
+    //         this.setState({
+    //             loading: true,
+    //         });
+    //         App.api(URL_LIST, {
+    //             offset: this.state.table.pageSize * (this.state.table.current - 1),
+    //             limit: this.state.table.pageSize,
+    //             q: val.q,
+    //         }).then((result) => {
+    //             this.setState({
+    //                 loading: false,
+    //                 table: {
+    //                     ...this.state.table,
+    //                     dataSource: result.items,
+    //                     pageSize: result.limit,
+    //                     offset: result.offset,
+    //                     total: result.total,
+    //                 },
+    //             })
+    //         })
+    //
+    //     });
+    //
+    //
+    // };
 
 
     tableOnchange = (pagination) => {
@@ -366,7 +367,7 @@ class Medias extends React.Component {
                 pageSize: pagination.pageSize,
                 current: pagination.current,
             }
-        }, this.handleSearch);
+        }, this.loadData);
 
     };
     handleSubmit = () => {
@@ -390,7 +391,7 @@ class Medias extends React.Component {
                 this.setState({
                     visible: false,
                     media: {},
-                }, this.handleSearch)
+                }, this.loadData)
             })
         })
     };
@@ -528,12 +529,14 @@ class Medias extends React.Component {
                     <Col span={20}>
                         <Form layout="inline">
                             <Form.Item>
-                                {getFieldDecorator('q')(
-                                    <Input placeholder="店铺名"/>
-                                )}
+                                <Input value={this.state.q} onChange={(e) => {
+                                    this.setState({
+                                        q: e.target.value,
+                                    })
+                                }} placeholder="店铺名"/>
                             </Form.Item>
                             <Form.Item>
-                                <Button type='primary' htmlType='submit' onClick={this.handleSearch}>搜索</Button>
+                                <Button type='primary' htmlType='submit' onClick={this.loadData}>搜索</Button>
                                 &nbsp;
                                 &nbsp;
                                 <Button type='danger' onClick={() => App.go('app/media/media-create')}>创建</Button>

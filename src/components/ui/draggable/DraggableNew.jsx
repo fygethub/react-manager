@@ -677,13 +677,13 @@ export default class DraggableNew extends React.Component {
                                 className="item"
                                 style={{fontWeight: '900'}}
                                 onClick={() => {
-                                    this.changeItemStyle('bold')(enmu.bold.bold);
-                                }}> B   </span>}
+                                    this.changeItemStyle('bold')(enmu.bold.normal);
+                                }}>B</span>}
                             {item.bold == 0 && <span
                                 className="item"
                                 onClick={() => {
-                                    this.changeItemStyle('bold')(enmu.bold.normal);
-                                }}> B  </span>}
+                                    this.changeItemStyle('bold')(enmu.bold.bold);
+                                }}>B</span>}
                         </Tooltip>
                         <Select
                             onSelect={this.changeItemStyle('fontFamily')}
