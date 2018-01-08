@@ -51,7 +51,7 @@ class PublicAccountAdd extends Component {
                     'app': JSON.stringify(val),
                     'fileElement': val.certificate
                 }).then((res) => {
-                    this.props.router.push('app/admin/admins');
+                    this.props.router.push('app/media/medias');
                 });
             }
         });

@@ -56,8 +56,9 @@ class Coupons extends React.Component {
                 title: '有效期',
                 dataIndex: 'expire',
                 key: 'expire',
-                render: (expire) => {
-                    return <span>{U.date.format(new Date(expire), 'yyyy-MM-dd hh:mm:ss')}</span>
+                render: (expire, record) => {
+                    let date = new Date(expire).setDate(new Date(expire).getDay() + (parseInt(record.duration) || 0));
+                    return <span>{U.date.format(new Date(date), 'yyyy-MM-dd HH:mm:ss')}</span>
                 }
 
             }, {
