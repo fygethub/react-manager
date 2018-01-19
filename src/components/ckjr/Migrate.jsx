@@ -19,7 +19,7 @@ class Migrate extends React.Component {
         this.state = {
             list: [],
             loading: false,
-            start: true,
+            start: false,
             mediaId: this.props.params.mediaId,
         }
     }

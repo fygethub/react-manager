@@ -2,7 +2,22 @@ import React from 'react';
 import Axios from 'axios';
 import cookie from 'js-cookie';
 import {Link} from 'react-router';
-import {message, Card, Row, Col, Table, Input, Button, Icon, Popconfirm, Modal, Form, Select, InputNumber} from 'antd';
+import {
+    message,
+    Card,
+    Row,
+    Col,
+    Table,
+    Input,
+    Button,
+    Icon,
+    Spin,
+    Popconfirm,
+    Modal,
+    Form,
+    Select,
+    InputNumber
+} from 'antd';
 import BreadcrumbCustom from '../BreadcrumbCustom';
 import App from '../../common/App.jsx';
 import U from '../../utils';
@@ -13,6 +28,7 @@ export default class Apps extends React.Component {
         super(props);
         this.state = {
             loading: true,
+            loadingPage: false,
             offset: 0,
             current: 1,
             pageSize: 10,
@@ -57,10 +73,16 @@ export default class Apps extends React.Component {
         Modal.confirm({
             title: '配置消息',
             onOk: () => {
+                this.setState({
+                    loadingPage: true,
+                });
                 App.api('adm/media/init_templatemsg', {
                     appId: appid,
                 }).then((res) => {
                     message.success(`新增模板${res.addCount}个,失败${res.errorCount}个`);
+                    this.setState({
+                        loadingPage: false,
+                    });
                 })
             },
         })
@@ -74,7 +96,6 @@ export default class Apps extends React.Component {
             limit: pageSize,
             mediaId: id,
         }).then((data) => {
-            console.log(data)
             this.setState({
                 dataSource: data,
                 pageSize: data.limit,
@@ -119,30 +140,32 @@ export default class Apps extends React.Component {
         //mediaId
         const {params:{id}} = this.props;
         return (
-            <div>
-                <BreadcrumbCustom first="店铺" second="公众号"/>
-                <Row style={{margin: '10px 0'}}>
-                    <Col span={20}>
+            <Spin spinning={this.state.loadingPage}>
+                <div>
+                    <BreadcrumbCustom first="店铺" second="公众号"/>
+                    <Row style={{margin: '10px 0'}}>
+                        <Col span={20}>
 
-                    </Col>
-                    <Col span={2} offset={2}>
-                        <Button size={'large'} type={'primary'} onClick={() => {
-                            this.props.router.push('/app/media/maps/add?mediaId=' + id)
-                        }}>添加</Button>
-                    </Col>
-                </Row>
-                <Card>
-                    <Table
-                        rowKey={(row) => row.appId}
-                        columns={columns}
-                        dataSource={dataSource}
-                        pagination={pagination}
-                        onChange={this.tableOnChange}
-                        loading={this.state.loading}
-                        scroll={{x: columns.map(({width}) => width || 100).reduce((l, f) => (l + f))}}
-                    />
-                </Card>
-            </div>
+                        </Col>
+                        <Col span={2} offset={2}>
+                            <Button size={'large'} type={'primary'} onClick={() => {
+                                this.props.router.push('/app/media/maps/add?mediaId=' + id)
+                            }}>添加</Button>
+                        </Col>
+                    </Row>
+                    <Card>
+                        <Table
+                            rowKey={(row) => row.appId}
+                            columns={columns}
+                            dataSource={dataSource}
+                            pagination={pagination}
+                            onChange={this.tableOnChange}
+                            loading={this.state.loading}
+                            scroll={{x: columns.map(({width}) => width || 100).reduce((l, f) => (l + f))}}
+                        />
+                    </Card>
+                </div>
+            </Spin>
         )
     }
 }
