@@ -97,7 +97,17 @@ const api = (url, params, options) => {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
-        }).then((response) => response.json().then(function (ret) {
+        }).then((response) => {
+            if (!options.noParse) {
+                return response.json()
+            } else {
+                return response.text();
+            }
+        }).then(function (ret) {
+            if (options.noParse) {
+                resolve(ret);
+                return;
+            }
             var error = ret.error;
             if (error) {
                 if (error.code == 5) {
@@ -118,8 +128,7 @@ const api = (url, params, options) => {
             resolve(ret.result);
         }, function () {
             rejectWrap(defaultError);
-        }));
-
+        });
     };
     return new Promise(apiPromise);
 };

@@ -159,6 +159,9 @@ class Medias extends React.Component {
                                 })
                             }}>修改手机号</a>
                         </MenuItem>
+                        <MenuItem key="10">
+                            <a onClick={() => App.go(`/app/ckjr/records/${record.id}`)}>数据迁移</a>
+                        </MenuItem>
                     </Menu>} trigger={['click']}>
                         <a className="color-info" href="javascript:;">
                             操作 <Icon type="down"/>

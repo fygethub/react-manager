@@ -26,6 +26,8 @@ import PublicAccountAdd from './components/media/PublicAccountAdd';
 import Apps from './components/apps/Apps';
 import Releases from './components/apps/Releases';
 
+import Migrate from './components/ckjr/Migrate';
+
 import Home from './Home';
 
 
@@ -58,6 +60,9 @@ const routes = (
                 <Route path={'apps'}>
                     <Route path={'apps'} component={Apps}/>
                     <Route path={'releases/:appId'} component={Releases}/>
+                </Route>
+                <Route path={'ckjr'}>
+                    <Route path={'records/:mediaId'} component={Migrate}/>
                 </Route>
                 <Route path={'media'}>
                     <Route path={'medias'} component={Medias}/>
