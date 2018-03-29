@@ -92,7 +92,7 @@ class SiderCustom extends Component {
                         key="/app/ui"
                         title={<span><Icon type="scan"/><span className="nav-text">合成图</span></span>}
                     >
-                        <Menu.Item key="/app/ui/drags-new/id"><Link to={'/app/ui/drags-new/id'}>添加编辑</Link></Menu.Item>
+                        <Menu.Item key="/app/ui/drags-new/0"><Link to={'/app/ui/drags-new/0'}>添加编辑</Link></Menu.Item>
                         <Menu.Item key="/app/ui/compounds"><Link to={'/app/ui/compounds'}>合成图列表</Link></Menu.Item>
                         <Menu.Item key="/app/ui/compound-manage">
                             <Link to={'/app/ui/compound-manage'}>字体管理</Link>
@@ -103,15 +103,15 @@ class SiderCustom extends Component {
                         title={<span><Icon type="shop"/><span className="nav-text">店铺</span></span>}
                     >
                         <Menu.Item key="/app/media/medias"><Link to={'/app/media/medias'}>店铺管理</Link> </Menu.Item>
-                        <Menu.Item key="/app/media/features"><Link to={'/app/media/features'}>功能开通</Link> </Menu.Item>
+                        {/*<Menu.Item key="/app/media/features"><Link to={'/app/media/features'}>功能开通</Link> </Menu.Item>*/}
                         <Menu.Item key="/app/media/coupons"><Link to={'/app/media/coupons'}>优惠券列表</Link> </Menu.Item>
                     </Menu.SubMenu>
-                    < Menu.SubMenu
+                    {/*<Menu.SubMenu
                         key="/app/system"
                         title={<span><Icon type="setting"/><span className="nav-text">系统设置</span></span>}
                     >
                         <Menu.Item key="/app/system/config"><Link to={'/app/system/config'}>系统设置</Link> </Menu.Item>
-                    </Menu.SubMenu>
+                    </Menu.SubMenu>*/}
                     {/*
                      //废弃
                      <Menu.SubMenu

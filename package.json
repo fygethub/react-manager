@@ -4,7 +4,7 @@
   "homepage": ".",
   "private": true,
   "dependencies": {
-    "antd": "^2.11.2",
+    "antd": "^2.13.11",
     "autoprefixer": "7.1.1",
     "awesome-urlsafe-base64": "^1.1.2",
     "axios": "^0.16.2",

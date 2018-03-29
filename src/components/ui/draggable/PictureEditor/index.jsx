@@ -37,7 +37,8 @@ export default class PictureEditor extends React.Component {
         if (!file) {
             return;
         }
-        OSSWrap.upload('compound-layer', file).then((result) => {
+        let namespace = 'compound-layer';
+        OSSWrap.upload(namespace, file).then((result) => {
             this.setState({
                 value: result.url,
             }, () => {

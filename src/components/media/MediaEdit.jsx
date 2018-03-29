@@ -4,6 +4,7 @@ import {
     Col, Table, Input, Button,
     Icon, Dropdown, Modal,
     Form, Select, InputNumber,
+    Transfer,
     Menu,
 }
     from 'antd';
@@ -15,13 +16,36 @@ import '../../asssets/css/users/users.less';
 
 const Option = Select.Option;
 class MediaEdit extends React.Component {
+
+    state = {
+        features: [],
+        selectedKeys: [],
+    };
+
     submit = (e) => {
         e.preventDefault();
         const {form: {validateFields}} = this.props;
         validateFields((err, val) => {
             if (!err) {
+                if (this.state.features && this.state.features == 0) {
+                    message.info('请选择功能模块');
+                    return;
+                }
+                let features = this.state.features.map(feature => feature.key);
+                const {name, mobile, realName, days, flowAmount, usernameUser, passwordUser}  = val;
+
+                let info = {
+                    name,
+                    mobile,
+                    realName,
+                    days: ~~days,
+                    features,
+                    flowAmount: ~~flowAmount,
+                    username: usernameUser,
+                    password: passwordUser,
+                };
                 App.api('adm/media/create', {
-                    info: JSON.stringify(val),
+                    info: JSON.stringify(info),
                 }).then((result) => {
                     message.success('创建成功');
                     setTimeout(() => {
@@ -34,12 +58,29 @@ class MediaEdit extends React.Component {
 
     };
 
+
+    componentDidMount() {
+        App.api('adm/media/features').then((features) => {
+            this.setState({
+                features
+            })
+        })
+    }
+
+    handleChange = (targetKeys, direction, moveKeys) => {
+        console.log(targetKeys);
+        this.setState({
+            selectedKeys: targetKeys,
+        })
+    };
+
     render() {
         const {getFieldDecorator, setFieldsValue} = this.props.form;
         const FormItem = Form.Item;
         return <div>
             <BreadcrumbCustom first={'创建店铺'}/>
             <Card>
+
                 <Form >
                     <FormItem
                         wrapperCol={{span: 8, offset: 4}}
@@ -85,22 +126,45 @@ class MediaEdit extends React.Component {
                             <Input />
                         )}
                     </FormItem>
+
                     <FormItem
-                        label="选择套餐"
                         wrapperCol={{span: 8, offset: 4}}
+                        label="登录用户名："
                         labelCol={{span: 4}}
                         hasFeedback
                     >
-                        {getFieldDecorator('grade', {
-                            rules: [{required: true, message: '请选择套餐'}]
+                        {getFieldDecorator('usernameUser', {
+                            rules: [{required: true, message: '请输入管理员登录账号'}],
                         })(
-                            <Select>
-                                <Option value='2'>基础版</Option>
-                                <Option value='3'>专业版</Option>
-                                <Option value='4'>企业版</Option>
-                            </Select>
+                            <Input />
                         )}
-
+                    </FormItem>
+                    <FormItem
+                        wrapperCol={{span: 8, offset: 4}}
+                        label="登录密码："
+                        labelCol={{span: 4}}
+                        hasFeedback
+                    >
+                        {getFieldDecorator('passwordUser', {
+                            rules: [{required: true, message: '请设置管理员密码'}],
+                        })(
+                            <Input type='password'/>
+                        )}
+                    </FormItem>
+                    <FormItem
+                        wrapperCol={{span: 8, offset: 4}}
+                        label="功能选择："
+                        labelCol={{span: 4}}
+                    >
+                        <Transfer
+                            dataSource={this.state.features}
+                            titles={['功能列表', '已开通']}
+                            operations={['添加', '取消']}
+                            notFoundContent={'没有条目'}
+                            targetKeys={this.state.selectedKeys}
+                            onChange={this.handleChange}
+                            render={item => item.name}
+                        />
                     </FormItem>
                     <FormItem
                         wrapperCol={{span: 8, offset: 4}}
@@ -108,7 +172,7 @@ class MediaEdit extends React.Component {
                         label='套餐时长'
                         hasFeedback
                     >
-                        {getFieldDecorator('flowAmount', {
+                        {getFieldDecorator('days', {
                             rules: [{required: true, message: '请选择套餐时长'}],
                         })(
                             <Select>
@@ -122,30 +186,28 @@ class MediaEdit extends React.Component {
                     </FormItem>
                     <FormItem
                         wrapperCol={{span: 8, offset: 4}}
-                        label="管理员用户名："
+                        label="赠送流量(分)"
                         labelCol={{span: 4}}
                         hasFeedback
                     >
-                        {getFieldDecorator('username', {
-                            rules: [{required: true, message: '请输入管理员登录账号'}],
+                        {getFieldDecorator('flowAmount', {
+                            rules: [{required: true, message: '赠送流量'}],
                         })(
-                            <Input />
-                        )}
-                    </FormItem>
-                    <FormItem
-                        wrapperCol={{span: 8, offset: 4}}
-                        label="管理员密码："
-                        labelCol={{span: 4}}
-                        hasFeedback
-                    >
-                        {getFieldDecorator('password', {
-                            rules: [{required: true, message: '请设置管理员密码'}],
-                        })(
-                            <Input type='password'/>
+                            <Select>
+                                <Option value={'0'}>不赠送</Option>
+                                <Option value={'5000'}>50元</Option>
+                                <Option value={'10000'}>100元</Option>
+                                <Option value={'50000'}>500元</Option>
+                                <Option value={'1000000'}>1000元</Option>
+                            </Select>
                         )}
                     </FormItem>
                     <FormItem>
-                        <Button type='primary' onClick={this.submit}>保存</Button>
+                        <Row>
+                            <Col span={4} offset={4}>
+                                <Button type='primary' onClick={this.submit}>保存</Button>
+                            </Col>
+                        </Row>
                     </FormItem>
                 </Form>
             </Card>
