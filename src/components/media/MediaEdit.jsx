@@ -31,8 +31,8 @@ class MediaEdit extends React.Component {
                     message.info('请选择功能模块');
                     return;
                 }
-                let features = this.state.features.map(feature => feature.key);
-                const {name, mobile, realName, days, flowAmount, usernameUser, passwordUser}  = val;
+                let features = this.state.selectedKeys;
+                const {name, mobile, realName, days, flowAmount, mingzi, minma}  = val;
 
                 let info = {
                     name,
@@ -41,8 +41,8 @@ class MediaEdit extends React.Component {
                     days: ~~days,
                     features,
                     flowAmount: ~~flowAmount,
-                    username: usernameUser,
-                    password: passwordUser,
+                    username: mingzi,
+                    password: minma,
                 };
                 App.api('adm/media/create', {
                     info: JSON.stringify(info),
@@ -133,7 +133,7 @@ class MediaEdit extends React.Component {
                         labelCol={{span: 4}}
                         hasFeedback
                     >
-                        {getFieldDecorator('usernameUser', {
+                        {getFieldDecorator('mingzi', {
                             rules: [{required: true, message: '请输入管理员登录账号'}],
                         })(
                             <Input />
@@ -145,7 +145,7 @@ class MediaEdit extends React.Component {
                         labelCol={{span: 4}}
                         hasFeedback
                     >
-                        {getFieldDecorator('passwordUser', {
+                        {getFieldDecorator('minma', {
                             rules: [{required: true, message: '请设置管理员密码'}],
                         })(
                             <Input type='password'/>

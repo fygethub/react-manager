@@ -625,7 +625,7 @@ class Medias extends React.Component {
                         <Row gutter={8}>
                             <Col span={8}> 店铺名称 </Col>
                             <Col span={12} offset={4}>
-                                <Input readOnly value={media.weixin && media.weixin.nick}/>
+                                <Input readOnly value={media.weixin && media.weixin.nick || media.name}/>
                             </Col>
                         </Row>
                         <Row gutter={8}>
@@ -668,6 +668,12 @@ class Medias extends React.Component {
                             <Col span={8}> 流量余额 </Col>
                             <Col span={12} offset={4}>
                                 <Input readOnly value={media.flowBalance / 100 + '元'}/>
+                            </Col>
+                        </Row>
+                        <Row gutter={8}>
+                            <Col span={8}> 账户余额 </Col>
+                            <Col span={12} offset={4}>
+                                <InputNumber readOnly value={media.balance / 100 + '元'}/>
                             </Col>
                         </Row>
                         <Row gutter={8}>
