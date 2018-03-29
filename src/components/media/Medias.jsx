@@ -5,6 +5,7 @@ import {
     Icon, Dropdown, Modal,
     Form, Select, InputNumber,
     Menu,
+    Transfer,
 }
     from 'antd';
 import BreadcrumbCustom from '../BreadcrumbCustom';
@@ -121,10 +122,13 @@ class Medias extends React.Component {
                         </MenuItem>
                         <Menu.Divider/>
                         <MenuItem key="2">
-                            <a href="javascript:;" onClick={() => this.detailModal(record.id, 1)}>续费升/降级</a>
+                            <a href="javascript:;" onClick={() => this.detailModal(record.id, 1)}>续费</a>
                         </MenuItem>
                         <MenuItem key="3">
                             <a href="javascript:;" onClick={() => this.detailModal(record.id, 3)}>手动提现</a>
+                        </MenuItem>
+                        <MenuItem key="11">
+                            <a href="javascript:;" onClick={() => this.detailModal(record.id, 'funnel')}>功能开通</a>
                         </MenuItem>
                         <MenuItem key="4">
                             <a href="javascript:;" onClick={() => this.wxQrcode(record.id)}>查看店铺二维码</a>
@@ -296,17 +300,32 @@ class Medias extends React.Component {
                 }
             })
         })
+
+        App.api('adm/media/features').then((features) => {
+            this.setState({
+                features
+            })
+        })
     };
 
     detailModal = (mediaId, visible = 1) => {
         App.api('adm/media/media', {
             mediaId
         }).then(media => {
+
+            if (visible === 'funnel') {
+                this.setState({
+                    selectedKeys: media.features,
+                    mediaId,
+                })
+            }
+
             this.setState({
                 media,
                 visible: visible === 1,
                 financeVisible: visible === 2,
                 amountVisible: visible === 3,
+                featuresVisible: visible === 'funnel',
             })
         })
     };
@@ -375,7 +394,7 @@ class Medias extends React.Component {
     };
     handleSubmit = () => {
         this.props.form.validateFields((err, values) => {
-            if (err && (err.id || err.grade || err.days)) {
+            if (err && (err.id || err.days)) {
                 let errorMsg = true;
                 Object.keys(err).forEach(key => {
                     if (errorMsg) {
@@ -387,7 +406,6 @@ class Medias extends React.Component {
             }
             App.api('adm/media/upgrade', {
                 mediaId: values.id,
-                grade: values.grade,
                 days: values.days,
             }).then(() => {
                 message.success('修改成功');
@@ -434,6 +452,14 @@ class Medias extends React.Component {
     };
 
 
+    handleChange = (targetKeys, direction, moveKeys) => {
+        console.log(targetKeys);
+        this.setState({
+            selectedKeys: targetKeys,
+        })
+    };
+
+
     render() {
         const {getFieldDecorator, setFieldsValue} = this.props.form;
 
@@ -455,6 +481,32 @@ class Medias extends React.Component {
                     <p>充值账户:{this.state.mediaId}</p>
                     <Input addonAfter="元"
                            onChange={(e) => this.setState({amount: e.target.value * 100})}/>
+                </Modal>
+                <Modal
+                    visible={this.state.featuresVisible}
+                    title="功能开通"
+                    onOk={() => {
+                        App.api('adm/media/update_features', {
+                            mediaId: this.state.mediaId,
+                            features: this.state.selectedKeys
+                        }).then(() => {
+                            message.info('修改成功');
+                            this.setState({
+                                featuresVisible: false, mediaId: null, selectedKeys: [],
+                            })
+                        });
+                    }}
+                    onCancel={() => this.setState({featuresVisible: false, mediaId: null, selectedKeys: []})}>
+                    <p>功能开通:{this.state.mediaId}</p>
+                    <Transfer
+                        dataSource={this.state.features}
+                        titles={['功能列表', '已开通']}
+                        operations={['添加', '取消']}
+                        notFoundContent={'没有条目'}
+                        targetKeys={this.state.selectedKeys}
+                        onChange={this.handleChange}
+                        render={item => item.name}
+                    />
                 </Modal>
                 <Modal
                     visible={this.state.showUpdateMobile}
@@ -628,11 +680,11 @@ class Medias extends React.Component {
                                 <Input readOnly value={media.weixin && media.weixin.nick || media.name}/>
                             </Col>
                         </Row>
-                        <Row gutter={8}>
-                            <Col span={8}> 套餐 </Col>
-                            <Col span={12} offset={4}><Input readOnly
-                                                             value={['', '', '基础版', '专业版', '企业版'][media.grade]}/></Col>
-                        </Row>
+                        {/* <Row gutter={8}>
+                         <Col span={8}> 套餐 </Col>
+                         <Col span={12} offset={4}><Input readOnly
+                         value={['', '', '基础版', '专业版', '企业版'][media.grade]}/></Col>
+                         </Row>*/}
                         <Row gutter={8}>
                             <Col span={8}> 微信头像 </Col>
                             <Col span={12} offset={4}>
@@ -724,23 +776,23 @@ class Medias extends React.Component {
                                 <Input disabled/>
                             )}
                         </FormItem>
-                        <FormItem
-                            label="选择套餐"
-                            wrapperCol={{span: 8, offset: 4}}
-                            labelCol={{span: 4}}
-                        >
-                            {getFieldDecorator('grade', {
-                                rules: [{required: true}],
-                                initialValue: media.grade + '',
-                            })(
-                                <Select>
-                                    <Option value='2'>基础版</Option>
-                                    <Option value='3'>专业版</Option>
-                                    <Option value='4'>企业版</Option>
-                                </Select>
-                            )}
+                        {/* <FormItem
+                         label="选择套餐"
+                         wrapperCol={{span: 8, offset: 4}}
+                         labelCol={{span: 4}}
+                         >
+                         {getFieldDecorator('grade', {
+                         rules: [{required: true}],
+                         initialValue: media.grade + '',
+                         })(
+                         <Select>
+                         <Option value='2'>基础版</Option>
+                         <Option value='3'>专业版</Option>
+                         <Option value='4'>企业版</Option>
+                         </Select>
+                         )}
 
-                        </FormItem>
+                         </FormItem>*/}
                         <FormItem
                             wrapperCol={{span: 8, offset: 4}}
                             label='到期日'
