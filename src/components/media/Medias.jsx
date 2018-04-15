@@ -10,8 +10,10 @@ import {
     from 'antd';
 import BreadcrumbCustom from '../BreadcrumbCustom';
 import App from '../../common/App.jsx';
+import Sping from '../../common/Sping.jsx';
 import U from '../../utils';
 import '../../asssets/css/users/users.less';
+import './cssMedia/media.less';
 import {Link} from 'react-router';
 import jrQrcode from  'jr-qrcode';
 
@@ -23,6 +25,7 @@ const MenuItem = Menu.Item;
 const FormItem = Form.Item;
 const Option = Select.Option;
 
+@Sping
 class Medias extends React.Component {
     constructor(props) {
         super(props);
@@ -40,6 +43,7 @@ class Medias extends React.Component {
             mobile: '',
             imgBase64: '',
             media: {},
+            features: [],
             financeVisible: false,
             showPresentFlow: false,
             showUpdateMobile: false,
@@ -112,24 +116,10 @@ class Medias extends React.Component {
                 render: (obj, record) => {
 
                     return <Dropdown overlay={<Menu>
-                        <MenuItem key="0">
-                            <a href="javascript:;"
-                               onClick={() => this.cancelModal(record.id, record.state !== 1)
-                               }> {record.state === 1 ? '封禁' : '解封'}</a>
-                        </MenuItem>
                         <MenuItem key="1">
                             <a href="javascript:;" onClick={() => this.detailModal(record.id, 2)}>账号详情</a>
                         </MenuItem>
                         <Menu.Divider/>
-                        <MenuItem key="2">
-                            <a href="javascript:;" onClick={() => this.detailModal(record.id, 1)}>续费</a>
-                        </MenuItem>
-                        <MenuItem key="3">
-                            <a href="javascript:;" onClick={() => this.detailModal(record.id, 3)}>手动提现</a>
-                        </MenuItem>
-                        <MenuItem key="11">
-                            <a href="javascript:;" onClick={() => this.detailModal(record.id, 'funnel')}>功能开通</a>
-                        </MenuItem>
                         <MenuItem key="4">
                             <a href="javascript:;" onClick={() => this.wxQrcode(record.id)}>查看店铺二维码</a>
                         </MenuItem>
@@ -143,9 +133,6 @@ class Medias extends React.Component {
                         </MenuItem>
                         <Menu.Divider/>
 
-                        <MenuItem key="7">
-                            <a href="javascript:;" onClick={() => this.handleShowPresentFlow(record.id)}>流量充值</a>
-                        </MenuItem>
                         <MenuItem key="8">
                             <a href="javascript:;" onClick={() => {
                                 this.setState({
@@ -189,38 +176,49 @@ class Medias extends React.Component {
         document.onkeydown = null;
     }
 
-    submitPresentFlow = () => {
-        if (!this.state.amount) {
-            message.info('输入充值金额');
-            return;
-        }
-
-        App.api('adm/media/present_flow', {
-            mediaId: this.state.mediaId,
-            amount: this.state.amount,
-        }).then(() => {
-            message.success('充值成功');
-            this.setState({
-                mediaId: null,
-                showPresentFlow: false,
-                amount: 0,
-            });
-        })
+    startLoading = () => {
+        this.props.startLoading();
     };
+
+    stopLoading = () => {
+        this.props.stopLoading();
+    };
+
     submitUpdateMobiel = () => {
-        if (!this.state.mobile || this.state.mobile.length < 11) {
+        if (!this.state.media.mobile || this.state.media.mobile.length < 11) {
             message.info('请输入正确手机号');
             return;
         }
+        let mobile = this.state.media.mobile;
+
+        if (mobile.split('-')[1]) {
+            mobile = mobile.split('-')[1];
+        }
+
         App.api('adm/media/update_ownermobile ', {
-            mediaId: this.state.mediaId,
-            mobile: this.state.mobile,
+            mediaId: this.state.media.id,
+            mobile,
         }).then(() => {
             message.success('修改成功');
             this.setState({
-                mediaId: null,
-                mobile: '',
-                showUpdateMobile: false,
+                mobileUpdateVisible: false,
+            });
+        })
+    };
+    submitUpdateName = () => {
+        if (!this.state.media.realName) {
+            message.info('请输入姓名');
+            return;
+        }
+        let realName = this.state.media.realName;
+
+        App.api('adm/media/update_ownername', {
+            mediaId: this.state.media.id,
+            name: realName,
+        }).then(() => {
+            message.success('修改成功');
+            this.setState({
+                nameUpdateVisible: false,
             });
         })
     };
@@ -299,7 +297,7 @@ class Medias extends React.Component {
                     total: result.total,
                 }
             })
-        })
+        });
 
         App.api('adm/media/features').then((features) => {
             this.setState({
@@ -309,6 +307,7 @@ class Medias extends React.Component {
     };
 
     detailModal = (mediaId, visible = 1) => {
+        this.startLoading();
         App.api('adm/media/media', {
             mediaId
         }).then(media => {
@@ -319,13 +318,15 @@ class Medias extends React.Component {
                     mediaId,
                 })
             }
-
             this.setState({
                 media,
+                selectedKeys: media.features,
                 visible: visible === 1,
                 financeVisible: visible === 2,
                 amountVisible: visible === 3,
                 featuresVisible: visible === 'funnel',
+            }, () => {
+                this.stopLoading();
             })
         })
     };
@@ -339,11 +340,16 @@ class Medias extends React.Component {
             cancelText: '取消',
             onOk: () => {
                 App.api('adm/media/block', {
-                    mediaId,
+                    mediaId: this.state.media.id,
                     cancel,
                 }).then(() => {
-                    this.loadData();
                     model.destroy();
+                    this.setState({
+                        media: {
+                            ...this.state.media,
+                            state: cancel ? 1 : 2,
+                        }
+                    })
                 });
             },
             onCancel: () => {
@@ -352,34 +358,6 @@ class Medias extends React.Component {
         });
 
     };
-
-    // loadData = () => {
-    //     const {form: {validateFields}} = this.props;
-    //     validateFields((err, val) => {
-    //         this.setState({
-    //             loading: true,
-    //         });
-    //         App.api(URL_LIST, {
-    //             offset: this.state.table.pageSize * (this.state.table.current - 1),
-    //             limit: this.state.table.pageSize,
-    //             q: val.q,
-    //         }).then((result) => {
-    //             this.setState({
-    //                 loading: false,
-    //                 table: {
-    //                     ...this.state.table,
-    //                     dataSource: result.items,
-    //                     pageSize: result.limit,
-    //                     offset: result.offset,
-    //                     total: result.total,
-    //                 },
-    //             })
-    //         })
-    //
-    //     });
-    //
-    //
-    // };
 
 
     tableOnchange = (pagination) => {
@@ -391,30 +369,6 @@ class Medias extends React.Component {
             }
         }, this.loadData);
 
-    };
-    handleSubmit = () => {
-        this.props.form.validateFields((err, values) => {
-            if (err && (err.id || err.days)) {
-                let errorMsg = true;
-                Object.keys(err).forEach(key => {
-                    if (errorMsg) {
-                        message.warning(err[key].errors[0].message);
-                        errorMsg = false;
-                    }
-                });
-                return;
-            }
-            App.api('adm/media/upgrade', {
-                mediaId: values.id,
-                days: values.days,
-            }).then(() => {
-                message.success('修改成功');
-                this.setState({
-                    visible: false,
-                    media: {},
-                }, this.loadData)
-            })
-        })
     };
 
     wxQrcode = (id) => {
@@ -434,14 +388,18 @@ class Medias extends React.Component {
         })
     };
 
-
     handleAmount = (mediaId) => {
         App.api('adm/finance/media_withdraw', {
             mediaId,
-            amount: this.state.amount * 100,
+            amount: this.state.withdrawAmount * 100,
         }).then(res => {
             message.success('提现成功');
+            let balance = this.state.media.balance - this.state.withdrawAmount * 100;
             this.setState({
+                media: {
+                    ...this.state.media,
+                    balance,
+                },
                 amountVisible: false,
             })
         })
@@ -451,11 +409,10 @@ class Medias extends React.Component {
         this.setState({show_qrcode: val ? val : false})
     };
 
-
     handleChange = (targetKeys, direction, moveKeys) => {
-        console.log(targetKeys);
         this.setState({
             selectedKeys: targetKeys,
+            saveTransferVisible: true,
         })
     };
 
@@ -473,50 +430,6 @@ class Medias extends React.Component {
         return (
             <div className="userDataList">
                 <BreadcrumbCustom first={TABLE_NAME} second={TABLE_NAME}/>
-                <Modal
-                    visible={this.state.showPresentFlow}
-                    title="流量充值"
-                    onOk={this.submitPresentFlow}
-                    onCancel={() => this.setState({showPresentFlow: false, mediaId: null, amount: 0})}>
-                    <p>充值账户:{this.state.mediaId}</p>
-                    <Input addonAfter="元"
-                           onChange={(e) => this.setState({amount: e.target.value * 100})}/>
-                </Modal>
-                <Modal
-                    visible={this.state.featuresVisible}
-                    title="功能开通"
-                    onOk={() => {
-                        App.api('adm/media/update_features', {
-                            mediaId: this.state.mediaId,
-                            features: this.state.selectedKeys
-                        }).then(() => {
-                            message.info('修改成功');
-                            this.setState({
-                                featuresVisible: false, mediaId: null, selectedKeys: [],
-                            })
-                        });
-                    }}
-                    onCancel={() => this.setState({featuresVisible: false, mediaId: null, selectedKeys: []})}>
-                    <p>功能开通:{this.state.mediaId}</p>
-                    <Transfer
-                        dataSource={this.state.features}
-                        titles={['功能列表', '已开通']}
-                        operations={['添加', '取消']}
-                        notFoundContent={'没有条目'}
-                        targetKeys={this.state.selectedKeys}
-                        onChange={this.handleChange}
-                        render={item => item.name}
-                    />
-                </Modal>
-                <Modal
-                    visible={this.state.showUpdateMobile}
-                    title="修改手机号码"
-                    onOk={this.submitUpdateMobiel}
-                    onCancel={() => this.setState({showUpdateMobile: false, mediaId: null, mobile: ''})}>
-                    <p>手机号码:</p>
-                    <Input value={this.state.mobile}
-                           onChange={(e) => this.setState({mobile: e.target.value})}/>
-                </Modal>
                 <Modal
                     visible={this.state.show_qrcode}
                     title="微信扫码"
@@ -594,12 +507,11 @@ class Medias extends React.Component {
                                 <Button type='primary' htmlType='submit' onClick={this.loadData}>搜索</Button>
                                 &nbsp;
                                 &nbsp;
-                                <Button type='danger' onClick={() => App.go('app/media/media-create')}>创建</Button>
+                                <Button type='danger' onClick={() => App.go('/app/media/media-create')}>创建</Button>
                             </Form.Item>
                         </Form>
                     </Col>
                 </Row>
-
                 <div className="table">
                     <Row gutter={24}>
                         <Col>
@@ -652,179 +564,266 @@ class Medias extends React.Component {
                         <Row gutter={8}>
                             <Col span={8}> 提现金额 </Col>
                             <Col span={12} offset={4}>
-                                <InputNumber value={this.state.amount}
-                                             onChange={e => this.setState({amount: e})}/>
+                                <InputNumber value={this.state.withdrawAmount}
+                                             onChange={e => this.setState({withdrawAmount: e})}/>
                             </Col>
                         </Row>
                     </Card>
                 </Modal>
                 <Modal
-                    title={'详情'}
+                    confirmLoading={this.state.confirmLoading}
                     visible={this.state.financeVisible}
-                    onOk={() => {
-                        this.setState({financeVisible: false,});
-                        message.info('待添加');
-                    }}
+                    footer={false}
                     onCancel={() => this.setState({financeVisible: false,})}
-                >
-                    <Card>
-                        <Row gutter={8}>
-                            <Col span={8}> 店铺ID </Col>
-                            <Col span={12} offset={4}>
-                                <Input readOnly value={media.id}/>
+                    title="店铺详情">
+                    <Card bordered={false}>
+                        <Row className={'media-row-border-bottom media-modal-row'}>
+                            <Col span={6}>
+                                <img
+                                    className="media-info-avatar"
+                                    src={(media.weixin && media.weixin.avatar) || media.img || wakkaaLogo}
+                                    alt=""/>
+                            </Col>
+                            <Col span={12}>
+                                <Row>
+                                    <Col span={6}>
+                                        <div>店铺名称:</div>
+                                    </Col>
+                                    <Col span={18}>
+                                        {media.weixin && media.weixin.nick || media.name}
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col span={6}>
+                                        <div>店铺Id:</div>
+                                    </Col>
+                                    <Col span={18}>
+                                        {media.id}
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col span={6}>
+                                        <div>到期时间:</div>
+                                    </Col>
+                                    <Col span={18}>
+                                        {U.date.format(new Date(media.validThru), 'yyyy-MM-dd hh:mm:ss')}
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col span={6}>
+                                        <div>剩余时间:</div>
+                                    </Col>
+                                    <Col span={18}>
+                                        {media.remainingDays} 天
+                                        <a onClick={() => {
+                                            this.setState({
+                                                accDayFeeVisible: true,
+                                            })
+                                        }}> 续费</a>
+                                    </Col>
+                                </Row>
+                                {this.state.accDayFeeVisible &&
+                                <Row
+                                    type={'flex'}
+                                    align={'middle'}>
+                                    <Col span={8}>
+                                        <Select style={{width: '100%'}} onChange={(e) => {
+                                            this.setState({
+                                                days: e.target ? e.target.value : e,
+                                            })
+                                        }}>
+                                            <Option value={'0'}>不续费</Option>
+                                            <Option value={'7'}>7天</Option>
+                                            <Option value={'30'}>一个月</Option>
+                                            <Option value={'90'}>3个月</Option>
+                                            <Option value={'180'}>半年</Option>
+                                            <Option value={'365'}>一年</Option>
+                                        </Select>
+                                    </Col>
+                                    <Col span={6} offset={1}>
+                                        <a href="javascript:void(0)" onClick={() => {
+                                            this.setState({
+                                                confirmLoading: true,
+                                            });
+                                            this.state.days != 0 && App.api('adm/media/upgrade', {
+                                                mediaId: this.state.media.id,
+                                                days: this.state.days,
+                                                grade: 4,
+                                            }).then(() => {
+                                                message.info('充值成功');
+                                                let media = this.state.media;
+                                                media.remainingDays = parseInt(media.remainingDays) + parseInt(this.state.days || 0);
+                                                media.validThru = new Date(media.validThru).getTime() + parseInt(this.state.days) * 24 * 60 * 60 * 1000;
+                                                this.setState({
+                                                    media,
+                                                    accDayFeeVisible: false,
+                                                    confirmLoading: false,
+                                                })
+                                            })
+                                        }}>确定</a>
+                                    </Col>
+                                    <Col span={4}>
+                                        <a href="javascript:void(0)" onClick={() => this.setState({
+                                            accDayFeeVisible: false,
+                                        })}>取消</a>
+                                    </Col>
+                                </Row>}
+                            </Col>
+                            <Col span={6}>
+                                <Row>
+                                    <Col>
+                                        <Button type='primary'>
+                                            <a href="javascript:;"
+                                               onClick={() => this.cancelModal(media.id, media.state !== 1)
+                                               }> {media.state === 1 ? '封禁店铺' : '解封店铺'}</a>
+                                        </Button>
+                                    </Col>
+                                </Row>
                             </Col>
                         </Row>
-                        <Row gutter={8}>
-                            <Col span={8}> 店铺名称 </Col>
-                            <Col span={12} offset={4}>
-                                <Input readOnly value={media.weixin && media.weixin.nick || media.name}/>
+                        <Row className={'media-row-border-bottom media-modal-row'}>
+                            <Col span={24}>
+                                <Row>
+                                    <Col span={6}>
+                                        <div>绑定微信号:</div>
+                                    </Col>
+                                    <Col span={6}>
+
+                                    </Col>
+                                </Row>
+                                <Row type={'flex'} align={'middle'}>
+                                    <Col span={6}>
+                                        <div>绑定人姓名:</div>
+                                    </Col>
+                                    {!this.state.nameUpdateVisible && <Col span={12}>
+                                        {media.realName}<a href="javascript:void(0)" onClick={() => {
+                                        this.setState({
+                                            nameUpdateVisible: true,
+                                        })
+                                    }}> 修改</a>
+                                    </Col>}
+                                    {this.state.nameUpdateVisible && <Col span={6}>
+                                        <Input value={media.realName}
+                                               onChange={(e) => this.setState({
+                                                   media: {
+                                                       ...media,
+                                                       realName: e.target.value
+                                                   }
+                                               })}/>
+                                    </Col>}
+                                    {this.state.nameUpdateVisible && <Col span={4} offset={1}>
+                                        <a href="javascript:void(0)" onClick={() => {
+                                            this.submitUpdateName()
+                                        }}> 修改</a>
+                                    </Col>}
+                                    {this.state.nameUpdateVisible && <Col span={4}>
+                                        <a href="javascript:void(0)" onClick={() => {
+                                            this.setState({
+                                                nameUpdateVisible: false,
+                                            })
+                                        }}> 取消</a>
+                                    </Col>}
+                                </Row>
+                                <Row type={'flex'} align={'middle'}>
+                                    <Col span={6}>
+                                        <span>绑定人手机号:</span>
+                                    </Col>
+                                    {!this.state.mobileUpdateVisible && <Col span={12}>
+                                        {media.mobile}<a href="javascript:void(0)" onClick={() => {
+                                        this.setState({
+                                            mobileUpdateVisible: true,
+                                        })
+                                    }}> 修改</a>
+                                    </Col>}
+                                    {this.state.mobileUpdateVisible && <Col>
+                                        <Input value={media.mobile}
+                                               onChange={(e) => this.setState({
+                                                   media: {
+                                                       ...media,
+                                                       mobile: e.target.value
+                                                   }
+                                               })}/>
+                                    </Col>}
+                                    {this.state.mobileUpdateVisible && <Col span={4} offset={1}>
+                                        <a href="javascript:void(0)" onClick={() => {
+                                            this.submitUpdateMobiel()
+                                        }}> 修改</a>
+                                    </Col>}
+                                    {this.state.mobileUpdateVisible && <Col span={4}>
+                                        <a href="javascript:void(0)" onClick={() => {
+                                            this.setState({
+                                                mobileUpdateVisible: false,
+                                            })
+                                        }}> 取消</a>
+                                    </Col>}
+                                </Row>
                             </Col>
                         </Row>
-                        {/* <Row gutter={8}>
-                         <Col span={8}> 套餐 </Col>
-                         <Col span={12} offset={4}><Input readOnly
-                         value={['', '', '基础版', '专业版', '企业版'][media.grade]}/></Col>
-                         </Row>*/}
-                        <Row gutter={8}>
-                            <Col span={8}> 微信头像 </Col>
-                            <Col span={12} offset={4}>
-                                <img src={(media.weixin && media.weixin.avatar) || wakkaaLogo} alt="Avatar"
-                                     style={{width: 40, height: 40}}/>
+                        <Row className='media-row-border-bottom media-modal-row'>
+                            <Col span={24}>
+                                <Row>
+                                    <Col span={6}>
+                                        <div>账户总收入:</div>
+                                    </Col>
+                                    <Col span={6}>
+                                        {media.income / 100 + '元'}
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col span={6}>
+                                        <div>账户余额:</div>
+                                    </Col>
+                                    <Col span={6}>
+                                        {media.balance / 100 + '元'}<a onClick={() => {
+                                        this.setState({
+                                            amountVisible: true,
+                                        })
+                                    }}> 提现</a>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col span={6}>
+                                        <div>流量余额:</div>
+                                    </Col>
+                                    <Col span={6}>
+                                        {media.flowBalance / 100 + '元'}<a onClick={() => {
+                                        this.handleShowPresentFlow(this.state.media.id);
+                                    }}> 充值</a>
+                                    </Col>
+                                </Row>
                             </Col>
                         </Row>
-                        <Row gutter={8}>
-                            <Col span={8}> 微信昵称 </Col>
-                            <Col span={12} offset={4}>
-                                <Input readOnly value={media.weixin && media.weixin.nick}/>
-                            </Col>
-                        </Row>
-                        <Row gutter={8}>
-                            <Col span={8}> 绑定手机号 </Col>
-                            <Col span={12} offset={4}>
-                                <Input readOnly value={media.mobile}/>
-                            </Col>
-                        </Row>
-                        <Row gutter={8}>
-                            <Col span={8}> 绑定人姓名 </Col>
-                            <Col span={12} offset={4}>
-                                <Input readOnly value={media.realName}/>
-                            </Col>
-                        </Row>
-                        <Row gutter={8}>
-                            <Col span={8}> 总收入 </Col>
-                            <Col span={12} offset={4}>
-                                <Input readOnly value={media.income / 100 + '元'}/>
-                            </Col>
-                        </Row>
-                        <Row gutter={8}>
-                            <Col span={8}> 流量余额 </Col>
-                            <Col span={12} offset={4}>
-                                <Input readOnly value={media.flowBalance / 100 + '元'}/>
-                            </Col>
-                        </Row>
-                        <Row gutter={8}>
-                            <Col span={8}> 账户余额 </Col>
-                            <Col span={12} offset={4}>
-                                <InputNumber readOnly value={media.balance / 100 + '元'}/>
-                            </Col>
-                        </Row>
-                        <Row gutter={8}>
-                            <Col span={8}> 账户余额 </Col>
-                            <Col span={12} offset={4}>
-                                <InputNumber readOnly value={media.balance / 100 + '元'}/>
+                        <Row className='media-modal-row'>
+                            <Col span={24}>
+                                <Row>
+                                    {this.state.features &&
+                                    <Transfer
+                                        dataSource={this.state.features}
+                                        titles={['功能列表', '已开通']}
+                                        operations={['添加', '取消']}
+                                        notFoundContent={'没有条目'}
+                                        targetKeys={this.state.selectedKeys}
+                                        onChange={this.handleChange}
+                                        render={item => item.name}
+                                    />}
+                                </Row>
+                                {this.state.saveTransferVisible && <Row style={{marginTop: 10}}>
+                                    <Col span={4} style={{textAlign: 'left'}}>
+                                        <Button
+                                            type={'primary'}
+                                            onClick={() => {
+                                                App.api('adm/media/update_features', {
+                                                    mediaId: this.state.media.id,
+                                                    features: this.state.selectedKeys
+                                                }).then(() => {
+                                                    message.info('修改成功');
+                                                });
+                                            }}> 保存</Button>
+                                    </Col>
+                                </Row>}
                             </Col>
                         </Row>
                     </Card>
-                </Modal>
-                <Modal
-                    title={'详情'}
-                    visible={this.state.visible}
-                    onOk={this.handleSubmit}
-                    onCancel={() => this.setState({visible: false,})}
-                >
-                    <Form >
-                        <FormItem
-                            wrapperCol={{span: 8, offset: 4}}
-                            labelCol={{span: 4}}
-                            label="头像"
-                        >
-                            <div className="avatar">
-                                <img
-                                    src={(media.weixin && media.weixin.avatar) ? media.weixin.avatar : wakkaaLogo}
-                                    alt="avatar"/>
-                            </div>
-                        </FormItem>
-                        <FormItem
-                            wrapperCol={{span: 8, offset: 4}}
-                            label='店铺ID'
-                            labelCol={{span: 4}}
-                        >
-                            {getFieldDecorator('id', {
-                                initialValue: media.id,
-                            })(
-                                <Input disabled/>
-                            )}
-                        </FormItem>
-                        <FormItem
-                            wrapperCol={{span: 8, offset: 4}}
-                            label="店铺名称"
-                            labelCol={{span: 4}}
-                        >
-                            {getFieldDecorator('nick', {
-                                initialValue: media.weixin && media.weixin.nick,
-                            })(
-                                <Input disabled/>
-                            )}
-                        </FormItem>
-                        {/* <FormItem
-                         label="选择套餐"
-                         wrapperCol={{span: 8, offset: 4}}
-                         labelCol={{span: 4}}
-                         >
-                         {getFieldDecorator('grade', {
-                         rules: [{required: true}],
-                         initialValue: media.grade + '',
-                         })(
-                         <Select>
-                         <Option value='2'>基础版</Option>
-                         <Option value='3'>专业版</Option>
-                         <Option value='4'>企业版</Option>
-                         </Select>
-                         )}
-
-                         </FormItem>*/}
-                        <FormItem
-                            wrapperCol={{span: 8, offset: 4}}
-                            label='到期日'
-                            labelCol={{span: 4}}
-                        >
-                            {getFieldDecorator('duration', {
-                                initialValue: U.date.format(new Date(media.validThru), 'yyyy-MM-dd hh:mm:ss'),
-                                rules: [{required: true}]
-                            })(
-                                <Input disabled/>
-                            )}
-                        </FormItem>
-                        <FormItem
-                            wrapperCol={{span: 8, offset: 4}}
-                            labelCol={{span: 4}}
-                            label='续费日期'
-                        >
-                            {getFieldDecorator('days', {
-                                rules: [{required: true}],
-                                initialValue: '0',
-                            })(
-                                <Select>
-                                    <Option value={'0'}>不续费</Option>
-                                    <Option value={'7'}>7天</Option>
-                                    <Option value={'30'}>一个月</Option>
-                                    <Option value={'90'}>3个月</Option>
-                                    <Option value={'180'}>半年</Option>
-                                    <Option value={'365'}>一年</Option>
-                                </Select>
-                            )}
-                        </FormItem>
-                    </Form>
                 </Modal>
             </div>
         )
@@ -832,3 +831,5 @@ class Medias extends React.Component {
 }
 
 export default Form.create()(Medias);
+
+
