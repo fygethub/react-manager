@@ -581,7 +581,7 @@ class Medias extends React.Component {
                             <Col span={6}>
                                 <img
                                     className="media-info-avatar"
-                                    src={(media.weixin && media.weixin.avatar) || media.img || wakkaaLogo}
+                                    src={ media.img || wakkaaLogo}
                                     alt=""/>
                             </Col>
                             <Col span={12}>
@@ -589,8 +589,15 @@ class Medias extends React.Component {
                                     <Col span={6}>
                                         <div>店铺名称:</div>
                                     </Col>
-                                    <Col span={18}>
-                                        {media.weixin && media.weixin.nick || media.name}
+                                    <Col span={12}>
+                                        {media.name}
+                                    </Col>
+                                    <Col span={6}>
+                                        <Button type='primary'>
+                                            <a href="javascript:;"
+                                               onClick={() => this.cancelModal(media.id, media.state !== 1)
+                                               }> {media.state === 1 ? '封禁店铺' : '解封店铺'}</a>
+                                        </Button>
                                     </Col>
                                 </Row>
                                 <Row>
@@ -608,6 +615,39 @@ class Medias extends React.Component {
                                     <Col span={18}>
                                         {U.date.format(new Date(media.validThru), 'yyyy-MM-dd hh:mm:ss')}
                                     </Col>
+                                </Row>
+                                <Row type={'flex'} align={'middle'}>
+                                    <Col span={6}>
+                                        <div>绑定姓名:</div>
+                                    </Col>
+                                    {!this.state.nameUpdateVisible && <Col span={18}>
+                                        {media.realName}<a href="javascript:void(0)" onClick={() => {
+                                        this.setState({
+                                            nameUpdateVisible: true,
+                                        })
+                                    }}> 修改</a>
+                                    </Col>}
+                                    {this.state.nameUpdateVisible && <Col span={8}>
+                                        <Input value={media.realName}
+                                               onChange={(e) => this.setState({
+                                                   media: {
+                                                       ...media,
+                                                       realName: e.target.value
+                                                   }
+                                               })}/>
+                                    </Col>}
+                                    {this.state.nameUpdateVisible && <Col span={4} offset={1}>
+                                        <a href="javascript:void(0)" onClick={() => {
+                                            this.submitUpdateName()
+                                        }}> 修改</a>
+                                    </Col>}
+                                    {this.state.nameUpdateVisible && <Col span={4}>
+                                        <a href="javascript:void(0)" onClick={() => {
+                                            this.setState({
+                                                nameUpdateVisible: false,
+                                            })
+                                        }}> 取消</a>
+                                    </Col>}
                                 </Row>
                                 <Row>
                                     <Col span={6}>
@@ -669,60 +709,27 @@ class Medias extends React.Component {
                                     </Col>
                                 </Row>}
                             </Col>
-                            <Col span={6}>
-                                <Row>
-                                    <Col>
-                                        <Button type='primary'>
-                                            <a href="javascript:;"
-                                               onClick={() => this.cancelModal(media.id, media.state !== 1)
-                                               }> {media.state === 1 ? '封禁店铺' : '解封店铺'}</a>
-                                        </Button>
-                                    </Col>
-                                </Row>
-                            </Col>
+
                         </Row>
                         <Row className={'media-row-border-bottom media-modal-row'}>
                             <Col span={24}>
+                                {media.weixin && media.weixin.avatar && <Row>
+                                    <Col span={6}>
+                                        <div>绑定微信头像:</div>
+                                    </Col>
+                                    <Col span={6}>
+                                        <img
+                                            style={{width: 40, height: 40}}
+                                            src={media.weixin.avatar} alt=""/>
+                                    </Col>
+                                </Row>}
                                 <Row>
                                     <Col span={6}>
                                         <div>绑定微信号:</div>
                                     </Col>
                                     <Col span={6}>
-
+                                        {media.weixin && media.weixin.nick}
                                     </Col>
-                                </Row>
-                                <Row type={'flex'} align={'middle'}>
-                                    <Col span={6}>
-                                        <div>绑定人姓名:</div>
-                                    </Col>
-                                    {!this.state.nameUpdateVisible && <Col span={12}>
-                                        {media.realName}<a href="javascript:void(0)" onClick={() => {
-                                        this.setState({
-                                            nameUpdateVisible: true,
-                                        })
-                                    }}> 修改</a>
-                                    </Col>}
-                                    {this.state.nameUpdateVisible && <Col span={6}>
-                                        <Input value={media.realName}
-                                               onChange={(e) => this.setState({
-                                                   media: {
-                                                       ...media,
-                                                       realName: e.target.value
-                                                   }
-                                               })}/>
-                                    </Col>}
-                                    {this.state.nameUpdateVisible && <Col span={4} offset={1}>
-                                        <a href="javascript:void(0)" onClick={() => {
-                                            this.submitUpdateName()
-                                        }}> 修改</a>
-                                    </Col>}
-                                    {this.state.nameUpdateVisible && <Col span={4}>
-                                        <a href="javascript:void(0)" onClick={() => {
-                                            this.setState({
-                                                nameUpdateVisible: false,
-                                            })
-                                        }}> 取消</a>
-                                    </Col>}
                                 </Row>
                                 <Row type={'flex'} align={'middle'}>
                                     <Col span={6}>
