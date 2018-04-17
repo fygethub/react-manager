@@ -223,9 +223,8 @@ class Medias extends React.Component {
         })
     };
 
-    handleShowPresentFlow = (mediaId) => {
+    handleShowPresentFlow = () => {
         this.setState({
-            mediaId,
             showPresentFlow: true,
         });
     };
@@ -359,6 +358,29 @@ class Medias extends React.Component {
 
     };
 
+    submitPresentFlow = () => {
+        if (!this.state.amount) {
+            message.info('输入充值金额');
+            return;
+        }
+
+        App.api('adm/media/present_flow', {
+            mediaId: this.state.media.id,
+            amount: this.state.amount,
+        }).then(() => {
+            message.success('充值成功');
+            let flowBalance = this.state.media.flowBalance;
+            flowBalance = (flowBalance - 0) + this.state.amount;
+            this.setState({
+                media: {
+                    ...this.state.media,
+                    flowBalance,
+                },
+                showPresentFlow: false,
+                amount: 0,
+            });
+        })
+    };
 
     tableOnchange = (pagination) => {
         this.setState({
@@ -437,6 +459,16 @@ class Medias extends React.Component {
                     onCancel={() => this.showQrcode()}
                     footer={null}>
                     <img src={this.state.imgBase64} id='qrcode' style={{width: '300px', height: '300px'}}/>
+                </Modal>
+                <Modal
+                    visible={this.state.showPresentFlow}
+                    title="流量充值"
+                    onOk={this.submitPresentFlow}
+                    onCancel={() => this.setState({showPresentFlow: false, amount: 0})}>
+                    <p>充值账户:{this.state.mediaId}</p>
+                    <Input addonAfter="元"
+                           value={(this.state.amount || 0) / 100 }
+                           onChange={(e) => this.setState({amount: e.target.value * 100})}/>
                 </Modal>
                 <Modal
                     title='增加店铺管理员'
@@ -793,9 +825,8 @@ class Medias extends React.Component {
                                         <div>流量余额:</div>
                                     </Col>
                                     <Col span={6}>
-                                        {media.flowBalance / 100 + '元'}<a onClick={() => {
-                                        this.handleShowPresentFlow(this.state.media.id);
-                                    }}> 充值</a>
+                                        {media.flowBalance / 100 + '元'}
+                                        <a onClick={this.handleShowPresentFlow}> 充值</a>
                                     </Col>
                                 </Row>
                             </Col>
