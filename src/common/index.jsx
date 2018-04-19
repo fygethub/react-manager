@@ -1,8 +1,4 @@
-import App from './App';
-import  OSSWrap from './OSSWrap'
-import  U from './U';
-import  CTYPE from './Ctype';
-
-export default {
-    App, OSSWrap, U, CTYPE
-}
+export {default as App} from './App';
+export {default as OSSWrap} from './OSSWrap';
+export {default as U} from './U';
+export {default as CTYPE} from './Ctype.jsx';

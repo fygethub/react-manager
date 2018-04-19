@@ -27,6 +27,8 @@ import Apps from './components/apps/Apps';
 import Releases from './components/apps/Releases';
 
 import Migrate from './components/ckjr/Migrate';
+import Courses from './components/evaluation/Courses';
+import Posts from './components/evaluation/Posts';
 
 import Home from './Home';
 
@@ -63,6 +65,10 @@ const routes = (
                 </Route>
                 <Route path={'ckjr'}>
                     <Route path={'records/:mediaId'} component={Migrate}/>
+                </Route>
+                <Route path={'evaluation'}>
+                    <Route path={'courses'} component={Courses}/>
+                    <Route path={'posts'} component={Posts}/>
                 </Route>
                 <Route path={'media'}>
                     <Route path={'medias'} component={Medias}/>

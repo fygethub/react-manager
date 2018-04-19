@@ -84,10 +84,7 @@ class SiderCustom extends Component {
                     openKeys={this.state.firstHide ? null : [this.state.openKey]}
                     onOpenChange={this.openMenu}
                 >
-                    {/*<Menu.Item key="/app/dashboard/index">*/}
-                    {/*<Link to={'/app/dashboard/index'}><Icon type="mobile"/><span*/}
-                    {/*className="nav-text">首页</span></Link>*/}
-                    {/*</Menu.Item>*/}
+
                     <Menu.SubMenu
                         key="/app/ui"
                         title={<span><Icon type="scan"/><span className="nav-text">合成图</span></span>}
@@ -98,28 +95,29 @@ class SiderCustom extends Component {
                             <Link to={'/app/ui/compound-manage'}>字体管理</Link>
                         </Menu.Item>
                     </Menu.SubMenu>
+
+
                     <Menu.SubMenu
                         key="/app/media"
                         title={<span><Icon type="shop"/><span className="nav-text">店铺</span></span>}
                     >
                         <Menu.Item key="/app/media/medias"><Link to={'/app/media/medias'}>店铺管理</Link> </Menu.Item>
-                        {/*<Menu.Item key="/app/media/features"><Link to={'/app/media/features'}>功能开通</Link> </Menu.Item>*/}
                         <Menu.Item key="/app/media/coupons"><Link to={'/app/media/coupons'}>优惠券列表</Link> </Menu.Item>
+                        <Menu.Item key="/app/media/course"><Link to={'/adm/media/courses'}>课程列表</Link> </Menu.Item>
+                        <Menu.Item key="/app/media/posts"><Link to={'/adm/media/posts'}>社群贴子列表</Link> </Menu.Item>
                     </Menu.SubMenu>
-                    {/*<Menu.SubMenu
-                        key="/app/system"
-                        title={<span><Icon type="setting"/><span className="nav-text">系统设置</span></span>}
+
+                    <Menu.SubMenu
+                        key="/app/evaluation"
+                        title={<span><Icon type="shop"/><span className="nav-text">课程&社群管理</span></span>}
                     >
-                        <Menu.Item key="/app/system/config"><Link to={'/app/system/config'}>系统设置</Link> </Menu.Item>
-                    </Menu.SubMenu>*/}
-                    {/*
-                     //废弃
-                     <Menu.SubMenu
-                     key="/app/user"
-                     title={<span><Icon type="user"/><span className="nav-text">用户管理</span></span>}
-                     >
-                     <Menu.Item key="/app/user/users"><Link to={'/app/user/users'}>用户列表</Link></Menu.Item>
-                     </Menu.SubMenu>*/}
+                        <Menu.Item key="/app/evaluation/course"><Link to={'/app/evaluation/courses'}>课程列表</Link>
+                        </Menu.Item>
+                        <Menu.Item key="/app/evaluation/posts"><Link to={'/app/evaluation/posts'}>社群贴子列表</Link>
+                        </Menu.Item>
+                    </Menu.SubMenu>
+
+
                     <Menu.SubMenu
                         key="/app/admin"
                         title={<span><Icon type="team"/><span className="nav-text">管理员</span></span>}
@@ -132,7 +130,6 @@ class SiderCustom extends Component {
                         title={<span><Icon type="team"/><span className="nav-text">应用</span></span>}
                     >
                         <Menu.Item key="/app/apps/apps"><Link to={`/app/apps/apps`}>应用列表</Link></Menu.Item>
-                        {/*<Menu.Item key="/app/apps/releases"><Link to={`/app/apps/releases`}>版本管理</Link></Menu.Item>*/}
                         <Menu.Item key="/app/apps/logs"><Link to={`/app/apps/logs`}>LOG</Link></Menu.Item>
                     </Menu.SubMenu>
                 </Menu>

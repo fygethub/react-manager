@@ -1,5 +1,5 @@
 import React from 'react';
-import Common from '../../common';
+import {App,CTYPE,U} from '../../common';
 import {
     Row,
     Col,
@@ -19,9 +19,6 @@ import {
 } from 'antd';
 import BreadcrumbCustom from '../BreadcrumbCustom';
 const data_url = 'adm/media/features';
-const App = Common.App;
-const CTYPE = Common.CTYPE;
-const U = Common.U;
 const Option = Select.Option;
 export default class Features extends React.Component {
     constructor(props) {
