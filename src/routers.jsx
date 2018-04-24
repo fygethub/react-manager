@@ -36,7 +36,7 @@ import Home from './Home';
 const routes = (
     <Router history={hashHistory}>
         <Route path={'/'} components={Page}>
-            <IndexRedirect to="/app/ui/compounds"/>
+            <IndexRedirect to="/app"/>
             <Route path={'app'} component={Home}>
                 <Route path={'admin'}>
                     <Route path={'admins'} component={Admins}/>

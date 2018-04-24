@@ -103,15 +103,13 @@ class SiderCustom extends Component {
                     >
                         <Menu.Item key="/app/media/medias"><Link to={'/app/media/medias'}>店铺管理</Link> </Menu.Item>
                         <Menu.Item key="/app/media/coupons"><Link to={'/app/media/coupons'}>优惠券列表</Link> </Menu.Item>
-                        <Menu.Item key="/app/media/course"><Link to={'/adm/media/courses'}>课程列表</Link> </Menu.Item>
-                        <Menu.Item key="/app/media/posts"><Link to={'/adm/media/posts'}>社群贴子列表</Link> </Menu.Item>
                     </Menu.SubMenu>
 
                     <Menu.SubMenu
                         key="/app/evaluation"
                         title={<span><Icon type="shop"/><span className="nav-text">课程&社群管理</span></span>}
                     >
-                        <Menu.Item key="/app/evaluation/course"><Link to={'/app/evaluation/courses'}>课程列表</Link>
+                        <Menu.Item key="/app/evaluation/courses"><Link to={'/app/evaluation/courses'}>课程列表</Link>
                         </Menu.Item>
                         <Menu.Item key="/app/evaluation/posts"><Link to={'/app/evaluation/posts'}>社群贴子列表</Link>
                         </Menu.Item>
@@ -122,15 +120,15 @@ class SiderCustom extends Component {
                         key="/app/admin"
                         title={<span><Icon type="team"/><span className="nav-text">管理员</span></span>}
                     >
-                        <Menu.Item key="/app/admin/admins"><Link to={`/app/admin/admins`}>管理员列表</Link></Menu.Item>
-                        <Menu.Item key="/app/admin/adminGroup"><Link to={`/app/admin/groups`}>管理员分组</Link></Menu.Item>
+                        <Menu.Item key="/app/admin/admins"><Link to={'/app/admin/admins'}>管理员列表</Link></Menu.Item>
+                        <Menu.Item key="/app/admin/groups"><Link to={'/app/admin/groups'}>管理员分组</Link></Menu.Item>
                     </Menu.SubMenu>
                     <Menu.SubMenu
                         key="/app/apps"
                         title={<span><Icon type="team"/><span className="nav-text">应用</span></span>}
                     >
-                        <Menu.Item key="/app/apps/apps"><Link to={`/app/apps/apps`}>应用列表</Link></Menu.Item>
-                        <Menu.Item key="/app/apps/logs"><Link to={`/app/apps/logs`}>LOG</Link></Menu.Item>
+                        <Menu.Item key="/app/apps/apps"><Link to={'/app/apps/apps'}>应用列表</Link></Menu.Item>
+                        <Menu.Item key="/app/apps/logs"><Link to={'/app/apps/logs'}>LOG</Link></Menu.Item>
                     </Menu.SubMenu>
                 </Menu>
             </Sider>

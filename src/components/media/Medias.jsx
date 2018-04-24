@@ -394,7 +394,6 @@ class Medias extends React.Component {
     };
 
     wxQrcode = (id) => {
-        //message.info('OPPS~ 未实现');
         let imgBase64 = jrQrcode.getQrBase64(App.getShopURL(id), {
             padding: 10,   // 二维码四边空白（默认为10px）
             width: 256,  // 二维码图片宽度（默认为256px）
@@ -406,6 +405,7 @@ class Medias extends React.Component {
         });
         this.setState({
             imgBase64,
+            mediaId: id,
             show_qrcode: true,
         })
     };
@@ -458,7 +458,10 @@ class Medias extends React.Component {
                     width='330px'
                     onCancel={() => this.showQrcode()}
                     footer={null}>
-                    <img src={this.state.imgBase64} id='qrcode' style={{width: '300px', height: '300px'}}/>
+                    <div>
+                        <h3>店铺地址:  {this.state.mediaId && App.getShopURL(this.state.mediaId)}</h3>
+                        <img src={this.state.imgBase64} id='qrcode' style={{width: '300px', height: '300px'}}/>
+                    </div>
                 </Modal>
                 <Modal
                     visible={this.state.showPresentFlow}
